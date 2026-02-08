@@ -9,5 +9,7 @@ import (
 func SetAdminRoute(v1 *gin.RouterGroup, c *container.Container) {
 
 	admin := v1.Group("/admin")
+	admin.Use(c.Middleware.AdminMiddleware.VerifyAdminToken())
+
 	UserRoutes(admin, c)
 }

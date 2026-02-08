@@ -11,6 +11,7 @@ type Container struct {
 	Handler    *Handler
 	Service    *Service
 	Repository *Repository
+	Middleware *Middleware
 	JWTManager *jwtutil.JWTManager
 }
 
@@ -28,10 +29,12 @@ func NewContainer(db *gorm.DB, cfg config.Config) *Container {
 	repository := NewRepository(db)
 	service := NewService(db, repository, jwtManager)
 	handler := NewHandler(service)
+	middleware := NewMiddleware(jwtManager, repository)
 	return &Container{
 		Handler:    handler,
 		Service:    service,
 		Repository: repository,
+		Middleware: middleware,
 		JWTManager: jwtManager,
 	}
 }
