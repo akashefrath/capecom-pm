@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GoORMHelperCache">
+    <option name="schemaMapping">
+      <map>
+        <entry key="AuthHandler">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/handlers/auth_handler.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="Config">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/config/config.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="Container">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/container/conntainer.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="DBConfig">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/config/config.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="Handler">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/container/handler.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="LoginHandler">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/handlers/auth_handler.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="LoginRequest">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/auth/login.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="LoginResponse">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/auth/login.go" />
+            </set>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="scannedPathMapping">
+      <map>
+        <entry key="file://$PROJECT_DIR$/cmd/main.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1770542003923" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/config.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1770535687195" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/config/config.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1770536601274" />
+              <option name="schema">
+                <list>
+                  <option value="DBConfig" />
+                  <option value="Config" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/config/database.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1770536460831" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/container/conntainer.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1770541933548" />
+              <option name="schema">
+                <list>
+                  <option value="Container" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/container/handler.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1770542222328" />
+              <option name="schema">
+                <list>
+                  <option value="Handler" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/database.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1770535654469" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/domain/dto/auth/login.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1770542316582" />
+              <option name="schema">
+                <list>
+                  <option value="LoginRequest" />
+                  <option value="LoginResponse" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/env.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1770535669195" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/handlers/auth_handler.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1770543240915" />
+              <option name="schema">
+                <list>
+                  <option value="AuthHandler" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/routes/routes.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1770542137883" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/routes/version/v1/auth.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1770542238369" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/routes/version/v1/v1.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1770542256505" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/routes/version/v_1.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1770542074361" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/routes/version/v_one.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1770542001192" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/utils/hash.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1770536723095" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/utils/i18n.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1770542990310" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/utils/i18n/en.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1770543121495" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/utils/i18n/i18n.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1770543008450" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/utils/i18n/ta.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1770543131306" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/utils/i18n/translate.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1770543154769" />
+            </ScannedPath>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="tableStructMapping">
+      <map>
+        <entry key="auth_handler" value="AuthHandler" />
+        <entry key="config" value="Config" />
+        <entry key="container" value="Container" />
+        <entry key="db_config" value="DBConfig" />
+        <entry key="handler" value="Handler" />
+        <entry key="login_handler" value="LoginHandler" />
+        <entry key="login_request" value="LoginRequest" />
+        <entry key="login_response" value="LoginResponse" />
+      </map>
+    </option>
+    <option name="lastTimeChecked" value="1770534823526" />
+  </component>
+</project>
