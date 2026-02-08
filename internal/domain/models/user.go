@@ -13,7 +13,7 @@ type User struct {
 
 	EmployeeID *string
 
-	GroupID       uint64
-	DesignationID uint64
-	DepartmentID  uint64
+	GroupID       int64
+	DesignationID int64
+	DepartmentID  int64
 }

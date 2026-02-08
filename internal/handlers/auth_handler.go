@@ -27,11 +27,13 @@ func (l *AuthHandler) Login(c *gin.Context) {
 	if !validate {
 		return
 	}
-	err := l.AuthService.Login(c, req)
+	tokenData, err := l.AuthService.Login(c, req)
 	if err != nil {
 		response.FromError(c, err)
 		return
 	}
 
-	response.JSON(c, 200, response.APIResponse{})
+	response.JSON(c, 200, response.APIResponse{
+		Data: tokenData,
+	})
 }

@@ -26,9 +26,13 @@ func FromError(c *gin.Context, err error) {
 	}
 
 	message := i18n.GetMessages(lang)
-	println(err.Error())
+	finalMessage := message[err.Error()]
+	if finalMessage == "" {
+		finalMessage = err.Error()
+	}
+
 	JSON(c, code, APIResponse{
 		Success: false,
-		Message: message[err.Error()],
+		Message: finalMessage,
 	})
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"capecom-pm/internal/bootstrap"
 	"capecom-pm/internal/config"
 	"capecom-pm/internal/container"
 	"capecom-pm/internal/routes"
@@ -16,7 +17,8 @@ func main() {
 	if db == nil {
 		log.Fatal("failed to connect to database")
 	}
-	c := container.NewContainer(db)
+	bootstrap.SeedMasterData(db)
+	c := container.NewContainer(db, appConfig)
 	r := gin.Default()
 	routes.Setup(r, c)
 	fmt.Println("http://localhost:" + appConfig.Port)

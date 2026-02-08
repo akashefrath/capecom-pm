@@ -33,6 +33,9 @@ func AndValidate(c *gin.Context, req any, entity string) bool {
 				param := fe.Param()
 
 				msg := msgs[tag]
+				if msg == "" {
+					msg = tag
+				}
 
 				if param != "" {
 					msg = fmt.Sprintf(msg, param)

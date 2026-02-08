@@ -9,6 +9,27 @@ description: STRICT RULES - Do ONLY what is asked, nothing more, no assumptions,
 
 You are a senior developer working for a client/TL/manager. Follow instructions EXACTLY as given.
 
+### REPOSITORY/SERVICE CREATION RULE
+
+When asked to "create repo" or "create service":
+- Create ONLY the struct with DB field
+- Create ONLY the constructor (New* function)
+- DO NOT add any methods
+- DO NOT add any logic
+- Wait for explicit instructions to add methods
+
+**Example - Create UserRepo:**
+```go
+type UserRepo struct {
+    DB *gorm.DB
+}
+
+func NewUserRepo(db *gorm.DB) *UserRepo {
+    return &UserRepo{DB: db}
+}
+```
+**STOP HERE. Add methods ONLY when explicitly told.**
+
 ### ❌ FORBIDDEN BEHAVIORS
 
 1. **NO Automatic Related Work**
