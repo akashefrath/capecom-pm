@@ -35,8 +35,11 @@ func (s AuthService) Login(c *gin.Context, req authdto.LoginRequest) (*authdto.L
 		}
 
 		accessToken, _ := s.jwt.CreateToken(usr.UUID, jwtutil.TokenTypeUser)
+		refreshToken, _ := s.jwt.CreateToken(usr.UUID, jwtutil.TokenTypeRefresh)
 		return &authdto.LoginResponse{
-			AccessToken: accessToken,
+			AccessToken:  accessToken,
+			RefreshToken: refreshToken,
+			TokenType:    "Bearer",
 		}, nil
 	}
 

@@ -25,7 +25,9 @@ type Claims struct {
 
 type Config struct {
 	UserSecret         string
+	UserRefreshSecret  string
 	AdminSecret        string
+	AdminRefreshSecret string
 	ExpireHours        int
 	RefreshExpireHours int
 }
@@ -34,11 +36,13 @@ type JWTManager struct {
 	config Config
 }
 
-func NewJWTManager(userSecret, adminSecret string, expireHours, refreshExpireHours int) *JWTManager {
+func NewJWTManager(userSecret, userRefreshSecret, adminSecret, admin string, expireHours, refreshExpireHours int) *JWTManager {
 	return &JWTManager{
 		config: Config{
 			UserSecret:         userSecret,
+			UserRefreshSecret:  userRefreshSecret,
 			AdminSecret:        adminSecret,
+			AdminRefreshSecret: adminSecret,
 			ExpireHours:        expireHours,
 			RefreshExpireHours: refreshExpireHours,
 		},
@@ -143,8 +147,15 @@ func (j *JWTManager) ValidateAnyToken(tokenString string) (*Claims, error) {
 }
 
 func (j *JWTManager) getSecret(tokenType TokenType) string {
-	if tokenType == TokenTypeAdmin || tokenType == TokenTypeAdminRefresh {
+	if tokenType == TokenTypeAdmin {
 		return j.config.AdminSecret
 	}
+	if tokenType == TokenTypeAdminRefresh {
+		return j.config.AdminRefreshSecret
+	}
+	if tokenType == TokenTypeRefresh {
+		return j.config.UserRefreshSecret
+	}
+
 	return j.config.UserSecret
 }

@@ -19,6 +19,8 @@ type DBConfig struct {
 type JWTConfig struct {
 	UserSecret         string
 	AdminSecret        string
+	UserRefreshSecret  string
+	AdminRefreshSecret string
 	ExpireHours        int
 	RefreshExpireHours int
 }
@@ -66,7 +68,9 @@ func loadJWTConfig() JWTConfig {
 
 	return JWTConfig{
 		UserSecret:         GetEnvMust("JWT_SECRET"),
+		UserRefreshSecret:  GetEnvMust("JWT_REFRESH_SECRET"),
 		AdminSecret:        GetEnvMust("JWT_ADMIN_SECRET"),
+		AdminRefreshSecret: GetEnvMust("JWT_ADMIN_REFRESH_SECRET"),
 		ExpireHours:        expireHours,
 		RefreshExpireHours: refreshExpireHours,
 	}

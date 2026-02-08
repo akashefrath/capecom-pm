@@ -66,7 +66,7 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
             # Define target directory
-            TARGET_DIR="/home/pm-backend/htdocs/backend.pm.example.com"
+            TARGET_DIR="/home/anchorbytes-pm-api/htdocs/pm-api.anchorbytes.com"
             
             # Move binary
             mv /tmp/pm_backend $TARGET_DIR/pm_backend

@@ -18,7 +18,9 @@ func NewContainer(db *gorm.DB, cfg config.Config) *Container {
 
 	jwtManager := jwtutil.NewJWTManager(
 		cfg.JWT.UserSecret,
+		cfg.JWT.UserRefreshSecret,
 		cfg.JWT.AdminSecret,
+		cfg.JWT.AdminRefreshSecret,
 		cfg.JWT.ExpireHours,
 		cfg.JWT.RefreshExpireHours,
 	)
