@@ -30,6 +30,12 @@ func (r *UserRepo) FindByEmail(email string) (*models.User, error) {
 	return &user, err
 }
 
+func (r *UserRepo) GetActiveUserIDByUuid(uuid string) *int64 {
+	var id int64
+	r.DB.Where("uuid = ? AND status = ? ", uuid, models.StatusActive).First(&models.User{}).Select("id")
+	return &id
+
+}
 func (r *UserRepo) Create(user *models.User) error {
 	return r.DB.Create(user).Error
 }

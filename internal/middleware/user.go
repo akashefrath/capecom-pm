@@ -7,28 +7,27 @@ import (
 	cacherepo "capecom-pm/internal/repositories/cache"
 	jwtutil "capecom-pm/internal/utils/jwt"
 	"capecom-pm/internal/utils/response"
-	"context"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
-type AdminMiddleware struct {
+type UserMiddleware struct {
 	JWTManager *jwtutil.Manager
 	UserRepo   *repositories.UserRepo
 	Redis      *cacherepo.RedisRepo
 }
 
-func NewAdminMiddleware(jwtManager *jwtutil.Manager, userRepo *repositories.UserRepo, redis *cacherepo.RedisRepo) *AdminMiddleware {
-	return &AdminMiddleware{
+func NewUserMiddleware(jwtManager *jwtutil.Manager, userRepo *repositories.UserRepo, redis *cacherepo.RedisRepo) *UserMiddleware {
+	return &UserMiddleware{
 		JWTManager: jwtManager,
 		UserRepo:   userRepo,
 		Redis:      redis,
 	}
 }
 
-// VerifyAdminToken middleware verifies admin JWT token and user status
-func (m *AdminMiddleware) VerifyAdminToken() gin.HandlerFunc {
+// VerifyUserToken middleware verifies user JWT token and user status
+func (m *UserMiddleware) VerifyUserToken() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
@@ -47,57 +46,8 @@ func (m *AdminMiddleware) VerifyAdminToken() gin.HandlerFunc {
 
 		tokenString := parts[1]
 
-		// Validate token with admin token type
-		claims, err := m.JWTManager.ValidateToken(tokenString, jwtutil.TokenTypeAdmin)
-		if err != nil {
-			response.FromError(c, err)
-			c.Abort()
-			return
-		}
-
-		status, err := verifyUserStatus(m, claims)
-
-		if err != nil {
-			response.FromError(c, domainerrors.ErrUnauthorized)
-			c.Abort()
-			return
-		}
-
-		if status != "active" {
-			response.FromError(c, domainerrors.ErrUnauthorized)
-			c.Abort()
-			return
-		}
-
-		// Set user ID in context for downstream handlers
-		c.Set("userID", claims.UserID)
-
-		c.Next()
-	}
-}
-
-// VerifyAdminRefreshToken middleware verifies admin refresh JWT token
-func (m *AdminMiddleware) VerifyAdminRefreshToken() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		authHeader := c.GetHeader("Authorization")
-		if authHeader == "" {
-			response.FromError(c, domainerrors.ErrUnauthorized)
-			c.Abort()
-			return
-		}
-
-		// Extract token from "Bearer <token>"
-		parts := strings.Split(authHeader, " ")
-		if len(parts) != 2 || parts[0] != "Bearer" {
-			response.FromError(c, domainerrors.ErrInvalidToken)
-			c.Abort()
-			return
-		}
-
-		tokenString := parts[1]
-
-		// Validate token with admin refresh token type
-		claims, err := m.JWTManager.ValidateToken(tokenString, jwtutil.TokenTypeAdminRefresh)
+		// Validate token with user token type
+		claims, err := m.JWTManager.ValidateToken(tokenString, jwtutil.TokenTypeUser)
 		if err != nil {
 			response.FromError(c, err)
 			c.Abort()
@@ -105,18 +55,20 @@ func (m *AdminMiddleware) VerifyAdminRefreshToken() gin.HandlerFunc {
 		}
 
 		// Verify user exists and is active
-		status, _ := verifyUserStatus(m, claims)
+		var status string
+		err = m.UserRepo.DB.Model(models.User{}).Where("uuid = ?", claims.UserID).Select("status").Scan(&status).Error
+		if err != nil {
+			response.FromError(c, domainerrors.ErrUnauthorized)
+			c.Abort()
+			return
+		}
 
 		if status != "active" {
 			response.FromError(c, domainerrors.ErrUnauthorized)
 			c.Abort()
 			return
 		}
-		err = m.Redis.SetString(context.Background(), claims.UserID, status, 0)
-		if err != nil {
-			print(err)
-			return
-		}
+
 		// Set user ID in context for downstream handlers
 		c.Set("userID", claims.UserID)
 
@@ -124,51 +76,55 @@ func (m *AdminMiddleware) VerifyAdminRefreshToken() gin.HandlerFunc {
 	}
 }
 
-func verifyUserStatus(m *AdminMiddleware, claims *jwtutil.Claims) (any, error) {
-	status, err := getCacheDataOrDB(
-		func() (any, error) {
+// VerifyUserRefreshToken middleware verifies user refresh JWT token
+func (m *UserMiddleware) VerifyUserRefreshToken() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		authHeader := c.GetHeader("Authorization")
+		if authHeader == "" {
+			response.FromError(c, domainerrors.ErrUnauthorized)
+			c.Abort()
+			return
+		}
 
-			data, err := m.Redis.GetString(context.Background(), claims.UserID)
-			if err != nil {
-				return nil, err
-			}
+		// Extract token from "Bearer <token>"
+		parts := strings.Split(authHeader, " ")
+		if len(parts) != 2 || parts[0] != "Bearer" {
+			response.FromError(c, domainerrors.ErrInvalidToken)
+			c.Abort()
+			return
+		}
 
-			return data, nil
-		},
-		func() (any, error) {
-			var status string
-			err := m.UserRepo.DB.Model(models.User{}).Where("uuid = ?", claims.UserID).Select("status").Scan(&status).Error
-			return status, err
-		},
-		func(v any) error {
-			go func() {
-				_ = m.Redis.SetString(context.Background(), claims.UserID, v, 0)
-			}()
-			return nil
-		},
-	)
-	return status, err
-}
-func getCacheDataOrDB(
-	cacheData func() (any, error),
-	dbData func() (any, error),
-	setData func(any) error,
-) (any, error) {
+		tokenString := parts[1]
 
-	// 1. Try cache
-	data, err := cacheData()
-	if err == nil && data != nil {
+		// Validate token with user refresh token type
+		claims, err := m.JWTManager.ValidateToken(tokenString, jwtutil.TokenTypeRefresh)
+		if err != nil {
+			response.FromError(c, err)
+			c.Abort()
+			return
+		}
 
-		return data, nil
+		// Verify user exists and is active
+		var status string
+
+		err = m.UserRepo.DB.Model(&struct {
+			Status string
+		}{}).Where("uuid = ?", claims.UserID).Select("status").Scan(&status).Error
+		if err != nil {
+			response.FromError(c, domainerrors.ErrUnauthorized)
+			c.Abort()
+			return
+		}
+
+		if status != "active" {
+			response.FromError(c, domainerrors.ErrUnauthorized)
+			c.Abort()
+			return
+		}
+
+		// Set user ID in context for downstream handlers
+		c.Set("userID", claims.UserID)
+
+		c.Next()
 	}
-
-	// 2. Fallback to DB
-	data, err = dbData()
-	if err != nil {
-		return nil, err
-	}
-
-	_ = setData(data)
-
-	return data, nil
 }

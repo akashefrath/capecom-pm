@@ -4,6 +4,7 @@ import (
 	"capecom-pm/internal/config"
 	jwtutil "capecom-pm/internal/utils/jwt"
 
+	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
 
@@ -12,10 +13,10 @@ type Container struct {
 	Service    *Service
 	Repository *Repository
 	Middleware *Middleware
-	JWTManager *jwtutil.JWTManager
+	JWTManager *jwtutil.Manager
 }
 
-func NewContainer(db *gorm.DB, cfg config.Config) *Container {
+func NewContainer(db *gorm.DB, cfg config.Config, redis *redis.Client) *Container {
 
 	jwtManager := jwtutil.NewJWTManager(
 		cfg.JWT.UserSecret,
@@ -26,7 +27,8 @@ func NewContainer(db *gorm.DB, cfg config.Config) *Container {
 		cfg.JWT.RefreshExpireHours,
 	)
 
-	repository := NewRepository(db)
+	repository := NewRepository(db, redis)
+
 	service := NewService(db, repository, jwtManager)
 	handler := NewHandler(service)
 	middleware := NewMiddleware(jwtManager, repository)

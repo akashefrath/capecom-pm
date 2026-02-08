@@ -12,19 +12,21 @@ import (
 
 type AuthService struct {
 	AuthRepo *repositories.AuthRepo
-	jwt      *jwtutil.JWTManager
+	jwt      *jwtutil.Manager
+	userRepo *repositories.UserRepo
 }
 
-func NewAuthService(AuthRepo *repositories.AuthRepo, jwt *jwtutil.JWTManager) *AuthService {
+func NewAuthService(AuthRepo *repositories.AuthRepo, jwt *jwtutil.Manager, userRepo *repositories.UserRepo) *AuthService {
 	return &AuthService{
 		AuthRepo: AuthRepo,
 		jwt:      jwt,
+		userRepo: userRepo,
 	}
 }
 
 func (s AuthService) Login(c *gin.Context, req authdto.LoginRequest) (*authdto.LoginResponse, error) {
 
-	if usr, err := s.AuthRepo.FindUserByEmailAndReturnPassword(req.Email); err != nil {
+	if usr, err := s.userRepo.FindByEmail(req.Email); err != nil {
 		return nil, err
 	} else if usr == nil {
 		return nil, domainerrors.ErrInvalidCredentials
@@ -34,13 +36,28 @@ func (s AuthService) Login(c *gin.Context, req authdto.LoginRequest) (*authdto.L
 			return nil, domainerrors.ErrInvalidCredentials
 		}
 
-		accessToken, _ := s.jwt.CreateToken(usr.UUID, jwtutil.TokenTypeUser)
-		refreshToken, _ := s.jwt.CreateToken(usr.UUID, jwtutil.TokenTypeRefresh)
+		accessToken, _ := s.jwt.CreateToken(usr.UUID, jwtutil.TokenTypeAdmin)
+		refreshToken, _ := s.jwt.CreateToken(usr.UUID, jwtutil.TokenTypeAdminRefresh)
 		return &authdto.LoginResponse{
 			AccessToken:  accessToken,
 			RefreshToken: refreshToken,
 			TokenType:    "Bearer",
 		}, nil
 	}
+
+}
+
+func (s AuthService) Refresh(userUuid string) (*authdto.LoginResponse, error) {
+	userID := s.userRepo.GetActiveUserIDByUuid(userUuid)
+	if userID == nil {
+		return nil, domainerrors.ErrInvalidCredentials
+	}
+	accessToken, _ := s.jwt.CreateToken(userUuid, jwtutil.TokenTypeAdmin)
+	refreshToken, _ := s.jwt.CreateToken(userUuid, jwtutil.TokenTypeAdminRefresh)
+	return &authdto.LoginResponse{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+		TokenType:    "Bearer",
+	}, nil
 
 }

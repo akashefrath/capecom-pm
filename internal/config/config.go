@@ -26,9 +26,10 @@ type JWTConfig struct {
 }
 
 type Config struct {
-	Port string
-	DB   DBConfig
-	JWT  JWTConfig
+	Port         string
+	DB           DBConfig
+	JWT          JWTConfig
+	RedisAddress string
 }
 
 func LoadEnv() Config {
@@ -37,9 +38,10 @@ func LoadEnv() Config {
 		log.Println(".env not found, using system env")
 	}
 	return Config{
-		Port: GetEnvMust("APP_PORT"),
-		DB:   loadDBConfig(),
-		JWT:  loadJWTConfig(),
+		Port:         GetEnvMust("APP_PORT"),
+		DB:           loadDBConfig(),
+		JWT:          loadJWTConfig(),
+		RedisAddress: GetEnvMust("REDIS_ADDRESS"),
 	}
 
 }

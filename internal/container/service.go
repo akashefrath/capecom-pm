@@ -12,9 +12,9 @@ type Service struct {
 	UserService *services.UserService
 }
 
-func NewService(db *gorm.DB, repository *Repository, jwt *jwtutil.JWTManager) *Service {
+func NewService(db *gorm.DB, repository *Repository, jwt *jwtutil.Manager) *Service {
 	return &Service{
-		AuthService: services.NewAuthService(repository.AuthRepo, jwt),
+		AuthService: services.NewAuthService(repository.AuthRepo, jwt, repository.UserRepo),
 		UserService: services.NewUserService(
 			repository.UserRepo,
 			repository.MasterDataRepo,

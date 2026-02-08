@@ -2,8 +2,10 @@ package container
 
 import (
 	"capecom-pm/internal/repositories"
+	cacherepo "capecom-pm/internal/repositories/cache"
 	mastersreo "capecom-pm/internal/repositories/masters"
 
+	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
 
@@ -15,9 +17,10 @@ type Repository struct {
 	DesignationRepo *mastersreo.DesignationRepo
 	DepartmentRepo  *mastersreo.DepartmentRepo
 	MasterDataRepo  *mastersreo.MasterDataRepo
+	CacheRepo       *cacherepo.RedisRepo
 }
 
-func NewRepository(db *gorm.DB) *Repository {
+func NewRepository(db *gorm.DB, redis *redis.Client) *Repository {
 	return &Repository{
 		AuthRepo:        repositories.NewAuthRepo(db),
 		UserRepo:        repositories.NewUserRepo(db),
@@ -26,5 +29,6 @@ func NewRepository(db *gorm.DB) *Repository {
 		DesignationRepo: mastersreo.NewDesignationRepo(db),
 		DepartmentRepo:  mastersreo.NewDepartmentRepo(db),
 		MasterDataRepo:  mastersreo.NewMasterDataRepo(db),
+		CacheRepo:       cacherepo.NewRedisRepo(redis),
 	}
 }

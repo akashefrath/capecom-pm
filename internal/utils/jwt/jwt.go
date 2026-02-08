@@ -32,12 +32,12 @@ type Config struct {
 	RefreshExpireHours int
 }
 
-type JWTManager struct {
+type Manager struct {
 	config Config
 }
 
-func NewJWTManager(userSecret, userRefreshSecret, adminSecret, admin string, expireHours, refreshExpireHours int) *JWTManager {
-	return &JWTManager{
+func NewJWTManager(userSecret, userRefreshSecret, adminSecret, admin string, expireHours, refreshExpireHours int) *Manager {
+	return &Manager{
 		config: Config{
 			UserSecret:         userSecret,
 			UserRefreshSecret:  userRefreshSecret,
@@ -50,7 +50,7 @@ func NewJWTManager(userSecret, userRefreshSecret, adminSecret, admin string, exp
 }
 
 // CreateToken creates a JWT token based on token type
-func (j *JWTManager) CreateToken(userID string, tokenType TokenType) (string, error) {
+func (j *Manager) CreateToken(userID string, tokenType TokenType) (string, error) {
 	var expirationTime time.Time
 
 	// Use different expiration for refresh tokens
@@ -84,7 +84,7 @@ func (j *JWTManager) CreateToken(userID string, tokenType TokenType) (string, er
 }
 
 // ValidateToken validates and parses a JWT token
-func (j *JWTManager) ValidateToken(tokenString string, tokenType TokenType) (*Claims, error) {
+func (j *Manager) ValidateToken(tokenString string, tokenType TokenType) (*Claims, error) {
 	claims := &Claims{}
 
 	secret := j.getSecret(tokenType)
@@ -111,7 +111,7 @@ func (j *JWTManager) ValidateToken(tokenString string, tokenType TokenType) (*Cl
 }
 
 // ValidateAnyToken validates token without checking type (useful for middleware)
-func (j *JWTManager) ValidateAnyToken(tokenString string) (*Claims, error) {
+func (j *Manager) ValidateAnyToken(tokenString string) (*Claims, error) {
 	claims := &Claims{}
 
 	// Try user secret first, then admin secret
@@ -146,7 +146,7 @@ func (j *JWTManager) ValidateAnyToken(tokenString string) (*Claims, error) {
 	return claims, nil
 }
 
-func (j *JWTManager) getSecret(tokenType TokenType) string {
+func (j *Manager) getSecret(tokenType TokenType) string {
 	if tokenType == TokenTypeAdmin {
 		return j.config.AdminSecret
 	}
