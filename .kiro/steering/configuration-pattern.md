@@ -1,5 +1,6 @@
 ---
 inclusion: auto
+description: Configuration pattern - environment variables, structured config loading, how to add new config
 ---
 
 # Configuration Pattern

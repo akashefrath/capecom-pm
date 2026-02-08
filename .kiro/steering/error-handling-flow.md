@@ -1,5 +1,6 @@
 ---
 inclusion: auto
+description: Error handling flow - domain errors, i18n translations, validation, API response format
 ---
 
 # Error Handling & Flow Pattern

@@ -1,5 +1,6 @@
 ---
 inclusion: auto
+description: Common patterns - database patterns (BaseModel, soft delete, UUID), utilities, CRUD operations, naming conventions
 ---
 
 # Common Patterns & Utilities

@@ -1,5 +1,6 @@
 ---
 inclusion: auto
+description: Domain structure - models with BaseModel, DTOs for requests/responses, validation patterns
 ---
 
 # Domain Structure Pattern

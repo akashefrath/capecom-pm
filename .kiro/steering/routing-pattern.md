@@ -1,5 +1,6 @@
 ---
 inclusion: auto
+description: Routing pattern - modular versioned routes, how to create route modules and RESTful endpoints
 ---
 
 # Routing Pattern

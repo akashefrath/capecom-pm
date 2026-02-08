@@ -1,5 +1,6 @@
 ---
 inclusion: auto
+description: Dependency Injection pattern - how to add repositories, services, and handlers with DI container
 ---
 
 # Dependency Injection Pattern
