@@ -19,7 +19,7 @@ func SeedMasterData(db *gorm.DB) error {
 		('550e8400-e29b-41d4-a716-446655440004','Employee','active')`,
 
 		// groups
-		`INSERT IGNORE INTO groups (uuid,name,status) VALUES
+		`INSERT IGNORE INTO user_groups (uuid,name,status) VALUES
 		('650e8400-e29b-41d4-a716-446655440001','Head Office','active'),
 		('650e8400-e29b-41d4-a716-446655440002','Branch A','active'),
 		('650e8400-e29b-41d4-a716-446655440003','Branch B','active')`,

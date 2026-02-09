@@ -3,10 +3,10 @@ package jwt
 import (
 	domainerrors "capecom-pm/internal/domain/error"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/google/uuid"
 )
 
 type TokenType string
@@ -36,13 +36,13 @@ type Manager struct {
 	config Config
 }
 
-func NewJWTManager(userSecret, userRefreshSecret, adminSecret, admin string, expireHours, refreshExpireHours int) *Manager {
+func NewJWTManager(userSecret, userRefreshSecret, adminSecret, adminRefreshSecret string, expireHours, refreshExpireHours int) *Manager {
 	return &Manager{
 		config: Config{
 			UserSecret:         userSecret,
 			UserRefreshSecret:  userRefreshSecret,
 			AdminSecret:        adminSecret,
-			AdminRefreshSecret: adminSecret,
+			AdminRefreshSecret: adminRefreshSecret,
 			ExpireHours:        expireHours,
 			RefreshExpireHours: refreshExpireHours,
 		},
@@ -50,17 +50,16 @@ func NewJWTManager(userSecret, userRefreshSecret, adminSecret, admin string, exp
 }
 
 // CreateToken creates a JWT token based on token type
-func (j *Manager) CreateToken(userID string, tokenType TokenType) (string, error) {
+func (j *Manager) CreateToken(userID string, tokenType TokenType, jti string) (string, error) {
 	var expirationTime time.Time
 
 	// Use different expiration for refresh tokens
 	if tokenType == TokenTypeRefresh || tokenType == TokenTypeAdminRefresh {
+		fmt.Print(j.config.RefreshExpireHours)
 		expirationTime = time.Now().Add(time.Duration(j.config.RefreshExpireHours) * time.Hour)
 	} else {
 		expirationTime = time.Now().Add(time.Duration(j.config.ExpireHours) * time.Hour)
 	}
-
-	jti := uuid.New().String()
 
 	claims := &Claims{
 		UserID: userID,

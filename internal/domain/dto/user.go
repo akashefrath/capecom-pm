@@ -1,5 +1,7 @@
 package dto
 
+import "capecom-pm/internal/domain/models"
+
 type CreateUserRequest struct {
 	Name          string   `json:"name" form:"name" binding:"required,min=2,max=120"`
 	Email         string   `json:"email" form:"email" binding:"required,email,max=255"`
@@ -11,4 +13,23 @@ type CreateUserRequest struct {
 	DesignationID string   `json:"designation_id" form:"designation_id" binding:"required"`
 	DepartmentID  string   `json:"department_id" form:"department_id" binding:"required"`
 	RoleIDs       []string `json:"role_ids" form:"role_ids" binding:"required,min=1"`
+}
+
+type UserResponse struct {
+	Id    string `json:"id"`
+	Name  string `json:"name"`
+	Email string `json:"email"`
+	//Phone       *string `json:"phone"`
+	//CountryCode *int    `json:"country_code"`
+	EmployeeID  *string      `json:"employee_id"`
+	Group       UtilNameId   `json:"user_group" gorm:"embedded;embeddedPrefix:user_group_"`
+	Designation UtilNameId   `json:"designation" gorm:"embedded;embeddedPrefix:designation_"`
+	Department  UtilNameId   `json:"department" gorm:"embedded;embeddedPrefix:department_"`
+	Roles       []UtilNameId `json:"roles" gorm:"-"`
+	models.BaseResponse
+}
+
+type UtilNameId struct {
+	Id   string `json:"id"`
+	Name string `json:"name"`
 }

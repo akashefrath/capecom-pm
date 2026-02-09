@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 const (
@@ -14,6 +15,7 @@ const (
 )
 
 type BaseModel struct {
+	gorm.Model
 	ID uint64
 
 	UUID string
@@ -22,9 +24,14 @@ type BaseModel struct {
 
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	DeletedAt time.Time
+	DeletedAt gorm.DeletedAt `gorm:"index"`
 
 	CreatedBy *uint64
+}
+
+type BaseResponse struct {
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 func NewBase(createdBy *uint64) BaseModel {

@@ -14,7 +14,7 @@ CREATE TABLE `users` (
   `status` ENUM ('active', 'inactive', 'blocked', 'archived') NOT NULL DEFAULT 'active',
   `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp,
-  `deleted_at` timestamp
+  `deleted_at` timestamp NULL DEFAULT NULL
 );
 
 CREATE TABLE `user_roles` (
@@ -26,7 +26,7 @@ CREATE TABLE `user_roles` (
   `status` ENUM ('active', 'inactive', 'blocked', 'archived') NOT NULL DEFAULT 'active',
   `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp,
-  `deleted_at` timestamp
+  `deleted_at` timestamp NULL DEFAULT NULL
 );
 
 CREATE TABLE `roles` (
@@ -37,10 +37,10 @@ CREATE TABLE `roles` (
   `status` ENUM ('active', 'inactive', 'blocked', 'archived') NOT NULL DEFAULT 'active',
   `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp,
-  `deleted_at` timestamp
+  `deleted_at` timestamp NULL DEFAULT NULL
 );
 
-CREATE TABLE `groups` (
+CREATE TABLE `user_groups` (
   `id` bigint PRIMARY KEY AUTO_INCREMENT,
   `uuid` varchar(36) UNIQUE NOT NULL,
   `name` varchar(120) NOT NULL,
@@ -48,7 +48,7 @@ CREATE TABLE `groups` (
   `status` ENUM ('active', 'inactive', 'blocked', 'archived') NOT NULL DEFAULT 'active',
   `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp,
-  `deleted_at` timestamp
+  `deleted_at` timestamp NULL DEFAULT NULL
 );
 
 CREATE TABLE `designations` (
@@ -59,7 +59,7 @@ CREATE TABLE `designations` (
   `status` ENUM ('active', 'inactive', 'blocked', 'archived') NOT NULL DEFAULT 'active',
   `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp,
-  `deleted_at` timestamp
+  `deleted_at` timestamp NULL DEFAULT NULL
 );
 
 CREATE TABLE `departments` (
@@ -70,7 +70,7 @@ CREATE TABLE `departments` (
   `status` ENUM ('active', 'inactive', 'blocked', 'archived') NOT NULL DEFAULT 'active',
   `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp,
-  `deleted_at` timestamp
+  `deleted_at` timestamp NULL DEFAULT NULL
 );
 
 CREATE TABLE `password_resets` (
@@ -86,7 +86,7 @@ CREATE TABLE `password_resets` (
   `status` ENUM ('active', 'inactive', 'blocked', 'archived') NOT NULL DEFAULT 'active',
   `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp,
-  `deleted_at` timestamp
+  `deleted_at` timestamp NULL DEFAULT NULL
 );
 
 CREATE TABLE `clients` (
@@ -100,7 +100,7 @@ CREATE TABLE `clients` (
   `created_by` bigint,
   `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp,
-  `deleted_at` timestamp
+  `deleted_at` timestamp NULL DEFAULT NULL
 );
 
 CREATE TABLE `projects` (
@@ -122,7 +122,7 @@ CREATE TABLE `projects` (
   `created_by` bigint,
   `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp,
-  `deleted_at` timestamp
+  `deleted_at` timestamp NULL DEFAULT NULL
 );
 
 CREATE TABLE `project_assets` (
@@ -139,7 +139,7 @@ CREATE TABLE `project_assets` (
   `status` ENUM ('active', 'inactive', 'blocked', 'archived') NOT NULL DEFAULT 'active',
   `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp,
-  `deleted_at` timestamp
+  `deleted_at` timestamp NULL DEFAULT NULL
 );
 
 CREATE TABLE `files` (
@@ -154,7 +154,7 @@ CREATE TABLE `files` (
   `status` ENUM ('active', 'inactive', 'blocked', 'archived') NOT NULL DEFAULT 'active',
   `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp,
-  `deleted_at` timestamp
+  `deleted_at` timestamp NULL DEFAULT NULL
 );
 
 CREATE TABLE `ticket_types` (
@@ -167,7 +167,7 @@ CREATE TABLE `ticket_types` (
   `status` ENUM ('active', 'inactive', 'blocked', 'archived') NOT NULL DEFAULT 'active',
   `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp,
-  `deleted_at` timestamp
+  `deleted_at` timestamp NULL DEFAULT NULL
 );
 
 CREATE TABLE `project_managers` (
@@ -179,7 +179,7 @@ CREATE TABLE `project_managers` (
   `status` ENUM ('active', 'inactive', 'blocked', 'archived') NOT NULL DEFAULT 'active',
   `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp,
-  `deleted_at` timestamp
+  `deleted_at` timestamp NULL DEFAULT NULL
 );
 
 CREATE TABLE `project_members` (
@@ -192,7 +192,7 @@ CREATE TABLE `project_members` (
   `status` ENUM ('active', 'inactive', 'blocked', 'archived') NOT NULL DEFAULT 'active',
   `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp,
-  `deleted_at` timestamp
+  `deleted_at` timestamp NULL DEFAULT NULL
 );
 
 CREATE TABLE `tickets` (
@@ -220,7 +220,7 @@ CREATE TABLE `tickets` (
   `status` ENUM ('active', 'inactive', 'blocked', 'archived') NOT NULL DEFAULT 'active',
   `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp,
-  `deleted_at` timestamp
+  `deleted_at` timestamp NULL DEFAULT NULL
 );
 
 CREATE TABLE `time_entries` (
@@ -236,7 +236,7 @@ CREATE TABLE `time_entries` (
   `status` ENUM ('active', 'inactive', 'blocked', 'archived') NOT NULL DEFAULT 'active',
   `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp,
-  `deleted_at` timestamp
+  `deleted_at` timestamp NULL DEFAULT NULL
 );
 
 CREATE TABLE `ticket_history` (
@@ -265,9 +265,26 @@ CREATE TABLE `activity_logs` (
   `status` ENUM ('active', 'inactive', 'blocked', 'archived') NOT NULL DEFAULT 'active',
   `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp,
-  `deleted_at` timestamp
+  `deleted_at` timestamp NULL DEFAULT NULL
 );
-
+CREATE TABLE `sessions` (
+                            `id` bigint PRIMARY KEY AUTO_INCREMENT,
+                            `uuid` varchar(36) UNIQUE NOT NULL,
+                            `user_id` bigint NOT NULL,
+                            `jti` varchar(36) UNIQUE NOT NULL,
+                            `refresh_token_hash` varchar(255) NOT NULL,
+                            `refresh_expires_at` timestamp NOT NULL,
+                            `rotated_at` timestamp NULL DEFAULT NULL,
+                            `status` ENUM ('active', 'inactive', 'blocked', 'revoked') NOT NULL DEFAULT 'active',
+                            `device_id` varchar(100),
+                            `device_name` varchar(100),
+                            `user_agent` text,
+                            `ip_address` varchar(45),
+                            `last_used_at` timestamp DEFAULT (CURRENT_TIMESTAMP),
+                            `created_at` timestamp DEFAULT (CURRENT_TIMESTAMP),
+                            `updated_at` timestamp DEFAULT (CURRENT_TIMESTAMP),
+                            `deleted_at` timestamp NULL DEFAULT NULL
+);
 CREATE INDEX `users_index_0` ON `users` (`uuid`);
 
 CREATE INDEX `users_index_1` ON `users` (`email`);
@@ -378,9 +395,9 @@ CREATE INDEX `roles_index_52` ON `roles` (`name`);
 
 CREATE INDEX `roles_index_53` ON `roles` (`status`);
 
-CREATE INDEX `groups_index_54` ON `groups` (`name`);
+CREATE INDEX `groups_index_54` ON `user_groups` (`name`);
 
-CREATE INDEX `groups_index_55` ON `groups` (`status`);
+CREATE INDEX `groups_index_55` ON `user_groups` (`status`);
 
 CREATE INDEX `designations_index_56` ON `designations` (`designation`);
 
@@ -460,7 +477,7 @@ CREATE INDEX `users_index_92` ON `users` (`country_code`);
 
 CREATE INDEX `roles_index_93` ON `roles` (`deleted_at`);
 
-CREATE INDEX `groups_index_94` ON `groups` (`deleted_at`);
+CREATE INDEX `groups_index_94` ON `user_groups` (`deleted_at`);
 
 CREATE INDEX `designations_index_95` ON `designations` (`deleted_at`);
 
@@ -506,7 +523,7 @@ CREATE INDEX `project_members_index_115` ON `project_members` (`project_id`, `st
 
 CREATE INDEX `project_managers_index_116` ON `project_managers` (`project_id`, `status`);
 
-ALTER TABLE `users` ADD FOREIGN KEY (`group_id`) REFERENCES `groups` (`id`);
+ALTER TABLE `users` ADD FOREIGN KEY (`group_id`) REFERENCES `user_groups` (`id`);
 
 ALTER TABLE `users` ADD FOREIGN KEY (`designation_id`) REFERENCES `designations` (`id`);
 
@@ -522,7 +539,7 @@ ALTER TABLE `user_roles` ADD FOREIGN KEY (`created_by`) REFERENCES `users` (`id`
 
 ALTER TABLE `roles` ADD FOREIGN KEY (`created_by`) REFERENCES `users` (`id`);
 
-ALTER TABLE `groups` ADD FOREIGN KEY (`created_by`) REFERENCES `users` (`id`);
+ALTER TABLE `user_groups` ADD FOREIGN KEY (`created_by`) REFERENCES `users` (`id`);
 
 ALTER TABLE `designations` ADD FOREIGN KEY (`created_by`) REFERENCES `users` (`id`);
 
@@ -588,6 +605,23 @@ ALTER TABLE `activity_logs` ADD FOREIGN KEY (`user_id`) REFERENCES `users` (`id`
 
 ALTER TABLE `activity_logs` ADD FOREIGN KEY (`created_by`) REFERENCES `users` (`id`);
 
+
+
+CREATE INDEX `idx_sessions_user` ON `sessions` (`user_id`);
+
+CREATE INDEX `idx_sessions_refresh_hash` ON `sessions` (`refresh_token_hash`);
+
+CREATE INDEX `idx_sessions_refresh_exp` ON `sessions` (`refresh_expires_at`);
+
+CREATE INDEX `idx_sessions_status` ON `sessions` (`status`);
+
+CREATE INDEX `idx_sessions_deleted` ON `sessions` (`deleted_at`);
+
+CREATE INDEX `idx_sessions_refresh_status` ON `sessions` (`refresh_token_hash`, `status`);
+
+ALTER TABLE `sessions` ADD FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+
+
 -- Triggers for auto-updating updated_at timestamps
 
 DELIMITER $$
@@ -610,7 +644,7 @@ BEGIN
   SET NEW.updated_at = CURRENT_TIMESTAMP;
 END$$
 
-CREATE TRIGGER `groups_updated_at` BEFORE UPDATE ON `groups`
+CREATE TRIGGER `groups_updated_at` BEFORE UPDATE ON `user_groups`
 FOR EACH ROW
 BEGIN
   SET NEW.updated_at = CURRENT_TIMESTAMP;
@@ -694,7 +728,16 @@ BEGIN
   SET NEW.updated_at = CURRENT_TIMESTAMP;
 END$$
 
-DELIMITER ;
+
+
+  CREATE TRIGGER `session_updated_at` BEFORE UPDATE ON `sessions`
+      FOR EACH ROW
+  BEGIN
+      SET NEW.updated_at = CURRENT_TIMESTAMP;
+END$$
+
+
+      DELIMITER ;
 
 -- ============================================
 -- PERFORMANCE OPTIMIZATION RECOMMENDATIONS

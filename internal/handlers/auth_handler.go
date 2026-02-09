@@ -4,6 +4,7 @@ import (
 	authdto "capecom-pm/internal/domain/dto/auth"
 	"capecom-pm/internal/services"
 	"capecom-pm/internal/utils"
+	"net/http"
 
 	"capecom-pm/internal/utils/bind"
 	"capecom-pm/internal/utils/response"
@@ -29,13 +30,13 @@ func (l *AuthHandler) Login(c *gin.Context) {
 	if !validate {
 		return
 	}
-	tokenData, err := l.AuthService.Login(c, req)
+	tokenData, err := l.AuthService.Login(req)
 	if err != nil {
 		response.FromError(c, err)
 		return
 	}
 
-	response.JSON(c, 200, response.APIResponse{
+	response.JSON(c, http.StatusOK, response.APIResponse{
 		Data: tokenData,
 	})
 }
@@ -48,7 +49,20 @@ func (l *AuthHandler) Refresh(c *gin.Context) {
 		return
 	}
 
-	response.JSON(c, 200, response.APIResponse{
+	response.JSON(c, http.StatusOK, response.APIResponse{
 		Data: tokenData,
 	})
+}
+
+func (l *AuthHandler) Me(c *gin.Context) {
+	userID := utils.GetUserID(c)
+	if usr, err := l.AuthService.FindUserByUuid(userID); err != nil {
+		response.FromError(c, err)
+	} else {
+		response.JSON(c, http.StatusOK, response.APIResponse{
+			Success: true,
+			Data:    usr,
+		})
+	}
+
 }

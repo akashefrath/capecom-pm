@@ -16,7 +16,7 @@ func NewGroupRepo(db *gorm.DB) *GroupRepo {
 
 func (r *GroupRepo) GetIDByUUID(uuid string) (int64, error) {
 	var id int64
-	err := r.DB.Table("groups").
+	err := r.DB.Table("user_groups").
 		Select("id").
 		Where("uuid = ? AND status = ?", uuid, "active").
 		Scan(&id).Error

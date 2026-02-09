@@ -7,8 +7,7 @@ import (
 	"capecom-pm/internal/repositories"
 	mastersreo "capecom-pm/internal/repositories/masters"
 	"capecom-pm/internal/utils"
-
-	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 type UserService struct {
@@ -26,7 +25,7 @@ func NewUserService(
 	}
 }
 
-func (s *UserService) CreateUser(c *gin.Context, req dto.CreateUserRequest) error {
+func (s *UserService) CreateUser(req dto.CreateUserRequest) (*dto.UserResponse, error) {
 	idS, err := s.masterDataRepo.GetUserRelatedIDs(
 		req.GroupID,
 		req.DesignationID,
@@ -34,18 +33,19 @@ func (s *UserService) CreateUser(c *gin.Context, req dto.CreateUserRequest) erro
 		req.RoleIDs,
 	)
 	if err != nil {
-
-		return err
+		return nil, domainerrors.NewWithCode(http.StatusBadRequest, err.Error(), "service", "check_fg")
 	}
 	finalPassword := req.Password
-	if finalPassword != "" {
+
+	if finalPassword == "" {
 		randomPass, err := utils.RandomPassword(8)
 		if err != nil {
-
-			return domainerrors.ErrInternal
-
+			return nil, domainerrors.Internal("service", "password")
 		}
 		finalPassword = utils.HashPassword(randomPass)
+
+	} else {
+		finalPassword = utils.HashPassword(req.Password)
 	}
 	user := &models.User{
 		Name:          req.Name,
@@ -59,10 +59,21 @@ func (s *UserService) CreateUser(c *gin.Context, req dto.CreateUserRequest) erro
 		DepartmentID:  idS.DepartmentID,
 		BaseModel:     models.NewBase(nil),
 	}
-	err = s.userRepo.CreateUserWithRoles(user, idS.RoleIDs)
+	usr, err := s.userRepo.CreateUserWithRoles(user, idS.RoleIDs)
 	if err != nil {
 
-		return err
+		return nil, err
 	}
-	return nil
+	return usr, nil
+}
+
+func (s *UserService) GetUserByID(uuid string) (*dto.UserResponse, error) {
+	user, err := s.userRepo.FindByUUID(uuid)
+	if err != nil {
+		return nil, err
+	}
+	if user == nil {
+		return nil, domainerrors.NewWithCode(http.StatusNotFound, domainerrors.ErrUserNotFound.Error(), "service", "GetUserByID")
+	}
+	return user, nil
 }

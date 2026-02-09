@@ -1,11 +1,15 @@
 package repositories
 
 import (
+	"capecom-pm/internal/domain/dto"
 	domainerrors "capecom-pm/internal/domain/error"
 	"capecom-pm/internal/domain/models"
 	"errors"
+	"fmt"
+	"net/http"
 
 	"github.com/go-sql-driver/mysql"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -19,6 +23,46 @@ func NewUserRepo(db *gorm.DB) *UserRepo {
 	}
 }
 
+func (r *UserRepo) UserJoinRaw(findBy string) string {
+	userJoin := `
+		SELECT 
+			u.uuid AS id,
+			u.name,
+			u.email,
+			u.employee_id,
+			u.created_at ,
+			u.updated_at ,
+		    g.uuid AS user_group_id,
+			g.name AS user_group_name,
+		    de.uuid AS designation_id,
+			de.designation AS designation_name,
+		    d.uuid AS department_id,
+		    d.department AS department_name
+		     
+		
+		FROM users u
+		LEFT JOIN user_groups g ON g.id = u.group_id
+		LEFT JOIN designations de ON de.id = u.designation_id
+		LEFT JOIN  departments d on d.id = u.department_id
+
+		
+		WHERE %s = ?
+	`
+	return fmt.Sprintf(userJoin, findBy)
+}
+
+func (r *UserRepo) UserRolesJoinRaw(findBy string) string {
+	roleJoin := `SELECT 
+			r.uuid AS id, 
+			r.name AS name 
+			FROM users u 
+			LEFT JOIN  user_roles ur on ur.user_id = u.id
+			LEFT JOIN  roles r on r.id = ur.role_id
+			WHERE %s = ?
+	`
+	return fmt.Sprintf(roleJoin, findBy)
+}
+
 func (r *UserRepo) FindByEmail(email string) (*models.User, error) {
 	var user models.User
 	err := r.DB.Where("email = ?", email).First(&user).Error
@@ -30,39 +74,84 @@ func (r *UserRepo) FindByEmail(email string) (*models.User, error) {
 	return &user, err
 }
 
+func (r *UserRepo) FindByUUID(uuid string) (*dto.UserResponse, error) {
+
+	var result dto.UserResponse
+	var roles []dto.UtilNameId
+	err := r.DB.Transaction(func(tx *gorm.DB) error {
+
+		err := tx.Raw(r.UserJoinRaw("u.uuid"), uuid).Scan(&result).Error
+
+		err = tx.Raw(r.UserRolesJoinRaw("u.uuid"), uuid).Scan(&roles).Error
+		result.Roles = roles
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil
+		}
+		return err
+	})
+
+	return &result, err
+}
+func (r *UserRepo) FindByIDWith(id uint64) (*dto.UserResponse, error) {
+
+	var result dto.UserResponse
+	var roles []dto.UtilNameId
+	err := r.DB.Transaction(func(tx *gorm.DB) error {
+		err := tx.Raw(r.UserJoinRaw("u.id"), id).Scan(&result).Error
+
+		err = tx.Raw(r.UserRolesJoinRaw("u.id"), id).Scan(&roles).Error
+		result.Roles = roles
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil
+		}
+		return err
+	})
+
+	return &result, err
+}
+func (r *UserRepo) FindByIDWithTx(id uint64, tx *gorm.DB) (*dto.UserResponse, error) {
+
+	var result dto.UserResponse
+	var roles []dto.UtilNameId
+
+	err := tx.Raw(r.UserJoinRaw("u.id"), id).Scan(&result).Error
+
+	err = tx.Raw(r.UserRolesJoinRaw("u.id"), id).Scan(&roles).Error
+	result.Roles = roles
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, nil
+	}
+
+	return &result, err
+}
+
 func (r *UserRepo) GetActiveUserIDByUuid(uuid string) *int64 {
 	var id int64
 	r.DB.Where("uuid = ? AND status = ? ", uuid, models.StatusActive).First(&models.User{}).Select("id")
 	return &id
 
 }
-func (r *UserRepo) Create(user *models.User) error {
-	return r.DB.Create(user).Error
-}
 
-func (r *UserRepo) CreateUserWithRoles(user *models.User, roleIDs []int64) error {
-	return r.DB.Transaction(func(tx *gorm.DB) error {
+func (r *UserRepo) CreateUserWithRoles(user *models.User, roleIDs []int64) (*dto.UserResponse, error) {
+	var results *dto.UserResponse
+	err := r.DB.Transaction(func(tx *gorm.DB) error {
 		// Create user
 		var mysqlErr *mysql.MySQLError
 		if err := tx.Create(user).Error; err != nil {
 			if errors.As(err, &mysqlErr) {
 				if mysqlErr.Number == 1062 {
-					return domainerrors.ErrDuplicateEmail
+					return domainerrors.NewWithCode(http.StatusConflict, domainerrors.ErrDuplicateEmail.Error(), "repo", "CreateUserWithRoles")
 				}
 			}
 
 			return err
 		}
-
-		// Create user_roles entries
 		if len(roleIDs) > 0 {
 			userRoles := make([]map[string]any, len(roleIDs))
 			for i, roleID := range roleIDs {
-				var uuid string
-				tx.Raw("SELECT UUID()").Scan(&uuid)
 
 				userRoles[i] = map[string]any{
-					"uuid":       uuid,
+					"uuid":       uuid.NewString(),
 					"user_id":    user.ID,
 					"role_id":    roleID,
 					"status":     "active",
@@ -70,11 +159,16 @@ func (r *UserRepo) CreateUserWithRoles(user *models.User, roleIDs []int64) error
 				}
 			}
 			if err := tx.Table("user_roles").Create(userRoles).Error; err != nil {
-
 				return err
 			}
 		}
-
+		result, err := r.FindByIDWithTx(user.ID, tx)
+		if err != nil {
+			return err
+		}
+		results = result
 		return nil
 	})
+
+	return results, err
 }

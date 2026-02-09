@@ -34,7 +34,7 @@ func (r *MasterDataRepo) GetUserRelatedIDs(
 
 	// Single query using UNION ALL to fetch all IDs at once
 	query := `
-		SELECT 'group' as type, id, uuid FROM groups WHERE uuid = ? AND status = 'active'
+		SELECT 'group' as type, id, uuid FROM user_groups WHERE uuid = ? AND status = 'active'
 		UNION ALL
 		SELECT 'designation' as type, id, uuid FROM designations WHERE uuid = ? AND status = 'active'
 		UNION ALL

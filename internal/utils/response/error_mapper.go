@@ -30,9 +30,23 @@ func FromError(c *gin.Context, err error) {
 	if finalMessage == "" {
 		finalMessage = err.Error()
 	}
+	var appErr *domainerrors.AppError
+	var entity string
+	var funcErr string
+	if errors.As(err, &appErr) {
+		if appErr.Code() != nil {
+			code = *appErr.Code()
+			entity = appErr.Entity()
+			funcErr = appErr.Function()
 
+			//finalMessage = message[appErr.Error()]
+
+		}
+	}
 	JSON(c, code, APIResponse{
 		Success: false,
 		Message: finalMessage,
+		Entity:  entity,
+		Func:    funcErr,
 	})
 }
