@@ -125,22 +125,22 @@ func (m *AdminMiddleware) VerifyAdminRefreshToken() gin.HandlerFunc {
 }
 
 func verifyUserStatus(m *AdminMiddleware, claims *jwtutil.Claims) (any, error) {
-	status, err := getCacheDataOrDB(
-		func() (any, error) {
+	status, err := cacherepo.GetCacheDataOrDB(
+		func() (*string, error) {
 
 			data, err := m.Redis.GetString(context.Background(), claims.UserID)
 			if err != nil {
 				return nil, err
 			}
 
-			return data, nil
+			return &data, nil
 		},
-		func() (any, error) {
+		func() (*string, error) {
 			var status string
 			err := m.UserRepo.DB.Model(models.User{}).Where("uuid = ?", claims.UserID).Select("status").Scan(&status).Error
-			return status, err
+			return &status, err
 		},
-		func(v any) error {
+		func(v *string) error {
 			go func() {
 				_ = m.Redis.SetString(context.Background(), claims.UserID, v, 0)
 			}()
@@ -148,27 +148,4 @@ func verifyUserStatus(m *AdminMiddleware, claims *jwtutil.Claims) (any, error) {
 		},
 	)
 	return status, err
-}
-func getCacheDataOrDB(
-	cacheData func() (any, error),
-	dbData func() (any, error),
-	setData func(any) error,
-) (any, error) {
-
-	// 1. Try cache
-	data, err := cacheData()
-	if err == nil && data != nil {
-
-		return data, nil
-	}
-
-	// 2. Fallback to DB
-	data, err = dbData()
-	if err != nil {
-		return nil, err
-	}
-
-	_ = setData(data)
-
-	return data, nil
 }

@@ -29,7 +29,7 @@ func NewContainer(db *gorm.DB, cfg config.Config, redis *redis.Client) *Containe
 
 	repository := NewRepository(db, redis)
 
-	service := NewService(db, repository, jwtManager)
+	service := NewService(repository, jwtManager)
 	handler := NewHandler(service)
 	middleware := NewMiddleware(jwtManager, repository)
 	return &Container{

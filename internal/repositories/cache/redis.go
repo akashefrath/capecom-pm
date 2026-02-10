@@ -1,6 +1,7 @@
 package cacherepo
 
 import (
+	"capecom-pm/internal/utils"
 	"context"
 	"encoding/json"
 	"time"
@@ -46,12 +47,7 @@ func (r *RedisRepo) SetString(
 		ttl = 15 * time.Minute
 	}
 
-	data, err := json.Marshal(value)
-	if err != nil {
-		return err
-	}
-
-	return r.Redis.Set(ctx, key, data, ttl).Err()
+	return r.Redis.Set(ctx, key, utils.ToString(value), ttl).Err()
 }
 
 func (r *RedisRepo) GetInterface(
@@ -71,18 +67,12 @@ func (r *RedisRepo) GetString(
 	ctx context.Context,
 	key string,
 ) (string, error) {
-	data, err := r.Redis.Get(ctx, key).Result()
-	if err != nil {
-		return "", err
-	}
+	//data, err := r.Redis.Get(ctx, key).Result()
+	//if err != nil {
+	//	return "", err
+	//}
 
-	var value string
-	err = json.Unmarshal([]byte(data), &value)
-	if err != nil {
-		return "", err
-	}
-
-	return value, nil
+	return "", nil
 }
 
 func (r *RedisRepo) Delete(
@@ -102,4 +92,28 @@ func (r *RedisRepo) Exists(
 	}
 
 	return count > 0, nil
+}
+func GetCacheDataOrDB[T any](
+	cacheData func() (T, error),
+	dbData func() (T, error),
+	setData func(T) error,
+) (T, error) {
+
+	var zero T
+
+	// 1. Try cache
+	data, err := cacheData()
+	if err == nil {
+		return data, nil
+	}
+
+	// 2. Fallback to DB
+	data, err = dbData()
+	if err != nil {
+		return zero, err
+	}
+
+	_ = setData(data)
+
+	return data, nil
 }

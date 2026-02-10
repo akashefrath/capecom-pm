@@ -163,9 +163,7 @@ func (r *UserRepo) FindByIDWithTx(id uint64, tx *gorm.DB) (*dto.UserResponse, er
 
 func (r *UserRepo) GetActiveUserIDByUuid(uuid string) *int64 {
 	var id int64
-	println(uuid)
 	r.DB.Raw(`SELECT id FROM users WHERE uuid = ?`, uuid).Scan(&id)
-
 	return &id
 
 }
