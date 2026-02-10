@@ -59,3 +59,11 @@ func AndValidate(c *gin.Context, req any, entity string) bool {
 
 	return true
 }
+
+func QueryBinder(c *gin.Context, req any, entity string) error {
+	if err := c.ShouldBindQuery(req); err != nil {
+		return err
+	}
+
+	return nil
+}

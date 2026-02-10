@@ -10,6 +10,6 @@ func AuthRoutes(v1 *gin.RouterGroup, c *container.Container) {
 	h := c.Handler.AuthHandler
 	auth := v1.Group("/auth")
 	auth.POST("/login", h.Login)
-	auth.POST("/refresh-token", c.Middleware.AdminMiddleware.VerifyAdminRefreshToken(), h.Refresh)
+	auth.POST("/refresh-token", h.Refresh)
 	auth.GET("/me", c.Middleware.AdminMiddleware.VerifyAdminToken(), h.Me)
 }

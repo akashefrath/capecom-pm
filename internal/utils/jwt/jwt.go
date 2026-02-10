@@ -49,6 +49,11 @@ func NewJWTManager(userSecret, userRefreshSecret, adminSecret, adminRefreshSecre
 	}
 }
 
+func (j *Manager) GetExpireTime() time.Time {
+	return time.Now().Add(time.Duration(j.config.RefreshExpireHours) * time.Hour)
+
+}
+
 // CreateToken creates a JWT token based on token type
 func (j *Manager) CreateToken(userID string, tokenType TokenType, jti string) (string, error) {
 	var expirationTime time.Time

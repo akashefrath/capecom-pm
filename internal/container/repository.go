@@ -12,6 +12,7 @@ import (
 type Repository struct {
 	AuthRepo        *repositories.AuthRepo
 	UserRepo        *repositories.UserRepo
+	SessionRepo     *repositories.SessionRepo
 	RoleRepo        *mastersreo.RoleRepo
 	GroupRepo       *mastersreo.GroupRepo
 	DesignationRepo *mastersreo.DesignationRepo
@@ -24,6 +25,7 @@ func NewRepository(db *gorm.DB, redis *redis.Client) *Repository {
 	return &Repository{
 		AuthRepo:        repositories.NewAuthRepo(db),
 		UserRepo:        repositories.NewUserRepo(db),
+		SessionRepo:     repositories.NewSessionRepo(db),
 		RoleRepo:        mastersreo.NewRoleRepo(db),
 		GroupRepo:       mastersreo.NewGroupRepo(db),
 		DesignationRepo: mastersreo.NewDesignationRepo(db),

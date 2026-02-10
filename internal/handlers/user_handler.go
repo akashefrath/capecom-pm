@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"capecom-pm/internal/domain/common"
 	"capecom-pm/internal/domain/dto"
 	"capecom-pm/internal/services"
 	"capecom-pm/internal/utils/bind"
@@ -41,6 +42,24 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 func (h *UserHandler) GetUserByID(c *gin.Context) {
 	id := c.Param("id")
 	user, err := h.UserService.GetUserByID(id)
+	if err != nil {
+		response.FromError(c, err)
+		return
+	}
+	response.JSON(c, http.StatusOK, response.APIResponse{
+		Success: true,
+		Data:    user,
+	})
+}
+func (h *UserHandler) GetUsers(c *gin.Context) {
+	var pg = common.Pagination{}
+	err := bind.QueryBinder(c, &pg, "get_users")
+	if err != nil {
+		/// no need
+	}
+	pg.Normalize()
+
+	user, err := h.UserService.GetUser(pg)
 	if err != nil {
 		response.FromError(c, err)
 		return

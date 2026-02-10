@@ -11,3 +11,7 @@ type LoginResponse struct {
 	TokenType    string `json:"token_type" default:"Bearer"`
 	// ExpiresIn    int    `json:"expires_in"`
 }
+
+type RefreshTokenRequest struct {
+	Token string `json:"token" form:"token" binding:"required"`
+}

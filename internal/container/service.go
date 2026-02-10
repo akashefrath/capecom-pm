@@ -14,7 +14,7 @@ type Service struct {
 
 func NewService(db *gorm.DB, repository *Repository, jwt *jwtutil.Manager) *Service {
 	return &Service{
-		AuthService: services.NewAuthService(repository.AuthRepo, jwt, repository.UserRepo),
+		AuthService: services.NewAuthService(repository.AuthRepo, jwt, repository.UserRepo,repository.SessionRepo),
 		UserService: services.NewUserService(
 			repository.UserRepo,
 			repository.MasterDataRepo,

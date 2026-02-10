@@ -42,8 +42,13 @@ func (l *AuthHandler) Login(c *gin.Context) {
 }
 
 func (l *AuthHandler) Refresh(c *gin.Context) {
-	userID := utils.GetUserID(c)
-	tokenData, err := l.AuthService.Refresh(userID)
+	//userID := utils.GetUserID(c)
+	var req authdto.RefreshTokenRequest
+	if validate := bind.AndValidate(c, &req, ""); !validate {
+		return
+	}
+
+	tokenData, err := l.AuthService.Refresh(req.Token)
 	if err != nil {
 		response.FromError(c, err)
 		return

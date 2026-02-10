@@ -1,6 +1,7 @@
 package services
 
 import (
+	"capecom-pm/internal/domain/common"
 	"capecom-pm/internal/domain/dto"
 	domainerrors "capecom-pm/internal/domain/error"
 	"capecom-pm/internal/domain/models"
@@ -69,6 +70,16 @@ func (s *UserService) CreateUser(req dto.CreateUserRequest) (*dto.UserResponse, 
 
 func (s *UserService) GetUserByID(uuid string) (*dto.UserResponse, error) {
 	user, err := s.userRepo.FindByUUID(uuid)
+	if err != nil {
+		return nil, err
+	}
+	if user == nil {
+		return nil, domainerrors.NewWithCode(http.StatusNotFound, domainerrors.ErrUserNotFound.Error(), "service", "GetUserByID")
+	}
+	return user, nil
+}
+func (s *UserService) GetUser(pagination common.Pagination) (*dto.ListWithMeta, error) {
+	user, err := s.userRepo.GetUsers(pagination)
 	if err != nil {
 		return nil, err
 	}

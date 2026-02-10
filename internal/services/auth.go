@@ -4,24 +4,28 @@ import (
 	"capecom-pm/internal/domain/dto"
 	authdto "capecom-pm/internal/domain/dto/auth"
 	domainerrors "capecom-pm/internal/domain/error"
+	"capecom-pm/internal/domain/models"
 	"capecom-pm/internal/repositories"
 	"capecom-pm/internal/utils"
 	jwtutil "capecom-pm/internal/utils/jwt"
+	"time"
 
 	"github.com/google/uuid"
 )
 
 type AuthService struct {
-	AuthRepo *repositories.AuthRepo
-	jwt      *jwtutil.Manager
-	userRepo *repositories.UserRepo
+	AuthRepo    *repositories.AuthRepo
+	jwt         *jwtutil.Manager
+	userRepo    *repositories.UserRepo
+	sessionRepo *repositories.SessionRepo
 }
 
-func NewAuthService(AuthRepo *repositories.AuthRepo, jwt *jwtutil.Manager, userRepo *repositories.UserRepo) *AuthService {
+func NewAuthService(AuthRepo *repositories.AuthRepo, jwt *jwtutil.Manager, userRepo *repositories.UserRepo, sessionRepo *repositories.SessionRepo) *AuthService {
 	return &AuthService{
-		AuthRepo: AuthRepo,
-		jwt:      jwt,
-		userRepo: userRepo,
+		AuthRepo:    AuthRepo,
+		jwt:         jwt,
+		userRepo:    userRepo,
+		sessionRepo: sessionRepo,
 	}
 }
 
@@ -36,30 +40,60 @@ func (s AuthService) Login(req authdto.LoginRequest) (*authdto.LoginResponse, er
 		if !utils.CheckPassword(usr.PasswordHash, req.Password) {
 			return nil, domainerrors.ErrInvalidCredentials
 		}
-		return s.CreateAndReturnToken(usr.UUID)
+		return s.CreateAndReturnToken(usr.UUID, "")
 	}
 
 }
 
-func (s AuthService) Refresh(userUuid string) (*authdto.LoginResponse, error) {
-	userID := s.userRepo.GetActiveUserIDByUuid(userUuid)
-	if userID == nil {
-		return nil, domainerrors.ErrUserNotFound
-	}
+func (s AuthService) Refresh(token string) (*authdto.LoginResponse, error) {
+	//userID := s.userRepo.GetActiveUserIDByUuid(userUuid)
+	//if userID == nil {
+	//	return nil, domainerrors.ErrUserNotFound
+	//}
 
-	return s.CreateAndReturnToken(userUuid)
+	return s.CreateAndReturnToken("", token)
 
 }
 
-func (s AuthService) CreateAndReturnToken(userUuid string) (*authdto.LoginResponse, error) {
+func (s AuthService) CreateAndReturnToken(userUuid string, oldToken string) (*authdto.LoginResponse, error) {
 	jti := uuid.NewString()
-	accessToken, _ := s.jwt.CreateToken(userUuid, jwtutil.TokenTypeAdmin, jti)
-	refreshToken, _ := s.jwt.CreateToken(userUuid, jwtutil.TokenTypeAdminRefresh, jti)
 
-	refreshToken2, _ := utils.GenerateRefreshToken()
-	hashedToken := utils.HashToken(refreshToken2)
+	refreshToken, _ := utils.GenerateRefreshToken()
+	hashedToken := utils.HashToken(refreshToken)
+	var accessToken string
 
-	println(hashedToken)
+	if oldToken == "" {
+		userData := s.userRepo.GetActiveUserIDByUuid(userUuid)
+		println(*userData)
+		session := &models.Session{
+			UserID:           *userData,
+			JTI:              jti,
+			RefreshTokenHash: hashedToken,
+			RefreshExpiresAt: s.jwt.GetExpireTime(),
+		}
+
+		err := s.sessionRepo.Create(session)
+		if err != nil {
+			return nil, err
+		}
+		accessToken, _ = s.jwt.CreateToken(userUuid, jwtutil.TokenTypeAdmin, jti)
+	} else {
+		token, err := s.sessionRepo.GetByHashedToken(utils.HashToken(oldToken))
+		if err != nil {
+			return nil, err
+		}
+		userData := s.userRepo.GetActiveUserUuidByID(token.UserID)
+		token.RefreshTokenHash = hashedToken
+		token.LastUsedAt = time.Now()
+
+		err = s.sessionRepo.Update(token)
+		if err != nil {
+			return nil, err
+		}
+		accessToken, _ = s.jwt.CreateToken(*userData, jwtutil.TokenTypeAdmin, jti)
+
+	}
+
 	return &authdto.LoginResponse{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,

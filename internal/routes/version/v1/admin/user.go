@@ -11,5 +11,5 @@ func UserRoutes(v1 *gin.RouterGroup, c *container.Container) {
 	user := v1.Group("/users")
 	user.POST("", h.CreateUser)
 	user.GET("/:id", h.GetUserByID)
-
+	user.GET("", h.GetUsers)
 }
