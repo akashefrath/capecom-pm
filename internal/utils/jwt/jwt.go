@@ -3,7 +3,6 @@ package jwt
 import (
 	domainerrors "capecom-pm/internal/domain/error"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -60,7 +59,7 @@ func (j *Manager) CreateToken(userID string, tokenType TokenType, jti string) (s
 
 	// Use different expiration for refresh tokens
 	if tokenType == TokenTypeRefresh || tokenType == TokenTypeAdminRefresh {
-		fmt.Print(j.config.RefreshExpireHours)
+
 		expirationTime = time.Now().Add(time.Duration(j.config.RefreshExpireHours) * time.Hour)
 	} else {
 		expirationTime = time.Now().Add(time.Duration(j.config.ExpireHours) * time.Hour)

@@ -49,9 +49,10 @@ func (r *SessionRepo) GetByUUID(sessionUUID string) (*models.Session, error) {
 // GetByHashedToken retrieves a session by token (refresh_token_hash)
 func (r *SessionRepo) GetByHashedToken(refreshToken string) (*models.Session, error) {
 	var session models.Session
-	err := r.DB.Where("refresh_token_hash = ? AND deleted_at IS NULL", refreshToken).First(&session).Error
+	var count int64 = 0
+	err := r.DB.Raw("SELECT * FROM sessions  WHERE refresh_token_hash = ? AND deleted_at IS NULL LIMIT 1", refreshToken).Scan(&session).Count(&count).Error
 
-	if errors.Is(err, gorm.ErrRecordNotFound) {
+	if errors.Is(err, gorm.ErrRecordNotFound) || count == 0 {
 		return nil, nil
 	}
 

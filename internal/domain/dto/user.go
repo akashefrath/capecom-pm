@@ -26,6 +26,7 @@ type UserResponse struct {
 	Designation UtilNameId   `json:"designation" gorm:"embedded;embeddedPrefix:designation_"`
 	Department  UtilNameId   `json:"department" gorm:"embedded;embeddedPrefix:department_"`
 	Roles       []UtilNameId `json:"roles,omitempty" gorm:"-"`
+
 	models.BaseResponse
 }
 

@@ -9,6 +9,7 @@ type LoginResponse struct {
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`
 	TokenType    string `json:"token_type" default:"Bearer"`
+	IsAdmin      bool   `json:"is_admin,omitempty"`
 	// ExpiresIn    int    `json:"expires_in"`
 }
 

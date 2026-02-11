@@ -16,4 +16,5 @@ type User struct {
 	GroupID       int64
 	DesignationID int64
 	DepartmentID  int64
+	IsAdmin       bool `gorm:"-"`
 }

@@ -3,11 +3,12 @@ package cache
 import (
 	"context"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/redis/go-redis/v9"
 )
+
+var IsRedisConnected = false
 
 func NewRedis(addr string) *redis.Client {
 	rdb := redis.NewClient(&redis.Options{
@@ -23,9 +24,10 @@ func NewRedis(addr string) *redis.Client {
 	defer cancel()
 
 	if err := rdb.Ping(ctx).Err(); err != nil {
-		log.Fatal("Redis connection failed:", err)
+		fmt.Println("redisRepo connection failed:", err)
 	} else {
-		fmt.Println("Redis connected")
+		IsRedisConnected = true
+		fmt.Println("redisRepo connected")
 	}
 
 	return rdb

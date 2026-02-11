@@ -8,6 +8,7 @@ import (
 	jwtutil "capecom-pm/internal/utils/jwt"
 	"capecom-pm/internal/utils/response"
 	"context"
+	"fmt"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -16,14 +17,14 @@ import (
 type AdminMiddleware struct {
 	JWTManager *jwtutil.Manager
 	UserRepo   *repositories.UserRepo
-	Redis      *cacherepo.RedisRepo
+	redisRepo  *cacherepo.RedisRepo
 }
 
 func NewAdminMiddleware(jwtManager *jwtutil.Manager, userRepo *repositories.UserRepo, redis *cacherepo.RedisRepo) *AdminMiddleware {
 	return &AdminMiddleware{
 		JWTManager: jwtManager,
 		UserRepo:   userRepo,
-		Redis:      redis,
+		redisRepo:  redis,
 	}
 }
 
@@ -112,7 +113,7 @@ func (m *AdminMiddleware) VerifyAdminRefreshToken() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		err = m.Redis.SetString(context.Background(), claims.UserID, status, 0)
+		err = m.redisRepo.SetString(context.Background(), claims.UserID, status, 0)
 		if err != nil {
 			print(err)
 			return
@@ -125,27 +126,17 @@ func (m *AdminMiddleware) VerifyAdminRefreshToken() gin.HandlerFunc {
 }
 
 func verifyUserStatus(m *AdminMiddleware, claims *jwtutil.Claims) (any, error) {
-	status, err := cacherepo.GetCacheDataOrDB(
-		func() (*string, error) {
+	userStatusCacheKey := fmt.Sprintf("user_status_%s", claims.UserID)
 
-			data, err := m.Redis.GetString(context.Background(), claims.UserID)
-			if err != nil {
-				return nil, err
-			}
-
-			return &data, nil
-		},
+	status, err := cacherepo.GetOrSet(
+		context.Background(),
+		m.redisRepo,
+		userStatusCacheKey,
+		0,
 		func() (*string, error) {
 			var status string
 			err := m.UserRepo.DB.Model(models.User{}).Where("uuid = ?", claims.UserID).Select("status").Scan(&status).Error
 			return &status, err
-		},
-		func(v *string) error {
-			go func() {
-				_ = m.Redis.SetString(context.Background(), claims.UserID, v, 0)
-			}()
-			return nil
-		},
-	)
+		})
 	return status, err
 }

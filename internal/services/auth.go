@@ -9,8 +9,6 @@ import (
 	cacherepo "capecom-pm/internal/repositories/cache"
 	"capecom-pm/internal/utils"
 	jwtutil "capecom-pm/internal/utils/jwt"
-	"context"
-	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -22,7 +20,7 @@ type AuthService struct {
 	jwt         *jwtutil.Manager
 	userRepo    *repositories.UserRepo
 	sessionRepo *repositories.SessionRepo
-	cacheRepo   *cacherepo.RedisRepo
+	redisRepo   *cacherepo.RedisRepo
 }
 
 func NewAuthService(AuthRepo *repositories.AuthRepo, jwt *jwtutil.Manager, userRepo *repositories.UserRepo, sessionRepo *repositories.SessionRepo, cacheRepo *cacherepo.RedisRepo) *AuthService {
@@ -31,7 +29,7 @@ func NewAuthService(AuthRepo *repositories.AuthRepo, jwt *jwtutil.Manager, userR
 		jwt:         jwt,
 		userRepo:    userRepo,
 		sessionRepo: sessionRepo,
-		cacheRepo:   cacheRepo,
+		redisRepo:   cacheRepo,
 	}
 }
 
@@ -46,7 +44,7 @@ func (s AuthService) Login(req authdto.LoginRequest) (*authdto.LoginResponse, er
 		if !utils.CheckPassword(usr.PasswordHash, req.Password) {
 			return nil, domainerrors.ErrInvalidCredentials
 		}
-		return s.CreateAndReturnToken(usr.UUID, "")
+		return s.CreateAndReturnToken(usr.UUID, "", usr.IsAdmin)
 	}
 
 }
@@ -57,11 +55,11 @@ func (s AuthService) Refresh(token string) (*authdto.LoginResponse, error) {
 	//	return nil, domainerrors.ErrUserNotFound
 	//}
 
-	return s.CreateAndReturnToken("", token)
+	return s.CreateAndReturnToken("", token, false)
 
 }
 
-func (s AuthService) CreateAndReturnToken(userUuid, oldToken string) (*authdto.LoginResponse, error) {
+func (s AuthService) CreateAndReturnToken(userUuid, oldToken string, isAdmin bool) (*authdto.LoginResponse, error) {
 
 	jti := uuid.NewString()
 
@@ -77,35 +75,26 @@ func (s AuthService) CreateAndReturnToken(userUuid, oldToken string) (*authdto.L
 	err = s.sessionRepo.DB.Transaction(func(tx *gorm.DB) error {
 
 		if oldToken == "" {
+			var userID int64 = 0
 
-			userID, _ := cacherepo.GetCacheDataOrDB(
-				func() (*int64, error) {
-					data, err := s.cacheRepo.GetString(context.Background(), "id_by_uuid:"+userUuid)
-					if err != nil {
-						return nil, err
-					}
-					finalInt, err := utils.ToInt64(data)
-					if err != nil {
-						return nil, err
-					}
-					return &finalInt, nil
-				},
-				func() (*int64, error) {
-					return s.userRepo.GetActiveUserIDByUuid(userUuid), nil
-				},
-				func(data *int64) error {
-					return s.cacheRepo.SetString(context.Background(), "id_by_uuid:"+userUuid, data, 0)
-				},
-			)
+			userIdIn, err := s.redisRepo.GetUserIdByUuid(userUuid, *s.userRepo)
+			if err != nil || userIdIn == nil {
+				return domainerrors.ErrUnauthorized
+			}
+			if userIdIn != nil {
+				userID = *userIdIn
+
+			}
+
 			if err != nil {
 				return err
 			}
-			if userID == nil {
+			if userID == int64(0) {
 				return domainerrors.ErrUnauthorized
 			}
 
 			session := &models.Session{
-				UserID:           *userID,
+				UserID:           userID,
 				JTI:              jti,
 				RefreshTokenHash: hashedToken,
 				RefreshExpiresAt: s.jwt.GetExpireTime(),
@@ -131,42 +120,32 @@ func (s AuthService) CreateAndReturnToken(userUuid, oldToken string) (*authdto.L
 			token.RefreshTokenHash = hashedToken
 			token.LastUsedAt = now
 			token.RotatedAt = &now
+			token.JTI = jti
 			token.RefreshExpiresAt = s.jwt.GetExpireTime()
 
 			if err := s.sessionRepo.Update(token); err != nil {
 				return err
 			}
 
-			userUuidNew, _ := cacherepo.GetCacheDataOrDB(
-				func() (*string, error) {
-					data, err := s.cacheRepo.GetString(context.Background(), fmt.Sprintf("uuid_by_id:%d", token.UserID))
-					if err != nil || data == "" {
-						return nil, domainerrors.ErrUnauthorized
-					}
-
-					return &data, nil
-
-				},
-				func() (*string, error) {
-
-					return s.userRepo.GetActiveUserUuidByID(token.UserID), nil
-				},
-				func(data *string) error {
-					 
-					return s.cacheRepo.SetString(context.Background(), fmt.Sprintf("uuid_by_id:%d", token.UserID), data, 0)
-				},
-			)
-
+			userUuidNew, _ := s.redisRepo.GetUserUuidById(token.UserID, *s.userRepo)
 			if userUuidNew == nil {
 				return domainerrors.ErrUnauthorized
-			} else {
-				userUuid = *userUuidNew
 			}
+			userUuid = *userUuidNew
 
 		}
 
-		var err error
-		accessToken, err = s.jwt.CreateToken(userUuid, jwtutil.TokenTypeAdmin, jti)
+		isAdminIn, err := s.userRepo.FindByUuidAndMailIsAdmin(userUuid)
+
+		if err != nil || userUuid == "" {
+			return domainerrors.ErrUnauthorized
+		}
+		tokenType := jwtutil.TokenTypeUser
+		if isAdminIn {
+			tokenType = jwtutil.TokenTypeAdmin
+		}
+
+		accessToken, err = s.jwt.CreateToken(userUuid, tokenType, jti)
 		return err
 	})
 
@@ -178,6 +157,7 @@ func (s AuthService) CreateAndReturnToken(userUuid, oldToken string) (*authdto.L
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 		TokenType:    "Bearer",
+		IsAdmin:      isAdmin,
 	}, nil
 }
 

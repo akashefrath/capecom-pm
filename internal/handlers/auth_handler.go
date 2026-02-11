@@ -42,7 +42,7 @@ func (l *AuthHandler) Login(c *gin.Context) {
 }
 
 func (l *AuthHandler) Refresh(c *gin.Context) {
-	//userID := utils.GetUserID(c)
+ 
 	var req authdto.RefreshTokenRequest
 	if validate := bind.AndValidate(c, &req, ""); !validate {
 		return
