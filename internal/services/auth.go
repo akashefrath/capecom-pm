@@ -137,7 +137,7 @@ func (s AuthService) CreateAndReturnToken(userUuid, oldToken string, isAdmin boo
 
 		}
 
-		isAdminIn, err := s.userRepo.FindByUuidAndMailIsAdmin(userUuid)
+		isAdminIn, err := s.userRepo.IsAdmin(userUuid)
 
 		if err != nil || userUuid == "" {
 			return domainerrors.ErrUnauthorized

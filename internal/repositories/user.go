@@ -77,7 +77,7 @@ func (r *UserRepo) FindByEmail(email string) (*models.User, error) {
 			return userIn
 		}
 		var count int64 = 0
-		err := tx.Raw("SELECT * FROM user_roles WHERE user_id = ? AND (role_id = ? OR role_id = ?) ", user.ID, 1, 2).Count(&count).Error
+		err := tx.Raw("SELECT COUNT(*) FROM user_roles WHERE user_id = ? AND (role_id = ? OR role_id = ?) ", user.ID, 1, 2).Count(&count).Error
 
 		if err == nil && count > 0 {
 			user.IsAdmin = true
@@ -91,33 +91,6 @@ func (r *UserRepo) FindByEmail(email string) (*models.User, error) {
 	}
 
 	return &user, err
-}
-
-func (r *UserRepo) FindByUuidAndMailIsAdmin(uuid string) (bool, error) {
-	var userId int64
-	var isAdmin = false
-
-	err := r.DB.Transaction(func(tx *gorm.DB) error {
-		userIn := tx.Raw("SELECT id FROM users WHERE uuid = ? OR email = ?", uuid, uuid).Scan(&userId).Error
-		if userIn != nil {
-			return userIn
-		}
-
-		var count int64 = 0
-		err := tx.Raw("SELECT * FROM user_roles WHERE user_id = ? AND (role_id = ? OR role_id = ?) ", userId, 1, 2).Count(&count).Error
-
-		if err == nil && count > 0 {
-			isAdmin = true
-		}
-		return err
-
-	})
-
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return isAdmin, nil
-	}
-
-	return isAdmin, err
 }
 
 func (r *UserRepo) FindByUuid(uuid string) (*models.User, error) {
@@ -144,28 +117,6 @@ func (r *UserRepo) FindByUuid(uuid string) (*models.User, error) {
 
 	return &user, err
 }
-
-//func (r *UserRepo) FindByEmailByAdmin(email string) (*models.User, error) {
-//
-//	var user models.User
-//
-//	err := r.DB.Transaction(func(tx *gorm.DB) error {
-//		userIn := tx.Raw("SELECT * FROM users WHERE email = ?", email).Scan(user).Error
-//		if userIn != nil {
-//			return userIn
-//		}
-//
-//		err := tx.Raw("SELECT * FROM user_roles WHERE user_id = ? AND (role_id = ? OR role_id = ?) ", user.ID, 1, 2).Error
-//		return err
-//
-//	})
-//
-//	if errors.Is(err, gorm.ErrRecordNotFound) {
-//		return nil, nil
-//	}
-//
-//	return &user, err
-//}
 
 func (r *UserRepo) FindByUUID(uuid string) (*dto.UserResponse, error) {
 
@@ -302,4 +253,49 @@ func (r *UserRepo) CreateUserWithRoles(user *models.User, roleIDs []int64) (*dto
 	})
 
 	return results, err
+}
+
+func (r *UserRepo) FindByUuidAndMailIsAdmin(uuid string, roleID int) (bool, error) {
+	var userId int64
+	var isAdmin = false
+
+	err := r.DB.Transaction(func(tx *gorm.DB) error {
+		userIn := tx.Raw("SELECT id FROM users WHERE uuid = ? OR email = ?", uuid, uuid).Scan(&userId).Error
+		if userIn != nil {
+			return userIn
+		}
+
+		var count int64 = 0
+		err := tx.Raw("SELECT count(*) FROM user_roles WHERE user_id = ? AND (role_id = ? ) ", userId, roleID).Count(&count).Error
+
+		if err == nil && count > 0 {
+			isAdmin = true
+		}
+		return err
+
+	})
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return isAdmin, nil
+	}
+
+	return isAdmin, err
+}
+
+func (r *UserRepo) IsAdmin(uuid string) (bool, error) {
+	result, err := r.FindByUuidAndMailIsAdmin(uuid, 1)
+	if err != nil {
+		return false, err
+	}
+
+	return result, nil
+}
+
+func (r *UserRepo) IsManager(uuid string) (bool, error) {
+	result, err := r.FindByUuidAndMailIsAdmin(uuid, 3)
+	if err != nil {
+		return false, err
+	}
+
+	return result, nil
 }

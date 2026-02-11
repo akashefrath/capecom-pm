@@ -9,11 +9,12 @@ import (
 )
 
 type Container struct {
-	Handler    *Handler
-	Service    *Service
-	Repository *Repository
-	Middleware *Middleware
-	JWTManager *jwtutil.Manager
+	Handler     *Handler
+	Service     *Service
+	Repository  *Repository
+	Middleware  *Middleware
+	JWTManager  *jwtutil.Manager
+	RedisClient *redis.Client
 }
 
 func NewContainer(db *gorm.DB, cfg config.Config, redis *redis.Client) *Container {
@@ -33,10 +34,11 @@ func NewContainer(db *gorm.DB, cfg config.Config, redis *redis.Client) *Containe
 	handler := NewHandler(service)
 	middleware := NewMiddleware(jwtManager, repository)
 	return &Container{
-		Handler:    handler,
-		Service:    service,
-		Repository: repository,
-		Middleware: middleware,
-		JWTManager: jwtManager,
+		Handler:     handler,
+		Service:     service,
+		Repository:  repository,
+		Middleware:  middleware,
+		JWTManager:  jwtManager,
+		RedisClient: redis,
 	}
 }
