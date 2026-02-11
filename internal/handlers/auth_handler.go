@@ -42,7 +42,7 @@ func (l *AuthHandler) Login(c *gin.Context) {
 }
 
 func (l *AuthHandler) Refresh(c *gin.Context) {
- 
+
 	var req authdto.RefreshTokenRequest
 	if validate := bind.AndValidate(c, &req, ""); !validate {
 		return
@@ -69,5 +69,20 @@ func (l *AuthHandler) Me(c *gin.Context) {
 			Data:    usr,
 		})
 	}
+
+}
+
+func (l *AuthHandler) Logout(c *gin.Context) {
+	jti := utils.GetJTI(c)
+	err := l.AuthService.LogoutUserByJTI(jti)
+	if err != nil {
+		response.FromError(c, err)
+		return
+	}
+
+	response.JSON(c, http.StatusOK, response.APIResponse{
+		Success: true,
+		Message: utils.GetMessage("logged_out_success", c),
+	})
 
 }

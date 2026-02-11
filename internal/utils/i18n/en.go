@@ -20,4 +20,6 @@ var EN = map[string]string{
 
 	// auth
 	"invalid_login_credentials": "Invalid login credentials",
+
+	"logged_out_success": "Logged out successfully",
 }

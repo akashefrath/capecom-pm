@@ -46,13 +46,24 @@ func (r *SessionRepo) GetByUUID(sessionUUID string) (*models.Session, error) {
 	return &session, err
 }
 
+// GetByJTI retrieves a session by JTI (JWT ID)
+func (r *SessionRepo) GetByJTI(jti string) (*models.Session, error) {
+	var session models.Session
+	err := r.DB.Where("jti = ? AND deleted_at IS NULL", jti).First(&session).Error
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, nil
+	}
+
+	return &session, err
+}
+
 // GetByHashedToken retrieves a session by token (refresh_token_hash)
 func (r *SessionRepo) GetByHashedToken(refreshToken string) (*models.Session, error) {
 	var session models.Session
-	var count int64 = 0
-	err := r.DB.Raw("SELECT * FROM sessions  WHERE refresh_token_hash = ? AND deleted_at IS NULL LIMIT 1", refreshToken).Scan(&session).Count(&count).Error
+	err := r.DB.Where("refresh_token_hash = ? AND deleted_at IS NULL", refreshToken).First(&session).Error
 
-	if errors.Is(err, gorm.ErrRecordNotFound) || count == 0 {
+	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, nil
 	}
 
@@ -76,9 +87,9 @@ func (r *SessionRepo) Update(session *models.Session) error {
 }
 
 // UpdateStatus updates the status of a session
-func (r *SessionRepo) UpdateStatus(sessionUUID string, status string) error {
+func (r *SessionRepo) UpdateStatus(jti string, status string) error {
 	return r.DB.Model(&models.Session{}).
-		Where("uuid = ? AND deleted_at IS NULL", sessionUUID).
+		Where("jti = ? AND deleted_at IS NULL", jti).
 		Updates(map[string]interface{}{
 			"status":     status,
 			"updated_at": time.Now(),
@@ -86,15 +97,15 @@ func (r *SessionRepo) UpdateStatus(sessionUUID string, status string) error {
 }
 
 // UpdateLastUsed updates the last_used_at timestamp
-func (r *SessionRepo) UpdateLastUsed(sessionUUID string) error {
+func (r *SessionRepo) UpdateLastUsed(jti string) error {
 	return r.DB.Model(&models.Session{}).
-		Where("uuid = ? AND deleted_at IS NULL", sessionUUID).
+		Where("uuid = ? AND deleted_at IS NULL", jti).
 		Update("last_used_at", time.Now()).Error
 }
 
 // RevokeSession revokes a session by UUID
-func (r *SessionRepo) RevokeSession(sessionUUID string) error {
-	return r.UpdateStatus(sessionUUID, models.SessionStatusRevoked)
+func (r *SessionRepo) RevokeSession(jti string) error {
+	return r.UpdateStatus(jti, models.SessionStatusRevoked)
 }
 
 // RevokeAllUserSessions revokes all sessions for a user

@@ -619,6 +619,9 @@ CREATE INDEX `idx_sessions_deleted` ON `sessions` (`deleted_at`);
 
 CREATE INDEX `idx_sessions_refresh_status` ON `sessions` (`refresh_token_hash`, `status`);
 
+CREATE INDEX `idx_sessions_jti` ON `sessions` (`jti`);
+CREATE INDEX `idx_sessions_jti_status` ON `sessions` (`jti`, `status`);
+
 ALTER TABLE `sessions` ADD FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
 

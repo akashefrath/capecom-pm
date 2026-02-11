@@ -13,4 +13,6 @@ func AuthRoutes(v1 *gin.RouterGroup, c *container.Container) {
 	auth.POST("/login", h.Login)
 	auth.POST("/refresh-token", h.Refresh)
 	auth.GET("/me", c.Middleware.UserMiddleware.VerifyUserToken(), h.Me)
+	auth.GET("/me-admin", c.Middleware.AdminMiddleware.VerifyAdminToken(), h.Me)
+	auth.POST("/logout", c.Middleware.UserMiddleware.VerifyUserToken(), h.Logout)
 }

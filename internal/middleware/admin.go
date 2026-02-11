@@ -10,21 +10,24 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
 type AdminMiddleware struct {
-	JWTManager *jwtutil.Manager
-	UserRepo   *repositories.UserRepo
-	redisRepo  *cacherepo.RedisRepo
+	JWTManager  *jwtutil.Manager
+	UserRepo    *repositories.UserRepo
+	redisRepo   *cacherepo.RedisRepo
+	SessionRepo *repositories.SessionRepo
 }
 
-func NewAdminMiddleware(jwtManager *jwtutil.Manager, userRepo *repositories.UserRepo, redis *cacherepo.RedisRepo) *AdminMiddleware {
+func NewAdminMiddleware(jwtManager *jwtutil.Manager, userRepo *repositories.UserRepo, redis *cacherepo.RedisRepo, SessionRepo *repositories.SessionRepo) *AdminMiddleware {
 	return &AdminMiddleware{
-		JWTManager: jwtManager,
-		UserRepo:   userRepo,
-		redisRepo:  redis,
+		JWTManager:  jwtManager,
+		UserRepo:    userRepo,
+		redisRepo:   redis,
+		SessionRepo: SessionRepo,
 	}
 }
 
@@ -65,6 +68,21 @@ func (m *AdminMiddleware) VerifyAdminToken() gin.HandlerFunc {
 		}
 
 		if status != "active" {
+			response.FromError(c, domainerrors.ErrUnauthorized)
+			c.Abort()
+			return
+		}
+		cacheKey := fmt.Sprintf("session:jti:%s", claims.ID)
+		session, err := cacherepo.GetOrSet(
+			context.Background(),
+			m.redisRepo,
+			cacheKey,
+			5*time.Minute, // Match access token TTL
+			func() (*models.Session, error) {
+				return m.SessionRepo.GetByJTI(claims.ID)
+			},
+		)
+		if err != nil || session == nil || session.Status != models.SessionStatusActive {
 			response.FromError(c, domainerrors.ErrUnauthorized)
 			c.Abort()
 			return

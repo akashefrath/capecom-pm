@@ -7,22 +7,27 @@ import (
 	cacherepo "capecom-pm/internal/repositories/cache"
 	jwtutil "capecom-pm/internal/utils/jwt"
 	"capecom-pm/internal/utils/response"
+	"context"
+	"fmt"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
 type UserMiddleware struct {
-	JWTManager *jwtutil.Manager
-	UserRepo   *repositories.UserRepo
-	Redis      *cacherepo.RedisRepo
+	JWTManager  *jwtutil.Manager
+	UserRepo    *repositories.UserRepo
+	redisRepo   *cacherepo.RedisRepo
+	SessionRepo *repositories.SessionRepo
 }
 
-func NewUserMiddleware(jwtManager *jwtutil.Manager, userRepo *repositories.UserRepo, redis *cacherepo.RedisRepo) *UserMiddleware {
+func NewUserMiddleware(jwtManager *jwtutil.Manager, userRepo *repositories.UserRepo, redis *cacherepo.RedisRepo, SessionRepo *repositories.SessionRepo) *UserMiddleware {
 	return &UserMiddleware{
-		JWTManager: jwtManager,
-		UserRepo:   userRepo,
-		Redis:      redis,
+		JWTManager:  jwtManager,
+		UserRepo:    userRepo,
+		redisRepo:   redis,
+		SessionRepo: SessionRepo,
 	}
 }
 
@@ -63,7 +68,24 @@ func (m *UserMiddleware) VerifyUserToken() gin.HandlerFunc {
 			return
 		}
 
-		if status != "active" {
+		if status != models.SessionStatusActive {
+			response.FromError(c, domainerrors.ErrUnauthorized)
+			c.Abort()
+			return
+		}
+
+		cacheKey := fmt.Sprintf("session:jti:%s", claims.ID)
+
+		session, err := cacherepo.GetOrSet(
+			context.Background(),
+			m.redisRepo,
+			cacheKey,
+			5*time.Minute, // Match access token TTL
+			func() (*models.Session, error) {
+				return m.SessionRepo.GetByJTI(claims.ID)
+			},
+		)
+		if err != nil || session == nil || session.Status != models.SessionStatusActive {
 			response.FromError(c, domainerrors.ErrUnauthorized)
 			c.Abort()
 			return
@@ -71,7 +93,7 @@ func (m *UserMiddleware) VerifyUserToken() gin.HandlerFunc {
 
 		// Set user ID in context for downstream handlers
 		c.Set("userID", claims.UserID)
-
+		c.Set("jti", claims.ID)
 		c.Next()
 	}
 }
@@ -116,12 +138,26 @@ func (m *UserMiddleware) VerifyUserRefreshToken() gin.HandlerFunc {
 			return
 		}
 
-		if status != "active" {
+		if status != models.SessionStatusActive {
 			response.FromError(c, domainerrors.ErrUnauthorized)
 			c.Abort()
 			return
 		}
-
+		cacheKey := fmt.Sprintf("session:jti:%s", claims.ID)
+		session, err := cacherepo.GetOrSet(
+			context.Background(),
+			m.redisRepo,
+			cacheKey,
+			5*time.Minute, // Match access token TTL
+			func() (*models.Session, error) {
+				return m.SessionRepo.GetByJTI(claims.ID)
+			},
+		)
+		if err != nil || session == nil || session.Status != models.SessionStatusActive {
+			response.FromError(c, domainerrors.ErrUnauthorized)
+			c.Abort()
+			return
+		}
 		// Set user ID in context for downstream handlers
 		c.Set("userID", claims.UserID)
 

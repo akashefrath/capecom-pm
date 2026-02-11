@@ -9,6 +9,8 @@ import (
 	cacherepo "capecom-pm/internal/repositories/cache"
 	"capecom-pm/internal/utils"
 	jwtutil "capecom-pm/internal/utils/jwt"
+	"context"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -164,4 +166,11 @@ func (s AuthService) CreateAndReturnToken(userUuid, oldToken string, isAdmin boo
 func (s AuthService) FindUserByUuid(userUuid string) (*dto.UserResponse, error) {
 	return s.userRepo.FindByUUID(userUuid)
 
+}
+
+func (s AuthService) LogoutUserByJTI(jti string) error {
+	cacheKey := fmt.Sprintf("session:jti:%s", jti)
+	_ = s.redisRepo.Delete(context.Background(), cacheKey)
+
+	return s.sessionRepo.RevokeSession(jti)
 }
