@@ -19,6 +19,10 @@ type Repository struct {
 	DepartmentRepo  *mastersreo.DepartmentRepo
 	MasterDataRepo  *mastersreo.MasterDataRepo
 	CacheRepo       *cacherepo.RedisRepo
+	FileRepo        *repositories.FileRepo
+	ClientRepo      *repositories.ClientRepo
+	ProjectRepo     *repositories.ProjectRepo
+	UtilsRepo       *repositories.UtilsRepo
 }
 
 func NewRepository(db *gorm.DB, redis *redis.Client) *Repository {
@@ -32,5 +36,9 @@ func NewRepository(db *gorm.DB, redis *redis.Client) *Repository {
 		DepartmentRepo:  mastersreo.NewDepartmentRepo(db),
 		MasterDataRepo:  mastersreo.NewMasterDataRepo(db),
 		CacheRepo:       cacherepo.NewRedisRepo(redis),
+		FileRepo:        repositories.NewFileRepo(db),
+		ClientRepo:      repositories.NewClientRepo(db),
+		ProjectRepo:     repositories.NewProjectRepo(db),
+		UtilsRepo:       repositories.NewUtilsRepo(db),
 	}
 }

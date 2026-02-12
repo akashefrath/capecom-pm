@@ -12,6 +12,14 @@ var (
 	ErrUserNotFound   = errors.New("user_not_found")
 	ErrDuplicateEmail = errors.New("duplicate_email")
 
+	// Client errors
+	ErrClientNotFound  = errors.New("client_not_found")
+	ErrDuplicateClient = errors.New("duplicate_client")
+
+	// Project errors
+	ErrProjectNotFound  = errors.New("project_not_found")
+	ErrDuplicateProject = errors.New("duplicate_project")
+
 	// Master data errors
 	ErrGroupNotFound       = errors.New("group_not_found")
 	ErrDesignationNotFound = errors.New("designation_not_found")

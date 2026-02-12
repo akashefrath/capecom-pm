@@ -11,5 +11,7 @@ func Routes(v1 *gin.RouterGroup, c *container.Container) {
 	adminV1Routes.SetAdminRoute(v1, c)
 	AuthRoutes(v1, c)
 	Projects(v1, c)
+	FileRoutes(v1, c)
+	UtilsRoutes(v1, c)
 
 }

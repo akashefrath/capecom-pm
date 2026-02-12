@@ -94,6 +94,37 @@ This directory contains comprehensive documentation for the project's architectu
 
 ---
 
+### 7. **auth-and-rbac.md**
+**Purpose:** Authentication, authorization, and role-based access control.
+
+**Covers:**
+- Token system (admin vs user tokens, separate JWT secrets)
+- Role system (Super Admin, Admin, Manager, Employee)
+- All 4 middleware types and when to use each
+- Context values set by middleware (`userID`, `isAdmin`, `jti`)
+- Route protection patterns (admin-only, any-auth, manager+admin, user-only)
+- How to add new RBAC checks
+- Session verification flow
+
+**When to use:** Protecting routes, checking user roles, reading auth context, adding new role-based middleware.
+
+---
+
+### 8. **redis-caching-performance.md**
+**Purpose:** Redis caching patterns, rate limiting, and performance optimization.
+
+**Covers:**
+- GetOrSet generic cache-aside pattern
+- Current cache keys and TTLs
+- Rate limiting (global and per-route)
+- How to use Redis in services and middleware
+- Cache invalidation
+- Performance guidelines and low-latency checklist
+
+**When to use:** Adding caching to new features, optimizing query performance, configuring rate limits.
+
+---
+
 ## 🚀 Quick Start Guide
 
 ### Adding a New Feature (e.g., "Projects")
@@ -291,6 +322,8 @@ Before submitting code, ensure:
 - Handle errors? → `error-handling-flow.md`
 - Add config values? → `configuration-pattern.md`
 - Implement CRUD? → `common-patterns.md`
+- Protect routes / check roles? → `auth-and-rbac.md`
+- Add Redis caching / optimize performance? → `redis-caching-performance.md`
 
 ---
 

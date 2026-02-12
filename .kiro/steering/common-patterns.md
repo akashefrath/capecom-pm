@@ -116,30 +116,60 @@ user := &models.User{
 db.Create(user)
 ```
 
-### Audit Trail Pattern
+### Audit Trail Pattern — Resolving JWT UUID to Internal User ID for `CreatedBy`
 
-Track who created/modified records:
+The auth middleware sets `userID` in the gin context as a UUID string (from the JWT `uid` claim). But `BaseModel.CreatedBy` is `*uint64` (the internal auto-increment ID). You must resolve UUID → internal ID before using it.
+
+**Handler layer** — extract UUID using `utils.GetUserID(c)` and pass it to the service as a string:
 
 ```go
-// On create
-user := &models.User{
-    Name:      "John Doe",
-    CreatedBy: &currentUserID,  // Set from auth context
-}
-
-// On update (in service layer)
-func (s *UserService) Update(c *gin.Context, id uint64, req UpdateUserRequest) error {
-    currentUserID := c.GetUint64("user_id")  // From auth middleware
-    
-    updates := map[string]interface{}{
-        "name":       req.Name,
-        "updated_at": time.Now(),
-        // Note: created_by doesn't change on update
+func (h *ClientHandler) CreateClient(c *gin.Context) {
+    var req dto.CreateClientRequest
+    if !bind.AndValidate(c, &req, "create_client") {
+        return
     }
-    
-    return s.repo.Update(id, updates)
+
+    userID := utils.GetUserID(c) // returns UUID string from context
+
+    client, err := h.ClientService.Create(req, userID)
+    // ...
 }
 ```
+
+**Service layer** — resolve UUID → internal `int64` ID via Redis cache (falls back to DB), then convert to `uint64` for `CreatedBy`:
+
+```go
+func (s *ClientService) Create(req dto.CreateClientRequest, userUUID string) (*dto.ClientResponse, error) {
+    var createdBy *uint64
+
+    if userUUID != "" {
+        userID, err := s.redisRepo.GetUserIdByUuid(userUUID, *s.userRepo)
+        if err != nil || userID == nil {
+            return nil, domainerrors.NewWithCode(http.StatusUnauthorized, domainerrors.ErrUnauthorized.Error(), "client_service", "get_user_id")
+        }
+        uid := uint64(*userID)
+        createdBy = &uid
+    }
+
+    client := &models.Client{
+        Name:      req.Name,
+        BaseModel: models.NewBase(createdBy),
+    }
+    // ...
+}
+```
+
+**Service must have `UserRepo` and `RedisRepo` injected** — wire them in `internal/container/service.go`:
+
+```go
+ClientService: services.NewClientService(repository.ClientRepo, repository.UserRepo, repository.CacheRepo),
+```
+
+**Key rules:**
+- NEVER cast `c.Get("userID")` directly to `uint64` — it's a UUID string, not an integer.
+- NEVER use `c.Get("user_id")` — the context key is `"userID"` (set by auth middleware).
+- ALWAYS resolve UUID → ID through `redisRepo.GetUserIdByUuid()` for cache-first performance.
+- See `internal/services/file.go` → `CreateFileAndGetUploadURL()` for the reference implementation of this pattern.
 
 ### Auto-Update Timestamps
 

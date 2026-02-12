@@ -12,4 +12,5 @@ func SetAdminRoute(v1 *gin.RouterGroup, c *container.Container) {
 	admin.Use(c.Middleware.AdminMiddleware.VerifyAdminToken())
 
 	UserRoutes(admin, c)
+	ClientRoutes(admin, c)
 }

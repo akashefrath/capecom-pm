@@ -92,8 +92,8 @@ CREATE TABLE `password_resets` (
 CREATE TABLE `clients` (
   `id` bigint PRIMARY KEY AUTO_INCREMENT,
   `uuid` varchar(36) UNIQUE NOT NULL,
-  `name` varchar(150) NOT NULL,
-  `email` varchar(255),
+  `name` varchar(150) UNIQUE NOT NULL ,
+  `email` varchar(255) UNIQUE NULL,
   `phone` varchar(20),
   `address` text,
   `status` ENUM ('active', 'inactive', 'blocked', 'archived') NOT NULL DEFAULT 'active',
@@ -145,12 +145,14 @@ CREATE TABLE `project_assets` (
 CREATE TABLE `files` (
   `id` bigint PRIMARY KEY AUTO_INCREMENT,
   `uuid` varchar(36) UNIQUE NOT NULL,
+  `author_id` bigint NOT NULL,
   `storage_key` varchar(500) UNIQUE NOT NULL,
-  `file_status` varchar(20) NOT NULL DEFAULT 'uploaded',
+  `file_status` ENUM ('uploaded', 'pending') NOT NULL DEFAULT 'uploaded',
   `original_name` varchar(255),
   `mime_type` varchar(120),
   `size_bytes` bigint,
   `created_by` bigint,
+  `storage` ENUM('s3','r2','local') NOT NULL DEFAULT 'r2',
   `status` ENUM ('active', 'inactive', 'blocked', 'archived') NOT NULL DEFAULT 'active',
   `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp,
@@ -285,6 +287,7 @@ CREATE TABLE `sessions` (
                             `updated_at` timestamp DEFAULT (CURRENT_TIMESTAMP),
                             `deleted_at` timestamp NULL DEFAULT NULL
 );
+
 CREATE INDEX `users_index_0` ON `users` (`uuid`);
 
 CREATE INDEX `users_index_1` ON `users` (`email`);
@@ -328,6 +331,7 @@ CREATE INDEX `project_assets_index_19` ON `project_assets` (`created_by`);
 CREATE INDEX `files_index_20` ON `files` (`file_status`);
 
 CREATE INDEX `files_index_21` ON `files` (`storage_key`);
+CREATE INDEX `files_index_22` ON `files` (`storage`);
 
 CREATE INDEX `project_managers_index_22` ON `project_managers` (`user_id`);
 
@@ -561,6 +565,7 @@ ALTER TABLE `project_assets` ADD FOREIGN KEY (`file_id`) REFERENCES `files` (`id
 
 ALTER TABLE `project_assets` ADD FOREIGN KEY (`created_by`) REFERENCES `users` (`id`);
 
+ALTER TABLE `files` ADD FOREIGN KEY (`author_id`) REFERENCES `users` (`id`);
 ALTER TABLE `files` ADD FOREIGN KEY (`created_by`) REFERENCES `users` (`id`);
 
 ALTER TABLE `ticket_types` ADD FOREIGN KEY (`created_by`) REFERENCES `users` (`id`);

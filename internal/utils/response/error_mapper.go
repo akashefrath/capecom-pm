@@ -19,6 +19,14 @@ func FromError(c *gin.Context, err error) {
 		code = http.StatusConflict
 	case errors.Is(err, domainerrors.ErrUserNotFound):
 		code = http.StatusNotFound
+	case errors.Is(err, domainerrors.ErrClientNotFound):
+		code = http.StatusNotFound
+	case errors.Is(err, domainerrors.ErrDuplicateClient):
+		code = http.StatusConflict
+	case errors.Is(err, domainerrors.ErrProjectNotFound):
+		code = http.StatusNotFound
+	case errors.Is(err, domainerrors.ErrDuplicateProject):
+		code = http.StatusConflict
 	case errors.Is(err, domainerrors.ErrBadRequest):
 		code = http.StatusBadRequest
 	case errors.Is(err, domainerrors.ErrUnauthorized):

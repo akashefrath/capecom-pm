@@ -20,4 +20,8 @@ var TA = map[string]string{
 
 	// auth
 	"invalid_login_credentials": "தவறான உள்நுழைவு விவரங்கள்",
+
+	// client
+	"client_not_found": "வாடிக்கையாளர் கிடைக்கவில்லை",
+	"duplicate_client": "வாடிக்கையாளர் ஏற்கனவே உள்ளது",
 }

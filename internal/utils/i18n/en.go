@@ -21,5 +21,9 @@ var EN = map[string]string{
 	// auth
 	"invalid_login_credentials": "Invalid login credentials",
 
+	// client
+	"client_not_found": "Client not found",
+	"duplicate_client": "Client already exists",
+
 	"logged_out_success": "Logged out successfully",
 }

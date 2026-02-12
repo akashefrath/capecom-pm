@@ -25,11 +25,20 @@ type JWTConfig struct {
 	RefreshExpireHours int
 }
 
+type R2Config struct {
+	AccountID       string
+	AccessKeyID     string
+	AccessKeySecret string
+	BucketName      string
+	FolderName      string
+}
+
 type Config struct {
 	Port         string
 	DB           DBConfig
 	JWT          JWTConfig
 	RedisAddress string
+	R2           R2Config
 }
 
 func LoadEnv() Config {
@@ -42,6 +51,7 @@ func LoadEnv() Config {
 		DB:           loadDBConfig(),
 		JWT:          loadJWTConfig(),
 		RedisAddress: GetEnvMust("REDIS_ADDRESS"),
+		R2:           loadR2Config(),
 	}
 
 }
@@ -88,4 +98,14 @@ func GetEnvMust(key string) string {
 		log.Fatal("env var " + key + " is not set")
 	}
 	return value
+}
+
+func loadR2Config() R2Config {
+	return R2Config{
+		AccountID:       GetEnvMust("R2_ACCOUNT_ID"),
+		AccessKeyID:     GetEnvMust("R2_ACCESS_KEY_ID"),
+		AccessKeySecret: GetEnvMust("R2_ACCESS_KEY_SECRET"),
+		BucketName:      GetEnvMust("R2_BUCKET_NAME"),
+		FolderName:      GetEnv("R2_FOLDER_NAME"),
+	}
 }

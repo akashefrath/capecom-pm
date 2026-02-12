@@ -21,14 +21,24 @@ version/v1/auth.go, user.go, project.go, etc. (feature modules)
 
 ```
 internal/routes/
-├── routes.go              # Main router setup, calls v1.Routes()
+├── routes.go              # Main router setup, global rate limiter, calls v1.Routes()
 └── version/
     └── v1/
         ├── v1.go          # V1 aggregator, registers all v1 modules
-        ├── auth.go        # Auth routes module
-        ├── user.go        # User routes module (example)
-        └── project.go     # Project routes module (example)
+        ├── auth.go        # Auth routes (login, refresh, me, logout)
+        ├── projects.go    # Project routes (AuthMiddleware + RBAC)
+        └── admin/
+            ├── admin.go   # Admin route group (AdminMiddleware.VerifyAdminToken)
+            └── user.go    # Admin user management routes
 ```
+
+### Route Groups by Access Level
+
+- `/api/v1/admin/*` — Admin-only (uses `AdminMiddleware.VerifyAdminToken()`)
+- `/api/v1/auth/*` — Mixed (some public, some use `AuthMiddleware.VerifyToken()`)
+- `/api/v1/project/*` — Manager + Admin only (uses `AuthMiddleware.VerifyToken()` + `RABCMiddleware.IsManagerOrAdmin()`)
+
+See `auth-and-rbac.md` for full middleware documentation.
 
 ## How Routes Work
 
