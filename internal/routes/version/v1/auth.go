@@ -11,7 +11,7 @@ import (
 func AuthRoutes(v1 *gin.RouterGroup, c *container.Container) {
 	h := c.Handler.AuthHandler
 	auth := v1.Group("/auth")
-	auth.Use(cache.SlidingWindowRateLimiter(c.RedisClient, 20, time.Minute))
+	auth.Use(cache.SlidingWindowRateLimiter(c.RedisClient, 30, time.Minute))
 	auth.POST("/login", h.Login)
 	auth.POST("/refresh-token", h.Refresh)
 	auth.GET("/me", c.Middleware.AuthMiddleware.VerifyToken(), h.Me)

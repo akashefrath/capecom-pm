@@ -53,7 +53,9 @@ func (m *AdminMiddleware) VerifyAdminToken() gin.HandlerFunc {
 
 		// Validate token with admin token type
 		claims, err := m.JWTManager.ValidateToken(tokenString, jwtutil.TokenTypeAdmin)
+
 		if err != nil {
+
 			response.FromError(c, err)
 			c.Abort()
 			return
@@ -61,13 +63,15 @@ func (m *AdminMiddleware) VerifyAdminToken() gin.HandlerFunc {
 
 		status, err := verifyUserStatus(m, claims)
 
-		if err != nil {
+		if err != nil || status == nil {
+
 			response.FromError(c, domainerrors.ErrUnauthorized)
 			c.Abort()
 			return
 		}
 
-		if status != "active" {
+		if *status != models.SessionStatusActive {
+
 			response.FromError(c, domainerrors.ErrUnauthorized)
 			c.Abort()
 			return
@@ -83,6 +87,7 @@ func (m *AdminMiddleware) VerifyAdminToken() gin.HandlerFunc {
 			},
 		)
 		if err != nil || session == nil || session.Status != models.SessionStatusActive {
+			println("aaaaaaa5")
 			response.FromError(c, domainerrors.ErrUnauthorized)
 			c.Abort()
 			return
@@ -95,55 +100,7 @@ func (m *AdminMiddleware) VerifyAdminToken() gin.HandlerFunc {
 	}
 }
 
-// VerifyAdminRefreshToken middleware verifies admin refresh JWT token
-func (m *AdminMiddleware) VerifyAdminRefreshToken() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		authHeader := c.GetHeader("Authorization")
-		if authHeader == "" {
-			response.FromError(c, domainerrors.ErrUnauthorized)
-			c.Abort()
-			return
-		}
-
-		// Extract token from "Bearer <token>"
-		parts := strings.Split(authHeader, " ")
-		if len(parts) != 2 || parts[0] != "Bearer" {
-			response.FromError(c, domainerrors.ErrInvalidToken)
-			c.Abort()
-			return
-		}
-
-		tokenString := parts[1]
-
-		// Validate token with admin refresh token type
-		claims, err := m.JWTManager.ValidateToken(tokenString, jwtutil.TokenTypeAdminRefresh)
-		if err != nil {
-			response.FromError(c, err)
-			c.Abort()
-			return
-		}
-
-		// Verify user exists and is active
-		status, _ := verifyUserStatus(m, claims)
-
-		if status != "active" {
-			response.FromError(c, domainerrors.ErrUnauthorized)
-			c.Abort()
-			return
-		}
-		err = m.redisRepo.SetString(context.Background(), claims.UserID, status, 0)
-		if err != nil {
-			print(err)
-			return
-		}
-		// Set user ID in context for downstream handlers
-		c.Set("userID", claims.UserID)
-
-		c.Next()
-	}
-}
-
-func verifyUserStatus(m *AdminMiddleware, claims *jwtutil.Claims) (any, error) {
+func verifyUserStatus(m *AdminMiddleware, claims *jwtutil.Claims) (*string, error) {
 	userStatusCacheKey := fmt.Sprintf("user_status_%s", claims.UserID)
 
 	status, err := cacherepo.GetOrSet(
@@ -152,9 +109,9 @@ func verifyUserStatus(m *AdminMiddleware, claims *jwtutil.Claims) (any, error) {
 		userStatusCacheKey,
 		0,
 		func() (*string, error) {
-			var status string
-			err := m.UserRepo.DB.Model(models.User{}).Where("uuid = ?", claims.UserID).Select("status").Scan(&status).Error
-			return &status, err
+			var status *string
+			status, err := m.UserRepo.FindUserStatus(claims.UserID)
+			return status, err
 		})
 	return status, err
 }

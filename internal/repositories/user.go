@@ -159,6 +159,12 @@ func (r *UserRepo) FindByID(id uint64) (*dto.UserResponse, error) {
 
 	return &result, err
 }
+func (r *UserRepo) FindUserStatus(uuid string) (*string, error) {
+
+	var result string
+	err := r.DB.Raw(`SELECT status FROM users WHERE uuid = ?`, uuid).Scan(&result).Error
+	return &result, err
+}
 
 func (r *UserRepo) GetUsers(pagination common.Pagination) (*dto.ListWithMeta, error) {
 
