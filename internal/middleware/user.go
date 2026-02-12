@@ -60,15 +60,15 @@ func (m *UserMiddleware) VerifyUserToken() gin.HandlerFunc {
 		}
 
 		// Verify user exists and is active
-		var status string
-		err = m.UserRepo.DB.Model(models.User{}).Where("uuid = ?", claims.UserID).Select("status").Scan(&status).Error
-		if err != nil {
+
+		status, err := verifyUserStatus(m.UserRepo, m.redisRepo, claims)
+		if err != nil || status == nil {
 			response.FromError(c, domainerrors.ErrUnauthorized)
 			c.Abort()
 			return
 		}
 
-		if status != models.SessionStatusActive {
+		if *status != models.SessionStatusActive {
 			response.FromError(c, domainerrors.ErrUnauthorized)
 			c.Abort()
 			return

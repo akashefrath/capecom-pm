@@ -67,26 +67,15 @@ func (m *AuthMiddleware) VerifyToken() gin.HandlerFunc {
 			isAdmin = true
 		}
 
-		// Verify user exists and is active
-		userStatusCacheKey := fmt.Sprintf("user_status_%s", claims.UserID)
-		status, err := cacherepo.GetOrSet(
-			context.Background(),
-			m.redisRepo,
-			userStatusCacheKey,
-			0,
-			func() (*string, error) {
-				var status string
-				err := m.UserRepo.DB.Model(models.User{}).Where("uuid = ?", claims.UserID).Select("status").Scan(&status).Error
-				return &status, err
-			})
+		status, err := verifyUserStatus(m.UserRepo, m.redisRepo, claims)
 
-		if err != nil {
+		if err != nil || status == nil {
 			response.FromError(c, domainerrors.ErrUnauthorized)
 			c.Abort()
 			return
 		}
 
-		if *status != "active" {
+		if *status != models.SessionStatusActive {
 			response.FromError(c, domainerrors.ErrUnauthorized)
 			c.Abort()
 			return

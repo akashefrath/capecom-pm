@@ -61,7 +61,7 @@ func (m *AdminMiddleware) VerifyAdminToken() gin.HandlerFunc {
 			return
 		}
 
-		status, err := verifyUserStatus(m, claims)
+		status, err := verifyUserStatus(m.UserRepo, m.redisRepo, claims)
 
 		if err != nil || status == nil {
 
@@ -100,17 +100,17 @@ func (m *AdminMiddleware) VerifyAdminToken() gin.HandlerFunc {
 	}
 }
 
-func verifyUserStatus(m *AdminMiddleware, claims *jwtutil.Claims) (*string, error) {
+func verifyUserStatus(UserRepo *repositories.UserRepo, redisRepo *cacherepo.RedisRepo, claims *jwtutil.Claims) (*string, error) {
 	userStatusCacheKey := fmt.Sprintf("user_status_%s", claims.UserID)
 
 	status, err := cacherepo.GetOrSet(
 		context.Background(),
-		m.redisRepo,
+		redisRepo,
 		userStatusCacheKey,
 		0,
 		func() (*string, error) {
 			var status *string
-			status, err := m.UserRepo.FindUserStatus(claims.UserID)
+			status, err := UserRepo.FindUserStatus(claims.UserID)
 			return status, err
 		})
 	return status, err
