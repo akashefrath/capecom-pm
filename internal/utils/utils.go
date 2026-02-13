@@ -4,6 +4,7 @@ import (
 	"capecom-pm/internal/utils/i18n"
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -27,4 +28,14 @@ func GetMessage(key string, c *gin.Context) string {
 	message := i18n.GetMessages(lang)
 	finalMessage := message[key]
 	return finalMessage
+}
+func ParseDate(s *string) *time.Time {
+	if s == nil || *s == "" {
+		return nil
+	}
+	t, err := time.Parse("2006-01-02", *s)
+	if err != nil {
+		return nil
+	}
+	return &t
 }

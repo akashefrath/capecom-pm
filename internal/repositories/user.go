@@ -167,7 +167,23 @@ func (r *UserRepo) GetActiveUserIDByUuid(uuid string) *int64 {
 	var id int64
 	r.DB.Raw(`SELECT id FROM users WHERE uuid = ?`, uuid).Scan(&id)
 	return &id
+}
 
+func (r *UserRepo) GetActiveUserIDsByUuids(uuids []string) (map[string]int64, error) {
+	type row struct {
+		UUID string
+		ID   int64
+	}
+	var rows []row
+	err := r.DB.Raw(`SELECT uuid, id FROM users WHERE uuid IN ? AND status = 'active' AND deleted_at IS NULL`, uuids).Scan(&rows).Error
+	if err != nil {
+		return nil, err
+	}
+	result := make(map[string]int64, len(rows))
+	for _, r := range rows {
+		result[r.UUID] = r.ID
+	}
+	return result, nil
 }
 
 func (r *UserRepo) GetActiveUserUuidByID(id int64) *string {

@@ -13,10 +13,21 @@ This project follows a clean domain-driven design with strict separation between
 internal/domain/
 ├── models/           # Database entities (GORM models)
 │   ├── base_model.go # Common fields for all models
-│   └── user.go       # User entity
-└── dto/              # Data Transfer Objects (request/response)
-    └── auth/         # Auth-related DTOs
-        └── login.go  # Login request/response
+│   ├── client.go
+│   ├── project.go
+│   └── project_asset.go
+├── dto/              # Data Transfer Objects (flat, one file per feature)
+│   ├── auth/         # Auth DTOs (separate package)
+│   │   └── auth.go
+│   ├── client.go
+│   ├── project.go
+│   ├── project_asset.go
+│   └── user.go
+├── common/           # Shared types (pagination)
+│   └── pagination.go
+└── error/            # Domain errors
+    ├── app_error.go
+    └── error.go
 ```
 
 ## Key Principles
@@ -137,28 +148,42 @@ DTOs are used for ALL API requests and responses. They provide type safety, vali
 
 ### DTO Organization
 
+DTOs are kept flat in `internal/domain/dto/` with one file per feature. Auth is the only exception with its own subfolder due to separate package needs.
+
 ```
 internal/domain/dto/
 ├── auth/
-│   └── login.go          # LoginRequest, LoginResponse
-├── user/
-│   └── user.go           # CreateUserRequest, UpdateUserRequest, UserResponse
-└── project/
-    └── project.go        # CreateProjectRequest, ProjectResponse
+│   └── auth.go           # LoginRequest, LoginResponse (separate package)
+├── client.go             # CreateClientRequest, ClientResponse
+├── project.go            # CreateProjectRequest, ProjectResponse
+├── project_asset.go      # CreateProjectAssetRequest, ProjectAssetResponse
+├── user.go               # CreateUserRequest, UserResponse
+├── file.go               # CreateFileRequest, CreateFileResponse
+├── list_with_pagination.go # ListWithMeta, PaginationMeta
+└── utils.go              # Shared DTO types
 ```
 
 ### Request DTOs
 
-Request DTOs define what data the API accepts with validation rules.
+Request DTOs define what data the API accepts with validation rules. All DTOs live in the `dto` package (not subpackages), except auth which has its own package.
 
-**File:** `internal/domain/dto/auth/login.go`
+**File:** `internal/domain/dto/client.go`
 
 ```go
-package authdto
+package dto
 
-type LoginRequest struct {
-    Email    string `json:"email" form:"email" binding:"required,email"`
-    Password string `json:"password" form:"password" binding:"required,min=6"`
+type CreateClientRequest struct {
+    Name    string  `json:"name" form:"name" binding:"required,min=2,max=150"`
+    Email   *string `json:"email" form:"email" binding:"omitempty,email,max=255"`
+    Phone   *string `json:"phone" form:"phone" binding:"omitempty,max=20"`
+    Address *string `json:"address" form:"address" binding:"omitempty"`
+}
+
+type UpdateClientRequest struct {
+    Name    *string `json:"name" form:"name" binding:"omitempty,min=2,max=150"`
+    Email   *string `json:"email" form:"email" binding:"omitempty,email,max=255"`
+    Phone   *string `json:"phone" form:"phone" binding:"omitempty,max=20"`
+    Address *string `json:"address" form:"address" binding:"omitempty"`
 }
 ```
 
@@ -169,66 +194,27 @@ type LoginRequest struct {
 - `binding:"max=100"` - Maximum length
 - `binding:"oneof=active inactive"` - Must be one of values
 - `binding:"uuid"` - Must be valid UUID
-
-**Example User Request DTOs:**
-```go
-package userdto
-
-type CreateUserRequest struct {
-    Name        string  `json:"name" binding:"required,min=2,max=100"`
-    Email       string  `json:"email" binding:"required,email"`
-    Password    string  `json:"password" binding:"required,min=8"`
-    Phone       *string `json:"phone" binding:"omitempty,e164"`
-    CountryCode *int    `json:"country_code" binding:"omitempty"`
-}
-
-type UpdateUserRequest struct {
-    Name        *string `json:"name" binding:"omitempty,min=2,max=100"`
-    Email       *string `json:"email" binding:"omitempty,email"`
-    Phone       *string `json:"phone" binding:"omitempty,e164"`
-    CountryCode *int    `json:"country_code" binding:"omitempty"`
-}
-```
+- `binding:"omitempty"` - Skip validation if empty (used for optional and update fields)
 
 ### Response DTOs
 
-Response DTOs define what data the API returns. They should NEVER include sensitive fields.
+Response DTOs define what data the API returns. They embed `models.BaseResponse` for timestamps and should NEVER include sensitive fields.
 
-**File:** `internal/domain/dto/auth/login.go`
+**File:** `internal/domain/dto/client.go`
 
 ```go
-package authdto
+package dto
 
-type LoginResponse struct {
-    AccessToken string `json:"access_token"`
-    TokenType   string `json:"token_type"`
-    ExpiresIn   int    `json:"expires_in"`
-}
-```
+import "capecom-pm/internal/domain/models"
 
-**Example User Response DTOs:**
-```go
-package userdto
+type ClientResponse struct {
+    Id      string  `json:"id"`
+    Name    string  `json:"name"`
+    Email   *string `json:"email"`
+    Phone   *string `json:"phone"`
+    Address *string `json:"address"`
 
-import "time"
-
-type UserResponse struct {
-    ID          uint64     `json:"id"`
-    UUID        string     `json:"uuid"`
-    Name        string     `json:"name"`
-    Email       string     `json:"email"`
-    Phone       *string    `json:"phone,omitempty"`
-    CountryCode *int       `json:"country_code,omitempty"`
-    Status      string     `json:"status"`
-    CreatedAt   time.Time  `json:"created_at"`
-    UpdatedAt   time.Time  `json:"updated_at"`
-}
-
-type UserListResponse struct {
-    Users      []UserResponse `json:"users"`
-    Total      int            `json:"total"`
-    Page       int            `json:"page"`
-    PerPage    int            `json:"per_page"`
+    models.BaseResponse
 }
 ```
 
@@ -239,7 +225,7 @@ type UserListResponse struct {
 3. ✅ Use JSON tags for all DTO fields
 4. ✅ Use `omitempty` for optional response fields
 5. ✅ Create separate DTOs for Create, Update, and Response
-6. ✅ Group related DTOs in the same package (e.g., `userdto`)
+6. ✅ Keep DTOs flat in `internal/domain/dto/` with one file per feature (e.g., `dto/client.go`, `dto/project.go`)
 7. ❌ NEVER expose sensitive fields (passwords, hashes, tokens)
 8. ❌ NEVER use models directly as responses
 9. ❌ NEVER add business logic to DTOs
@@ -273,50 +259,31 @@ type Project struct {
 
 ### Step 2: Create DTOs
 
-**File:** `internal/domain/dto/project/project.go`
+**File:** `internal/domain/dto/project.go`
 
 ```go
-package projectdto
+package dto
 
-import "time"
+import (
+    "capecom-pm/internal/domain/models"
+    "time"
+)
 
-// Request DTOs
 type CreateProjectRequest struct {
-    Name        string     `json:"name" binding:"required,min=2,max=200"`
-    Description string     `json:"description" binding:"required"`
-    StartDate   *time.Time `json:"start_date" binding:"omitempty"`
-    EndDate     *time.Time `json:"end_date" binding:"omitempty"`
-    ClientID    uint64     `json:"client_id" binding:"required"`
+    ProjectName string  `json:"project_name" form:"project_name" binding:"required,min=2,max=120"`
+    ProjectCode string  `json:"project_code" form:"project_code" binding:"required,min=2,max=120"`
+    ClientUUID  *string `json:"client_id" form:"client_id" binding:"omitempty,uuid"`
 }
 
-type UpdateProjectRequest struct {
-    Name        *string    `json:"name" binding:"omitempty,min=2,max=200"`
-    Description *string    `json:"description" binding:"omitempty"`
-    StartDate   *time.Time `json:"start_date" binding:"omitempty"`
-    EndDate     *time.Time `json:"end_date" binding:"omitempty"`
-    Status      *string    `json:"status" binding:"omitempty,oneof=active inactive completed"`
-}
-
-// Response DTOs
 type ProjectResponse struct {
-    ID          uint64     `json:"id"`
-    UUID        string     `json:"uuid"`
-    Name        string     `json:"name"`
-    Description string     `json:"description"`
-    StartDate   *time.Time `json:"start_date,omitempty"`
-    EndDate     *time.Time `json:"end_date,omitempty"`
+    Id          string     `json:"id"`
+    ProjectName string     `json:"project_name"`
+    ProjectCode string     `json:"project_code"`
+    ClientID    *string    `json:"client_id"`
+    ClientName  *string    `json:"client_name"`
     Status      string     `json:"status"`
-    OwnerID     uint64     `json:"owner_id"`
-    ClientID    uint64     `json:"client_id"`
-    CreatedAt   time.Time  `json:"created_at"`
-    UpdatedAt   time.Time  `json:"updated_at"`
-}
 
-type ProjectListResponse struct {
-    Projects []ProjectResponse `json:"projects"`
-    Total    int               `json:"total"`
-    Page     int               `json:"page"`
-    PerPage  int               `json:"per_page"`
+    models.BaseResponse
 }
 ```
 
@@ -326,36 +293,32 @@ type ProjectListResponse struct {
 package handlers
 
 import (
-    "capecom-pm/internal/domain/dto/project"
+    "capecom-pm/internal/domain/dto"
+    "capecom-pm/internal/utils"
+    "capecom-pm/internal/utils/bind"
+    "capecom-pm/internal/utils/response"
+    "net/http"
     "github.com/gin-gonic/gin"
 )
 
-func (h *ProjectHandler) Create(c *gin.Context) {
-    var req projectdto.CreateProjectRequest
-    
-    // Bind and validate request
-    if err := c.ShouldBindJSON(&req); err != nil {
-        // Handle validation error
+func (h *ProjectHandler) CreateProject(c *gin.Context) {
+    var req dto.CreateProjectRequest
+    if !bind.AndValidate(c, &req, "create_project") {
         return
     }
-    
-    // Call service
-    project, err := h.service.Create(&req)
+
+    userID := utils.GetUserID(c)
+
+    project, err := h.ProjectService.Create(req, userID)
     if err != nil {
-        // Handle error
+        response.FromError(c, err)
         return
     }
-    
-    // Return response DTO
-    response := projectdto.ProjectResponse{
-        ID:          project.ID,
-        UUID:        project.UUID,
-        Name:        project.Name,
-        Description: project.Description,
-        // ... map other fields
-    }
-    
-    c.JSON(201, response)
+
+    response.JSON(c, http.StatusCreated, response.APIResponse{
+        Success: true,
+        Data:    project,
+    })
 }
 ```
 
@@ -429,7 +392,7 @@ When adding a new feature:
 
 - [ ] Create model in `internal/domain/models/`
 - [ ] Embed `BaseModel` in the model
-- [ ] Create DTO package in `internal/domain/dto/feature/`
+- [ ] Create DTO file in `internal/domain/dto/feature.go`
 - [ ] Create request DTOs with validation tags
 - [ ] Create response DTOs with JSON tags
 - [ ] Never expose models directly in API

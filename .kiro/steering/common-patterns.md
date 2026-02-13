@@ -655,12 +655,21 @@ func (h *UserHandler) Delete(c *gin.Context) {
 ## Naming Conventions
 
 ### Files
-- Models: `internal/domain/models/user.go`
-- DTOs: `internal/domain/dto/user/user.go`
-- Repositories: `internal/repositories/user.go`
-- Services: `internal/services/user.go`
-- Handlers: `internal/handlers/user_handler.go`
-- Routes: `internal/routes/version/v1/user.go`
+
+Single-feature modules stay flat. When a feature grows sub-resources, group into a subfolder with its own package.
+
+Flat (single feature):
+- Models: `internal/domain/models/client.go`
+- DTOs: `internal/domain/dto/client.go`
+- Repositories: `internal/repositories/client.go`
+- Services: `internal/services/client.go`
+- Handlers: `internal/handlers/client_handler.go`
+- Routes: `internal/routes/version/v1/projects.go`
+
+Grouped (feature with sub-resources):
+- Repositories: `internal/repositories/project/project.go`, `internal/repositories/project/asset.go` (package `projectrepo`)
+- Services: `internal/services/project/project.go`, `internal/services/project/asset.go` (package `projectsvc`)
+- Handlers: `internal/handlers/project/project_handler.go`, `internal/handlers/project/asset_handler.go` (package `projecthandler`)
 
 ### Structs
 - Model: `User`

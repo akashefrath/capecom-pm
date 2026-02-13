@@ -27,6 +27,12 @@ func FromError(c *gin.Context, err error) {
 		code = http.StatusNotFound
 	case errors.Is(err, domainerrors.ErrDuplicateProject):
 		code = http.StatusConflict
+	case errors.Is(err, domainerrors.ErrProjectAssetNotFound):
+		code = http.StatusNotFound
+	case errors.Is(err, domainerrors.ErrFileNotFound):
+		code = http.StatusBadRequest
+	case errors.Is(err, domainerrors.ErrFileNotUploaded):
+		code = http.StatusBadRequest
 	case errors.Is(err, domainerrors.ErrBadRequest):
 		code = http.StatusBadRequest
 	case errors.Is(err, domainerrors.ErrUnauthorized):

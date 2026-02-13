@@ -31,6 +31,7 @@ func (p *Pagination) Offset() int {
 	return (p.Page - 1) * p.Limit
 }
 func (p *Pagination) BuildPaginationQuery() string {
+	p.Normalize()
 	return fmt.Sprintf(" LIMIT %d OFFSET %d ", p.Limit, p.Offset())
 }
 

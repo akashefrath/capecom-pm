@@ -37,7 +37,8 @@ func (l *AuthHandler) Login(c *gin.Context) {
 	}
 
 	response.JSON(c, http.StatusOK, response.APIResponse{
-		Data: tokenData,
+		Success: true,
+		Data:    tokenData,
 	})
 }
 
@@ -55,7 +56,8 @@ func (l *AuthHandler) Refresh(c *gin.Context) {
 	}
 
 	response.JSON(c, http.StatusOK, response.APIResponse{
-		Data: tokenData,
+		Success: true,
+		Data:    tokenData,
 	})
 }
 

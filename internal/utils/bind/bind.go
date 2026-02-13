@@ -1,6 +1,7 @@
 package bind
 
 import (
+	"capecom-pm/internal/domain/common"
 	"capecom-pm/internal/utils/i18n"
 	"capecom-pm/internal/utils/response"
 	"errors"
@@ -66,4 +67,13 @@ func QueryBinder(c *gin.Context, req any, entity string) error {
 	}
 
 	return nil
+}
+
+func PaginationBinder(c *gin.Context, entity string) (*common.Pagination, error) {
+	req := common.Pagination{}
+	if err := c.ShouldBindQuery(req); err != nil {
+		return nil, err
+	}
+	req.Normalize()
+	return &req, nil
 }

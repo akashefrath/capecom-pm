@@ -83,14 +83,9 @@ func (s AuthService) CreateAndReturnToken(userUuid, oldToken string, isAdmin boo
 			if err != nil || userIdIn == nil {
 				return domainerrors.ErrUnauthorized
 			}
-			if userIdIn != nil {
-				userID = *userIdIn
 
-			}
+			userID = *userIdIn
 
-			if err != nil {
-				return err
-			}
 			if userID == int64(0) {
 				return domainerrors.ErrUnauthorized
 			}

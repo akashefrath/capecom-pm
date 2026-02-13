@@ -26,11 +26,16 @@ internal/routes/
     └── v1/
         ├── v1.go          # V1 aggregator, registers all v1 modules
         ├── auth.go        # Auth routes (login, refresh, me, logout)
-        ├── projects.go    # Project routes (AuthMiddleware + RBAC)
+        ├── projects.go    # Project + project asset routes (AuthMiddleware + RBAC)
+        ├── file.go        # File upload routes
+        ├── utils.go       # Utility routes
         └── admin/
             ├── admin.go   # Admin route group (AdminMiddleware.VerifyAdminToken)
+            ├── client.go  # Admin client management routes
             └── user.go    # Admin user management routes
 ```
+
+Route files are flat — one file per feature group. Sub-resources (like project assets) are registered in the same route file as their parent (e.g., `projects.go` handles both `/project` and `/project/:projectId/assets`).
 
 ### Route Groups by Access Level
 
@@ -168,20 +173,25 @@ func ResourceRoutes(v1 *gin.RouterGroup, c *container.Container) {
 }
 ```
 
-### Nested Routes
+### Nested Routes (Sub-resources in same file)
 
 ```go
-func ProjectRoutes(v1 *gin.RouterGroup, c *container.Container) {
+func Projects(v1 *gin.RouterGroup, c *container.Container) {
     h := c.Handler.ProjectHandler
-    th := c.Handler.TaskHandler
-    
-    project := v1.Group("/projects")
-    project.GET("", h.List)
-    project.POST("", h.Create)
-    
-    // Nested tasks under projects
-    project.GET("/:id/tasks", th.GetProjectTasks)
-    project.POST("/:id/tasks", th.CreateTask)
+    ah := c.Handler.ProjectAssetHandler
+
+    project := v1.Group("/project")
+    project.Use(c.Middleware.AuthMiddleware.VerifyToken())
+    project.Use(c.Middleware.RABCMiddleware.IsManagerOrAdmin())
+    project.POST("", h.CreateProject)
+    project.GET("", h.GetProjects)
+
+    // Sub-resources nested under parent
+    project.POST("/:projectId/assets", ah.CreateAsset)
+    project.GET("/:projectId/assets", ah.GetAssets)
+    project.GET("/:projectId/assets/:assetId", ah.GetAsset)
+    project.PUT("/:projectId/assets/:assetId", ah.UpdateAsset)
+    project.DELETE("/:projectId/assets/:assetId", ah.DeleteAsset)
 }
 ```
 

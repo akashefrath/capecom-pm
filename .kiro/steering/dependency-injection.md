@@ -10,13 +10,37 @@ This project uses a clean DI pattern with a container-based approach. Follow thi
 ## Architecture Layers
 
 ```
-Database (gorm.DB)
+Database (gorm.DB) + Redis + R2 Storage
     ↓
-Repository Layer (data access)
+Repository Layer (data access)         — internal/repositories/ (flat)
     ↓
-Service Layer (business logic)
+Service Layer (business logic)         — internal/services/ (flat)
     ↓
-Handler Layer (HTTP handlers)
+Handler Layer (HTTP handlers)          — internal/handlers/ (flat)
+    ↓
+Container (DI wiring)                  — internal/container/
+```
+
+All layers are flat — one file per feature, no subfolders. When a feature grows to have sub-resources (e.g., project + project assets), group them into a subfolder with its own package:
+
+```
+repositories/
+├── auth.go, client.go, file.go, ...     (flat, package repositories)
+└── project/                              (grouped, package projectrepo)
+    ├── project.go
+    └── asset.go
+
+services/
+├── auth.go, client.go, file.go, ...     (flat, package services)
+└── project/                              (grouped, package projectsvc)
+    ├── project.go
+    └── asset.go
+
+handlers/
+├── auth_handler.go, client_handler.go, ...(flat, package handlers)
+└── project/                              (grouped, package projecthandler)
+    ├── project_handler.go
+    └── asset_handler.go
 ```
 
 ## How to Add a New Feature

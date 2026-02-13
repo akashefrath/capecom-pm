@@ -1,14 +1,19 @@
 package container
 
-import "capecom-pm/internal/handlers"
+import (
+	"capecom-pm/internal/handlers"
+	projecthandler "capecom-pm/internal/handlers/project"
+)
 
 type Handler struct {
-	AuthHandler    *handlers.AuthHandler
-	UserHandler    *handlers.UserHandler
-	FileHandler    *handlers.FileHandler
-	ClientHandler  *handlers.ClientHandler
-	ProjectHandler *handlers.ProjectHandler
-	UtilsHandler   *handlers.UtilsHandler
+	AuthHandler         *handlers.AuthHandler
+	UserHandler         *handlers.UserHandler
+	FileHandler         *handlers.FileHandler
+	ClientHandler       *handlers.ClientHandler
+	ProjectHandler      *projecthandler.ProjectHandler
+	ProjectAssetHandler *projecthandler.AssetHandler
+	ProjectTeamHandler  *projecthandler.TeamHandler
+	UtilsHandler        *handlers.UtilsHandler
 }
 
 func NewHandler(service *Service) *Handler {
@@ -21,8 +26,12 @@ func NewHandler(service *Service) *Handler {
 			service.FileService),
 		ClientHandler: handlers.NewClientHandler(
 			service.ClientService),
-		ProjectHandler: handlers.NewProjectHandler(
+		ProjectHandler: projecthandler.NewProjectHandler(
 			service.ProjectService),
+		ProjectAssetHandler: projecthandler.NewAssetHandler(
+			service.ProjectAssetService),
+		ProjectTeamHandler: projecthandler.NewTeamHandler(
+			service.ProjectTeamService),
 		UtilsHandler: handlers.NewUtilsHandler(
 			service.UtilsService),
 	}

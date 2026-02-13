@@ -17,8 +17,13 @@ var (
 	ErrDuplicateClient = errors.New("duplicate_client")
 
 	// Project errors
-	ErrProjectNotFound  = errors.New("project_not_found")
-	ErrDuplicateProject = errors.New("duplicate_project")
+	ErrProjectNotFound      = errors.New("project_not_found")
+	ErrDuplicateProject     = errors.New("duplicate_project")
+	ErrProjectAssetNotFound = errors.New("project_asset_not_found")
+
+	// File errors
+	ErrFileNotFound    = errors.New("file_not_found")
+	ErrFileNotUploaded = errors.New("file_not_uploaded")
 
 	// Master data errors
 	ErrGroupNotFound       = errors.New("group_not_found")
