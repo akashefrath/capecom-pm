@@ -29,6 +29,18 @@ func FromError(c *gin.Context, err error) {
 		code = http.StatusConflict
 	case errors.Is(err, domainerrors.ErrProjectAssetNotFound):
 		code = http.StatusNotFound
+	case errors.Is(err, domainerrors.ErrTicketNotFound):
+		code = http.StatusNotFound
+	case errors.Is(err, domainerrors.ErrDuplicateTicket):
+		code = http.StatusConflict
+	case errors.Is(err, domainerrors.ErrTicketTypeNotFound):
+		code = http.StatusBadRequest
+	case errors.Is(err, domainerrors.ErrNotProjectMember):
+		code = http.StatusBadRequest
+	case errors.Is(err, domainerrors.ErrNotTicketAssignee):
+		code = http.StatusForbidden
+	case errors.Is(err, domainerrors.ErrTimeEntryNotFound):
+		code = http.StatusNotFound
 	case errors.Is(err, domainerrors.ErrFileNotFound):
 		code = http.StatusBadRequest
 	case errors.Is(err, domainerrors.ErrFileNotUploaded):

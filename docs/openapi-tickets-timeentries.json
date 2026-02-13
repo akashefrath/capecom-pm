@@ -1,0 +1,780 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "Capecom PM - Tickets & Time Entries API",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "{{baseUrl}}{{apiPath}}",
+            "description": "API Server"
+        }
+    ],
+    "security": [
+        {
+            "bearerAuth": []
+        }
+    ],
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer"
+            }
+        },
+        "schemas": {
+            "Ticket": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+                    },
+                    "project_id": {
+                        "type": "string",
+                        "example": "p1r2o3j4-e5c6-7890-abcd-ef1234567890"
+                    },
+                    "code": {
+                        "type": "string",
+                        "example": "ECOM-42"
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Implement user authentication"
+                    },
+                    "lifecycle_status": {
+                        "type": "string",
+                        "enum": [
+                            "todo",
+                            "in_progress",
+                            "in_review",
+                            "testing",
+                            "done",
+                            "closed",
+                            "reopened"
+                        ]
+                    },
+                    "priority": {
+                        "type": "string",
+                        "enum": [
+                            "low",
+                            "medium",
+                            "high",
+                            "urgent"
+                        ]
+                    }
+                }
+            }
+        }
+    },
+    "paths": {
+        "/project/{projectId}/tickets": {
+            "post": {
+                "summary": "Create Ticket",
+                "tags": [
+                    "Tickets"
+                ],
+                "parameters": [
+                    {
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "title",
+                                    "ticket_type_id",
+                                    "estimated_hours",
+                                    "internal_estimated_hours"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Implement login page"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Build the login UI with email/password"
+                                    },
+                                    "ticket_type_id": {
+                                        "type": "string",
+                                        "format": "uuid",
+                                        "example": "t1y2p3e4-5678-90ab-cdef-1234567890ab"
+                                    },
+                                    "assigned_to": {
+                                        "type": "string",
+                                        "format": "uuid",
+                                        "example": "u1s2e3r4-5678-90ab-cdef-1234567890ab"
+                                    },
+                                    "estimated_hours": {
+                                        "type": "number",
+                                        "example": 8
+                                    },
+                                    "internal_estimated_hours": {
+                                        "type": "number",
+                                        "example": 6
+                                    },
+                                    "priority": {
+                                        "type": "string",
+                                        "enum": [
+                                            "low",
+                                            "medium",
+                                            "high",
+                                            "urgent"
+                                        ],
+                                        "example": "high"
+                                    },
+                                    "start_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-02-14"
+                                    },
+                                    "end_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-02-20"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Ticket created successfully"
+                    }
+                }
+            },
+            "get": {
+                "summary": "List Tickets",
+                "tags": [
+                    "Tickets"
+                ],
+                "parameters": [
+                    {
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 20
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of tickets with pagination"
+                    }
+                }
+            }
+        },
+        "/project/{projectId}/tickets/{ticketId}": {
+            "get": {
+                "summary": "Get Single Ticket",
+                "tags": [
+                    "Tickets"
+                ],
+                "parameters": [
+                    {
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "ticketId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ticket details"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update Ticket",
+                "tags": [
+                    "Tickets"
+                ],
+                "parameters": [
+                    {
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "ticketId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Updated title"
+                                    },
+                                    "priority": {
+                                        "type": "string",
+                                        "enum": [
+                                            "low",
+                                            "medium",
+                                            "high",
+                                            "urgent"
+                                        ]
+                                    },
+                                    "estimated_hours": {
+                                        "type": "number",
+                                        "example": 12
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Ticket updated"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete Ticket (Soft Delete)",
+                "tags": [
+                    "Tickets"
+                ],
+                "parameters": [
+                    {
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "ticketId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ticket deleted"
+                    }
+                }
+            }
+        },
+        "/project/{projectId}/tickets/{ticketId}/lifecycle": {
+            "patch": {
+                "summary": "Update Ticket Lifecycle Status",
+                "tags": [
+                    "Tickets"
+                ],
+                "parameters": [
+                    {
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "ticketId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "lifecycle_status"
+                                ],
+                                "properties": {
+                                    "lifecycle_status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "todo",
+                                            "in_progress",
+                                            "in_review",
+                                            "testing",
+                                            "done",
+                                            "closed",
+                                            "reopened"
+                                        ],
+                                        "example": "in_progress"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Status updated"
+                    }
+                }
+            }
+        },
+        "/project/{projectId}/tickets/{ticketId}/assignee": {
+            "patch": {
+                "summary": "Reassign Ticket",
+                "tags": [
+                    "Tickets"
+                ],
+                "parameters": [
+                    {
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "ticketId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "assigned_to"
+                                ],
+                                "properties": {
+                                    "assigned_to": {
+                                        "type": "string",
+                                        "format": "uuid",
+                                        "example": "u1s2e3r4-5678-90ab-cdef-1234567890ab"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Ticket reassigned"
+                    }
+                }
+            }
+        },
+        "/project/{projectId}/tickets/{ticketId}/time-entries": {
+            "post": {
+                "summary": "Create Time Entry (Assignee Only)",
+                "tags": [
+                    "Time Entries"
+                ],
+                "description": "Only the ticket assignee can add time entries",
+                "parameters": [
+                    {
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "ticketId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "work_date",
+                                    "hours"
+                                ],
+                                "properties": {
+                                    "work_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-02-13"
+                                    },
+                                    "hours": {
+                                        "type": "number",
+                                        "minimum": 0.01,
+                                        "maximum": 24,
+                                        "example": 4.5
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Implemented login validation"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Time entry created"
+                    },
+                    "403": {
+                        "description": "Not the ticket assignee"
+                    }
+                }
+            },
+            "get": {
+                "summary": "List Time Entries",
+                "tags": [
+                    "Time Entries"
+                ],
+                "parameters": [
+                    {
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "ticketId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 20
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of time entries",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "success": true,
+                                    "data": {
+                                        "data": [
+                                            {
+                                                "id": "e1n2t3r4-5678-90ab-cdef-1234567890ab",
+                                                "ticket_id": "t1c2k3t4-5678-90ab-cdef-1234567890ab",
+                                                "ticket_code": "ECOM-42",
+                                                "work_date": "2026-02-13",
+                                                "hours": 4.5,
+                                                "description": "Implemented login validation"
+                                            }
+                                        ],
+                                        "meta": {
+                                            "page": 1,
+                                            "limit": 20,
+                                            "total": 1,
+                                            "has_more": false
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/project/{projectId}/tickets/{ticketId}/time-entries/{entryId}": {
+            "get": {
+                "summary": "Get Single Time Entry",
+                "tags": [
+                    "Time Entries"
+                ],
+                "parameters": [
+                    {
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "ticketId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "entryId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Time entry details"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update Time Entry (Owner Only)",
+                "tags": [
+                    "Time Entries"
+                ],
+                "description": "Only the user who created the entry can update it",
+                "parameters": [
+                    {
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "ticketId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "entryId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "work_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-02-14"
+                                    },
+                                    "hours": {
+                                        "type": "number",
+                                        "example": 5.0
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Updated description"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Time entry updated"
+                    },
+                    "403": {
+                        "description": "Not the entry owner"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete Time Entry (Owner Only)",
+                "tags": [
+                    "Time Entries"
+                ],
+                "description": "Only the user who created the entry can delete it",
+                "parameters": [
+                    {
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "ticketId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "entryId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Time entry deleted"
+                    },
+                    "403": {
+                        "description": "Not the entry owner"
+                    }
+                }
+            }
+        },
+        "/project/{projectId}/tickets/{ticketId}/history": {
+            "get": {
+                "summary": "Get Ticket History",
+                "tags": [
+                    "Ticket History"
+                ],
+                "description": "View all changes made to the ticket",
+                "parameters": [
+                    {
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "ticketId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 20
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ticket history with pagination",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "success": true,
+                                    "data": {
+                                        "data": [
+                                            {
+                                                "id": "h1s2t3o4-5678-90ab-cdef-1234567890ab",
+                                                "ticket_id": "t1c2k3t4-5678-90ab-cdef-1234567890ab",
+                                                "changed_by": "u1s2e3r4-5678-90ab-cdef-1234567890ab",
+                                                "changed_by_name": "John Doe",
+                                                "field_name": "time_entry_added",
+                                                "old_value": null,
+                                                "new_value": "2026-02-13",
+                                                "note": null,
+                                                "created_at": "2026-02-13T10:30:00Z"
+                                            }
+                                        ],
+                                        "meta": {
+                                            "page": 1,
+                                            "limit": 20,
+                                            "total": 1,
+                                            "has_more": false
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

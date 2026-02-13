@@ -71,7 +71,7 @@ func QueryBinder(c *gin.Context, req any, entity string) error {
 
 func PaginationBinder(c *gin.Context, entity string) (*common.Pagination, error) {
 	req := common.Pagination{}
-	if err := c.ShouldBindQuery(req); err != nil {
+	if err := c.ShouldBindQuery(&req); err != nil {
 		return nil, err
 	}
 	req.Normalize()

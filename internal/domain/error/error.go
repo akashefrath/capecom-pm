@@ -21,6 +21,14 @@ var (
 	ErrDuplicateProject     = errors.New("duplicate_project")
 	ErrProjectAssetNotFound = errors.New("project_asset_not_found")
 
+	// Ticket errors
+	ErrTicketNotFound     = errors.New("ticket_not_found")
+	ErrDuplicateTicket    = errors.New("duplicate_ticket")
+	ErrTicketTypeNotFound = errors.New("ticket_type_not_found")
+	ErrNotProjectMember   = errors.New("not_project_member")
+	ErrNotTicketAssignee  = errors.New("not_ticket_assignee")
+	ErrTimeEntryNotFound  = errors.New("time_entry_not_found")
+
 	// File errors
 	ErrFileNotFound    = errors.New("file_not_found")
 	ErrFileNotUploaded = errors.New("file_not_uploaded")

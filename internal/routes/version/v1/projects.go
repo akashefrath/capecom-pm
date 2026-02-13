@@ -36,4 +36,26 @@ func Projects(v1 *gin.RouterGroup, c *container.Container) {
 	project.POST("/:projectId/members", th.AssignMembers)
 	project.DELETE("/:projectId/members", th.RemoveMembers)
 	project.GET("/:projectId/members", th.GetMembers)
+
+	// tickets
+	tk := c.Handler.TicketHandler
+	project.POST("/:projectId/tickets", tk.CreateTicket)
+	project.GET("/:projectId/tickets", tk.GetTickets)
+	project.GET("/:projectId/tickets/:ticketId", tk.GetTicket)
+	project.PUT("/:projectId/tickets/:ticketId", tk.UpdateTicket)
+	project.PATCH("/:projectId/tickets/:ticketId/lifecycle", tk.UpdateLifecycleStatus)
+	project.PATCH("/:projectId/tickets/:ticketId/assignee", tk.UpdateAssignee)
+	project.DELETE("/:projectId/tickets/:ticketId", tk.DeleteTicket)
+
+	// time entries
+	te := c.Handler.TimeEntryHandler
+	project.POST("/:projectId/tickets/:ticketId/time-entries", te.CreateTimeEntry)
+	project.GET("/:projectId/tickets/:ticketId/time-entries", te.GetTimeEntries)
+	project.GET("/:projectId/tickets/:ticketId/time-entries/:entryId", te.GetTimeEntry)
+	project.PUT("/:projectId/tickets/:ticketId/time-entries/:entryId", te.UpdateTimeEntry)
+	project.DELETE("/:projectId/tickets/:ticketId/time-entries/:entryId", te.DeleteTimeEntry)
+
+	// ticket history
+	hh := c.Handler.HistoryHandler
+	project.GET("/:projectId/tickets/:ticketId/history", hh.GetTicketHistory)
 }

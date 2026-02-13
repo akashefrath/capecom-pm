@@ -1,0 +1,176 @@
+{
+  "info": {
+    "name": "Capecom PM - Tickets & Time Entries",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {"key": "baseUrl", "value": "http://localhost:8080"},
+    {"key": "apiPath", "value": "/api/v1"},
+    {"key": "token", "value": "your-jwt-token-here"},
+    {"key": "projectId", "value": "550e8400-e29b-41d4-a716-446655440000"},
+    {"key": "ticketId", "value": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"},
+    {"key": "entryId", "value": "e1n2t3r4-5678-90ab-cdef-1234567890ab"}
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [{"key": "token", "value": "{{token}}", "type": "string"}]
+  },
+  "item": [
+    {
+      "name": "Tickets",
+      "item": [
+        {
+          "name": "Create Ticket",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}{{apiPath}}/project/{{projectId}}/tickets",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Implement login page\",\n  \"description\": \"Build the login UI with email/password\",\n  \"ticket_type_id\": \"t1y2p3e4-5678-90ab-cdef-1234567890ab\",\n  \"assigned_to\": \"u1s2e3r4-5678-90ab-cdef-1234567890ab\",\n  \"estimated_hours\": 8,\n  \"internal_estimated_hours\": 6,\n  \"priority\": \"high\",\n  \"start_date\": \"2026-02-14\",\n  \"end_date\": \"2026-02-20\",\n  \"due_date\": \"2026-02-20\"\n}"
+            }
+          }
+        }
+,
+        {
+          "name": "List Tickets",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}{{apiPath}}/project/{{projectId}}/tickets?page=1&limit=20",
+              "query": [
+                {"key": "page", "value": "1"},
+                {"key": "limit", "value": "20"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Single Ticket",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}{{apiPath}}/project/{{projectId}}/tickets/{{ticketId}}"
+          }
+        },
+        {
+          "name": "Update Ticket",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}{{apiPath}}/project/{{projectId}}/tickets/{{ticketId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated title\",\n  \"priority\": \"urgent\",\n  \"estimated_hours\": 12,\n  \"due_date\": \"2026-03-01\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Lifecycle Status",
+          "request": {
+            "method": "PATCH",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}{{apiPath}}/project/{{projectId}}/tickets/{{ticketId}}/lifecycle",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"lifecycle_status\": \"in_progress\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Reassign Ticket",
+          "request": {
+            "method": "PATCH",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}{{apiPath}}/project/{{projectId}}/tickets/{{ticketId}}/assignee",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"assigned_to\": \"u1s2e3r4-5678-90ab-cdef-1234567890ab\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Ticket",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}{{apiPath}}/project/{{projectId}}/tickets/{{ticketId}}"
+          }
+        }
+      ]
+    }
+,
+    {
+      "name": "Time Entries",
+      "item": [
+        {
+          "name": "Create Time Entry",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}{{apiPath}}/project/{{projectId}}/tickets/{{ticketId}}/time-entries",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"work_date\": \"2026-02-13\",\n  \"hours\": 4.5,\n  \"description\": \"Implemented login validation and error handling\"\n}"
+            }
+          }
+        },
+        {
+          "name": "List Time Entries",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}{{apiPath}}/project/{{projectId}}/tickets/{{ticketId}}/time-entries?page=1&limit=20",
+              "query": [
+                {"key": "page", "value": "1"},
+                {"key": "limit", "value": "20"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Single Time Entry",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}{{apiPath}}/project/{{projectId}}/tickets/{{ticketId}}/time-entries/{{entryId}}"
+          }
+        },
+        {
+          "name": "Update Time Entry",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}{{apiPath}}/project/{{projectId}}/tickets/{{ticketId}}/time-entries/{{entryId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hours\": 5.0,\n  \"description\": \"Implemented login validation, error handling, and unit tests\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Time Entry",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}{{apiPath}}/project/{{projectId}}/tickets/{{ticketId}}/time-entries/{{entryId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ticket History",
+      "item": [
+        {
+          "name": "Get Ticket History",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}{{apiPath}}/project/{{projectId}}/tickets/{{ticketId}}/history?page=1&limit=20",
+              "query": [
+                {"key": "page", "value": "1"},
+                {"key": "limit", "value": "20"}
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
