@@ -166,3 +166,11 @@ func (s *ProjectService) GetProjects(pg *common.Pagination) (*[]dto.ProjectRespo
 	}
 	return projects, nil
 }
+
+func (s *ProjectService) GetProject(projectID string) (*dto.ProjectResponse, error) {
+	projects, err := s.projectRepo.FindByUUID(projectID)
+	if err != nil {
+		return nil, err
+	}
+	return projects, nil
+}

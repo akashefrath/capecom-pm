@@ -17,6 +17,27 @@
             </set>
           </value>
         </entry>
+        <entry key="AppError">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/error/app_error.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="Assets">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/project.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="AssetsResponse">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/project.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="AuthHandler">
           <value>
             <set>
@@ -45,6 +66,20 @@
             </set>
           </value>
         </entry>
+        <entry key="BaseModelNoCB">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/models/base_model.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="BaseResponse">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/models/base_model.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="Claims">
           <value>
             <set>
@@ -64,6 +99,13 @@
           <value>
             <set>
               <option value="file://$PROJECT_DIR$/internal/container/container.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="CreateProjectRequest">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/project.go" />
             </set>
           </value>
         </entry>
@@ -95,6 +137,27 @@
             </set>
           </value>
         </entry>
+        <entry key="File">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/project.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="FileResponse">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/utils/file.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="Files">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/project.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="GroupRepo">
           <value>
             <set>
@@ -113,6 +176,13 @@
           <value>
             <set>
               <option value="file://$PROJECT_DIR$/internal/config/config.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ListWithMeta">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/list_with_pagination.go" />
             </set>
           </value>
         </entry>
@@ -165,10 +235,59 @@
             </set>
           </value>
         </entry>
+        <entry key="Pagination">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/common/pagination.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="PaginationMeta">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/list_with_pagination.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ProjectHandler">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/handlers/project/project_handler.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ProjectRepo">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/repositories/project/project.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ProjectResponse">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/project.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ProjectService">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/services/project/project.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="RedisRepo">
           <value>
             <set>
               <option value="file://$PROJECT_DIR$/internal/repositories/cache/redis.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="RefreshTokenRequest">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/auth/auth.go" />
             </set>
           </value>
         </entry>
@@ -190,6 +309,34 @@
           <value>
             <set>
               <option value="file://$PROJECT_DIR$/internal/container/service.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="Session">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/models/session.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="SessionRepo">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/repositories/session.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="UpdateProjectLifecycleRequest">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/project.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="UpdateProjectRequest">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/project.go" />
             </set>
           </value>
         </entry>
@@ -221,10 +368,24 @@
             </set>
           </value>
         </entry>
+        <entry key="UserResponse">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/user.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="UserService">
           <value>
             <set>
               <option value="file://$PROJECT_DIR$/internal/services/user.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="UtilNameId">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/user.go" />
             </set>
           </value>
         </entry>
@@ -249,7 +410,7 @@
         <entry key="file://$PROJECT_DIR$/internal/bootstrap/seeder.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1770550769335" />
+              <option name="lastModified" value="1770739973034" />
             </ScannedPath>
           </value>
         </entry>
@@ -320,7 +481,7 @@
         <entry key="file://$PROJECT_DIR$/internal/container/repository.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1770567037322" />
+              <option name="lastModified" value="1770739973034" />
               <option name="schema">
                 <list>
                   <option value="Repository" />
@@ -341,14 +502,56 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/internal/domain/common/pagination.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1770739973035" />
+              <option name="schema">
+                <list>
+                  <option value="Pagination" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/internal/domain/dto/auth/auth.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1770563732383" />
+              <option name="lastModified" value="1770739973035" />
               <option name="schema">
                 <list>
                   <option value="LoginRequest" />
                   <option value="LoginResponse" />
+                  <option value="RefreshTokenRequest" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/domain/dto/list_with_pagination.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1770739973035" />
+              <option name="schema">
+                <list>
+                  <option value="ListWithMeta" />
+                  <option value="PaginationMeta" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/domain/dto/project.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771056586798" />
+              <option name="schema">
+                <list>
+                  <option value="CreateProjectRequest" />
+                  <option value="UpdateProjectRequest" />
+                  <option value="UpdateProjectLifecycleRequest" />
+                  <option value="ProjectResponse" />
+                  <option value="AssetsResponse" />
                 </list>
               </option>
             </ScannedPath>
@@ -357,10 +560,36 @@
         <entry key="file://$PROJECT_DIR$/internal/domain/dto/user.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1770551790901" />
+              <option name="lastModified" value="1770739973036" />
               <option name="schema">
                 <list>
                   <option value="CreateUserRequest" />
+                  <option value="UserResponse" />
+                  <option value="UtilNameId" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/domain/dto/utils/file.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771052108208" />
+              <option name="schema">
+                <list>
+                  <option value="FileResponse" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/domain/error/app_error.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1770739973036" />
+              <option name="schema">
+                <list>
+                  <option value="AppError" />
                 </list>
               </option>
             </ScannedPath>
@@ -376,10 +605,24 @@
         <entry key="file://$PROJECT_DIR$/internal/domain/models/base_model.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1770552372144" />
+              <option name="lastModified" value="1770739973036" />
               <option name="schema">
                 <list>
                   <option value="BaseModel" />
+                  <option value="BaseModelNoCB" />
+                  <option value="BaseResponse" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/domain/models/session.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1770739973037" />
+              <option name="schema">
+                <list>
+                  <option value="Session" />
                 </list>
               </option>
             </ScannedPath>
@@ -400,7 +643,7 @@
         <entry key="file://$PROJECT_DIR$/internal/handlers/auth_handler.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1770567737982" />
+              <option name="lastModified" value="1770739973037" />
               <option name="schema">
                 <list>
                   <option value="AuthHandler" />
@@ -409,10 +652,22 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/internal/handlers/project/project_handler.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771049706054" />
+              <option name="schema">
+                <list>
+                  <option value="ProjectHandler" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/internal/handlers/user_handler.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1770552475265" />
+              <option name="lastModified" value="1770739973037" />
               <option name="schema">
                 <list>
                   <option value="UserHandler" />
@@ -448,7 +703,7 @@
         <entry key="file://$PROJECT_DIR$/internal/repositories/auth.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1770554119564" />
+              <option name="lastModified" value="1770739973038" />
               <option name="schema">
                 <list>
                   <option value="AuthRepo" />
@@ -496,7 +751,7 @@
         <entry key="file://$PROJECT_DIR$/internal/repositories/masters/group.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1770552595102" />
+              <option name="lastModified" value="1770739973038" />
               <option name="schema">
                 <list>
                   <option value="GroupRepo" />
@@ -508,7 +763,7 @@
         <entry key="file://$PROJECT_DIR$/internal/repositories/masters/master_data.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1770552597034" />
+              <option name="lastModified" value="1770739973039" />
               <option name="schema">
                 <list>
                   <option value="MasterDataRepo" />
@@ -526,6 +781,30 @@
               <option name="schema">
                 <list>
                   <option value="RoleRepo" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/repositories/project/project.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771056539933" />
+              <option name="schema">
+                <list>
+                  <option value="ProjectRepo" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/repositories/session.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1770739973039" />
+              <option name="schema">
+                <list>
+                  <option value="SessionRepo" />
                 </list>
               </option>
             </ScannedPath>
@@ -553,21 +832,28 @@
         <entry key="file://$PROJECT_DIR$/internal/routes/version/v1/admin/admin.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1770739940738" />
+              <option name="lastModified" value="1771048458057" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/internal/routes/version/v1/admin/user.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1770549465552" />
+              <option name="lastModified" value="1770739973041" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/internal/routes/version/v1/auth.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1770568627721" />
+              <option name="lastModified" value="1770739973041" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/routes/version/v1/projects.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771049706733" />
             </ScannedPath>
           </value>
         </entry>
@@ -590,10 +876,22 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/internal/services/project/project.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771049704332" />
+              <option name="schema">
+                <list>
+                  <option value="ProjectService" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/internal/services/user.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1770553162842" />
+              <option name="lastModified" value="1770739973042" />
               <option name="schema">
                 <list>
                   <option value="UserService" />
@@ -605,14 +903,14 @@
         <entry key="file://$PROJECT_DIR$/internal/utils/bind/bind.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1770553405795" />
+              <option name="lastModified" value="1770739973042" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/internal/utils/hash.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1770559562248" />
+              <option name="lastModified" value="1770739973043" />
             </ScannedPath>
           </value>
         </entry>
@@ -640,7 +938,7 @@
         <entry key="file://$PROJECT_DIR$/internal/utils/jwt/jwt.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1770568057376" />
+              <option name="lastModified" value="1770739973043" />
               <option name="schema">
                 <list>
                   <option value="Claims" />
@@ -667,7 +965,7 @@
         <entry key="file://$PROJECT_DIR$/internal/utils/response/error_mapper.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1770553360439" />
+              <option name="lastModified" value="1770739973043" />
             </ScannedPath>
           </value>
         </entry>
@@ -691,20 +989,30 @@
       <map>
         <entry key="admin_middleware" value="AdminMiddleware" />
         <entry key="api_response" value="APIResponse" />
+        <entry key="app_error" value="AppError" />
+        <entry key="assets" value="Assets" />
+        <entry key="assets_response" value="AssetsResponse" />
         <entry key="auth_handler" value="AuthHandler" />
         <entry key="auth_repo" value="AuthRepo" />
         <entry key="auth_service" value="AuthService" />
         <entry key="base_model" value="BaseModel" />
+        <entry key="base_model_no_cb" value="BaseModelNoCB" />
+        <entry key="base_response" value="BaseResponse" />
         <entry key="claims" value="Claims" />
         <entry key="config" value="Config" />
         <entry key="container" value="Container" />
+        <entry key="create_project_request" value="CreateProjectRequest" />
         <entry key="create_user_request" value="CreateUserRequest" />
         <entry key="db_config" value="DBConfig" />
         <entry key="department_repo" value="DepartmentRepo" />
         <entry key="designation_repo" value="DesignationRepo" />
+        <entry key="file" value="File" />
+        <entry key="file_response" value="FileResponse" />
+        <entry key="files" value="Files" />
         <entry key="group_repo" value="GroupRepo" />
         <entry key="handler" value="Handler" />
         <entry key="jwt_config" value="JWTConfig" />
+        <entry key="list_with_meta" value="ListWithMeta" />
         <entry key="login_request" value="LoginRequest" />
         <entry key="login_response" value="LoginResponse" />
         <entry key="manager" value="Manager" />
@@ -712,18 +1020,31 @@
         <entry key="master_data_repo" value="MasterDataRepo" />
         <entry key="middleware" value="Middleware" />
         <entry key="page_meta" value="PageMeta" />
+        <entry key="pagination" value="Pagination" />
+        <entry key="pagination_meta" value="PaginationMeta" />
+        <entry key="project_handler" value="ProjectHandler" />
+        <entry key="project_repo" value="ProjectRepo" />
+        <entry key="project_response" value="ProjectResponse" />
+        <entry key="project_service" value="ProjectService" />
         <entry key="redis_repo" value="RedisRepo" />
+        <entry key="refresh_token_request" value="RefreshTokenRequest" />
         <entry key="repository" value="Repository" />
         <entry key="role_repo" value="RoleRepo" />
         <entry key="row" value="row" />
         <entry key="service" value="Service" />
+        <entry key="session" value="Session" />
+        <entry key="session_repo" value="SessionRepo" />
+        <entry key="update_project_lifecycle_request" value="UpdateProjectLifecycleRequest" />
+        <entry key="update_project_request" value="UpdateProjectRequest" />
         <entry key="user" value="User" />
         <entry key="user_handler" value="UserHandler" />
         <entry key="user_middleware" value="UserMiddleware" />
         <entry key="user_repo" value="UserRepo" />
+        <entry key="user_response" value="UserResponse" />
         <entry key="user_service" value="UserService" />
+        <entry key="util_name_id" value="UtilNameId" />
       </map>
     </option>
-    <option name="lastTimeChecked" value="1770739634108" />
+    <option name="lastTimeChecked" value="1771046286230" />
   </component>
 </project>

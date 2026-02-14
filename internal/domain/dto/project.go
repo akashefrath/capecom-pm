@@ -1,6 +1,7 @@
 package dto
 
 import (
+	dto_utils "capecom-pm/internal/domain/dto/utils"
 	"capecom-pm/internal/domain/models"
 	"time"
 )
@@ -39,6 +40,7 @@ type UpdateProjectLifecycleRequest struct {
 }
 
 type ProjectResponse struct {
+	InternalID             int64      `json:"-" gorm:"internal_id"`
 	Id                     string     `json:"id"`
 	ProjectName            string     `json:"project_name"`
 	ProjectCode            string     `json:"project_code"`
@@ -53,6 +55,19 @@ type ProjectResponse struct {
 	InternalEstimatedHours float64    `json:"internal_estimated_hours"`
 	PrimaryRepoURL         *string    `json:"primary_repo_url"`
 	Status                 string     `json:"status"`
+	TicketCount            int        `json:"ticket_count"`
+	TaskCount              int        `json:"task_count"`
+	TotalBookedHours       int        `json:"total_booked_hours"`
+
+	Assets []AssetsResponse `json:"assets,omitempty" gorm:"-"`
 
 	models.BaseResponse
+}
+type AssetsResponse struct {
+	Id          string                 `json:"id"`
+	Title       string                 `json:"title"`
+	Type        string                 `json:"type"`
+	Description string                 `json:"description"`
+	Content     string                 `json:"content"`
+	Files       dto_utils.FileResponse `json:"file,omitempty" gorm:"embedded;embeddedPrefix:file_"`
 }

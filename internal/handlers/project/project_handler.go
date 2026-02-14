@@ -109,3 +109,17 @@ func (h *ProjectHandler) GetProjects(c *gin.Context) {
 		Data:    data,
 	})
 }
+func (h *ProjectHandler) GetProject(c *gin.Context) {
+	projectId := c.Param("projectId")
+	//userID := utils.GetUserID(c)
+
+	data, err := h.ProjectService.GetProject(projectId)
+	if err != nil {
+		response.FromError(c, err)
+		return
+	}
+	response.JSON(c, http.StatusOK, response.APIResponse{
+		Success: true,
+		Data:    data,
+	})
+}

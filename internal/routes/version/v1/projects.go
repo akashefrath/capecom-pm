@@ -16,6 +16,7 @@ func Projects(v1 *gin.RouterGroup, c *container.Container) {
 	project.Use(c.Middleware.RABCMiddleware.IsManagerOrAdmin())
 	project.POST("", h.CreateProject)
 	project.GET("", h.GetProjects)
+	project.GET("/:projectId", h.GetProject)
 	project.PUT("/update/:id", h.UpdateProject)
 	project.PATCH("/lifecycle/:id", h.UpdateLifecycleStatus)
 	project.DELETE("/delete/:id", h.DeleteProject)
