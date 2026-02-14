@@ -10,7 +10,7 @@ import (
 )
 
 func ConnectDB(dbConfig DBConfig) *gorm.DB {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true&charset=utf8mb4&loc=Local",
 		dbConfig.DBUser,
 		dbConfig.DBPass,
 		dbConfig.DBHost,
@@ -18,22 +18,30 @@ func ConnectDB(dbConfig DBConfig) *gorm.DB {
 		dbConfig.DBName,
 	)
 
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	// 1. Use a more robust Logger to see slow queries caused by latency
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
+		//	Logger: logger.Default.LogMode(logger.Info),
+
+		PrepareStmt: true, // Cache prepared statements to reduce round trips
+	})
+
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
+
+	sqlDB, err := db.DB()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	sqlDB, _ := db.DB()
-	err = sqlDB.Ping()
-	if err != nil {
-		log.Fatal(err)
-		return nil
-	}
-	println("opened")
-
+	// 2. Optimized Pool Settings
+	// Keep more idle connections than usual because opening new ones over 200ms is slow.
 	sqlDB.SetMaxIdleConns(dbConfig.DBMaxIdle)
 	sqlDB.SetMaxOpenConns(dbConfig.DBMaxOpen)
-	sqlDB.SetConnMaxLifetime(time.Minute * time.Duration(dbConfig.DBMaxLifetime))
+
+	// Prevents "Connection Reset by Peer" common in long-distance networking
+	sqlDB.SetConnMaxLifetime(time.Minute * 30)
+	sqlDB.SetConnMaxIdleTime(time.Minute * 10)
 
 	return db
 }

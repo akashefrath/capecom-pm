@@ -128,10 +128,22 @@ func (s *TicketService) GetByUUID(ticketUUID string) (*dto.TicketResponse, error
 	return s.ticketRepo.FindByUUID(ticketUUID)
 }
 
-func (s *TicketService) GetAllByProject(projectUUID string, pg *common.Pagination) (*dto.ListWithMeta, error) {
+func (s *TicketService) GetAllByProject(projectUUID string, pg *common.Pagination, userID string) (*dto.ListWithMeta, error) {
 	projectID, err := s.projectRepo.GetInternalIDByUUID(projectUUID)
+
 	if err != nil {
 		return nil, domainerrors.NewWithCode(http.StatusNotFound, domainerrors.ErrProjectNotFound.Error(), "ticket_service", "resolve_project")
+	}
+
+	userId, err := s.redisRepo.GetUserIdByUuid(userID, *s.userRepo)
+
+	if err != nil || userId == nil {
+		return nil, domainerrors.NewWithCode(http.StatusUnauthorized, domainerrors.ErrUnauthorized.Error(), "ticket_service", "resolve_project")
+	}
+
+	member, err := s.projectRepo.IsUserProjectMember(*userId, projectUUID)
+	if err != nil || !member {
+		return nil, domainerrors.NewWithCode(http.StatusUnauthorized, domainerrors.ErrUnauthorized.Error(), "ticket_service", "resolve_project")
 	}
 
 	total, err := s.ticketRepo.CountByProjectID(projectID)

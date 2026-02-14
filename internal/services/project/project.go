@@ -159,18 +159,43 @@ func (s *ProjectService) Delete(uuid string) error {
 	return s.projectRepo.Delete(uuid)
 }
 
-func (s *ProjectService) GetProjects(pg *common.Pagination) (*[]dto.ProjectResponse, error) {
-	projects, err := s.projectRepo.GetAll(pg)
+func (s *ProjectService) GetProjects(pg *common.Pagination, userID string) (*[]dto.ProjectResponse, error) {
+	isAdmin, err := s.userRepo.IsManagerOrAdmin(userID)
 	if err != nil {
 		return nil, err
 	}
-	return projects, nil
+
+	// 1. Admin/Manager: Fetch all and return immediately
+	if isAdmin {
+		return s.projectRepo.GetAll(pg)
+	}
+
+	// 2. Regular User: Resolve ID and filter access
+	uID, err := s.redisRepo.GetUserIdByUuid(userID, *s.userRepo)
+	if err != nil || uID == nil {
+		return nil, domainerrors.NewWithCode(http.StatusUnauthorized, domainerrors.ErrUnauthorized.Error(), "project_service", "auth")
+	}
+
+	return s.projectRepo.GetAllForUser(pg, *uID)
 }
 
-func (s *ProjectService) GetProject(projectID string) (*dto.ProjectResponse, error) {
-	projects, err := s.projectRepo.FindByUUID(projectID)
+func (s *ProjectService) GetProject(projectID string, userID string) (*dto.ProjectResponse, error) {
+	// 1. Check roles first (High-level permission)
+	isAdmin, err := s.userRepo.IsManagerOrAdmin(userID)
 	if err != nil {
 		return nil, err
 	}
-	return projects, nil
+
+	// 2. If Admin/Manager, fetch directly and return early
+	if isAdmin {
+		return s.projectRepo.FindByUUID(projectID)
+	}
+
+	// 3. For regular users, resolve internal ID and check access in one go
+	uID, err := s.redisRepo.GetUserIdByUuid(userID, *s.userRepo)
+	if err != nil || uID == nil {
+		return nil, domainerrors.NewWithCode(http.StatusUnauthorized, domainerrors.ErrUnauthorized.Error(), "project_service", "auth")
+	}
+
+	return s.projectRepo.FindByUUIDIfUserHaveAccess(projectID, *uID)
 }

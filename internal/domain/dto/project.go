@@ -56,8 +56,8 @@ type ProjectResponse struct {
 	PrimaryRepoURL         *string    `json:"primary_repo_url"`
 	Status                 string     `json:"status"`
 	TicketCount            int        `json:"ticket_count"`
-	TaskCount              int        `json:"task_count"`
-	TotalBookedHours       int        `json:"total_booked_hours"`
+	//TaskCount              int        `json:"task_count"`
+	TotalBookedHours float64 `json:"total_booked_hours"`
 
 	Assets []AssetsResponse `json:"assets,omitempty" gorm:"-"`
 

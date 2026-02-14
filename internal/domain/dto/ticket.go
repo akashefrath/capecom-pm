@@ -47,6 +47,7 @@ type UpdateTicketAssigneeRequest struct {
 }
 
 type TicketResponse struct {
+	InternalProjectID      uint64     `json:"-" gorm:"internal_project_id"`
 	Id                     string     `json:"id"`
 	ProjectID              string     `json:"project_id"`
 	Code                   string     `json:"code"`

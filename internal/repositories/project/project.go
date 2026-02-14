@@ -56,6 +56,35 @@ func (r *ProjectRepo) FindByUUID(uuid string) (*dto.ProjectResponse, error) {
 	}
 	return &result, nil
 }
+func (r *ProjectRepo) FindByUUIDIfUserHaveAccess(uuid string, userID int64) (*dto.ProjectResponse, error) {
+	var result dto.ProjectResponse
+
+	err := r.DB.Transaction(func(tx *gorm.DB) error {
+		err := tx.Raw(r.selectQueryMember("p.uuid", "", `, 
+       (SELECT COUNT(t.id) FROM tickets t 
+        WHERE t.project_id = p.id AND t.deleted_at IS NULL) AS ticket_count,
+       (SELECT COALESCE(SUM(hours), 0) FROM time_entries te
+        WHERE te.project_id = p.id AND te.deleted_at IS NULL) AS total_booked_hours`,
+			` LEFT JOIN tickets t on t.project_id = p.id`), userID, uuid).Scan(&result).Error
+
+		err = tx.Raw(`SELECT p.uuid AS id, p.title , p.asset_type ,p.description ,p.content,
+       f.uuid as file_id, f.storage_key as file_storage_key, f.mime_type as file_mime_type, f.size_bytes as files_size_bytes, f.storage as storage
+       FROM project_assets as p 
+       LEFT JOIN files f ON f.id = p.file_id 
+       WHERE p.project_id = ? AND p.deleted_at IS NULL`,
+			result.InternalID).Scan(&result.Assets).Error
+
+		return err
+	})
+
+	if err != nil {
+		return nil, err
+	}
+	if result.Id == "" {
+		return nil, domainerrors.ErrProjectNotFound
+	}
+	return &result, nil
+}
 
 func (r *ProjectRepo) findByID(id uint64) (*dto.ProjectResponse, error) {
 	var result dto.ProjectResponse
@@ -72,6 +101,14 @@ func (r *ProjectRepo) findByID(id uint64) (*dto.ProjectResponse, error) {
 func (r *ProjectRepo) GetAll(pg *common.Pagination) (*[]dto.ProjectResponse, error) {
 	var results []dto.ProjectResponse
 	err := r.DB.Raw(r.selectQuery("", pg.BuildPaginationQuery(), "", "")).Scan(&results).Error
+	if err != nil {
+		return nil, err
+	}
+	return &results, nil
+}
+func (r *ProjectRepo) GetAllForUser(pg *common.Pagination, userID int64) (*[]dto.ProjectResponse, error) {
+	var results []dto.ProjectResponse
+	err := r.DB.Raw(r.selectQueryMember("", pg.BuildPaginationQuery(), "", ""), userID).Scan(&results).Error
 	if err != nil {
 		return nil, err
 	}
@@ -111,6 +148,22 @@ func (r *ProjectRepo) Delete(uuid string) error {
 	}
 	return nil
 }
+func (r *ProjectRepo) IsUserProjectMember(userID int64, projectID string) (bool, error) {
+	var exists bool
+
+	err := r.DB.Raw(`
+    SELECT EXISTS (
+			SELECT 1
+			FROM project_members
+			LEFT JOIN projects p ON p.uuid = ?
+			WHERE project_id = p.id AND user_id = ?
+			
+		)
+	`, projectID, userID).Scan(&exists).Error
+
+	return exists, err
+
+}
 
 func (r *ProjectRepo) selectQuery(whereCol string, pagination string, extraSelect string, extraJoin string) string {
 	q := `SELECT p.id AS internal_id, p.uuid AS id, p.project_name, p.project_code,
@@ -130,13 +183,37 @@ func (r *ProjectRepo) selectQuery(whereCol string, pagination string, extraSelec
 	if pagination != "" {
 		q += ` ` + pagination
 	}
-	finalQ := q
-	if extraSelect != "" && extraJoin != "" {
-		finalQ = fmt.Sprintf(q, extraSelect, extraJoin)
 
-	} else {
-		finalQ = fmt.Sprintf(q, "", "")
+	q = fmt.Sprintf(q, extraSelect, extraJoin)
+
+	return q
+}
+
+func (r *ProjectRepo) selectQueryMember(whereCol string, pagination string, extraSelect string, extraJoin string) string {
+	q := `SELECT p.id AS internal_id, p.uuid AS id, p.project_name, p.project_code,
+		c.uuid AS client_id, p.client_name_snapshot AS client_name,
+		p.lifecycle_status, p.start_date, p.internal_start_date,
+		p.end_date, p.internal_end_date, p.estimated_hours,
+		p.internal_estimated_hours, p.primary_repo_url,
+		p.status, p.created_at, p.updated_at
+		
+		%s
+		
+			  
+		FROM projects p
+		INNER JOIN project_members pme ON pme.project_id = p.id
+		LEFT JOIN clients c ON c.id = p.client_id AND c.deleted_at IS NULL
+		%s
+		
+		WHERE p.deleted_at IS NULL AND pme.user_id = ?`
+	if whereCol != "" {
+		q += ` AND ` + whereCol + ` = ?`
+	}
+	if pagination != "" {
+		q += ` ` + pagination
 	}
 
-	return finalQ
+	q = fmt.Sprintf(q, extraSelect, extraJoin)
+
+	return q
 }

@@ -27,6 +27,7 @@ var (
 	ErrTicketTypeNotFound = errors.New("ticket_type_not_found")
 	ErrNotProjectMember   = errors.New("not_project_member")
 	ErrNotTicketAssignee  = errors.New("not_ticket_assignee")
+	ErrHoursExceeded      = errors.New("hours_exceeded")
 	ErrTimeEntryNotFound  = errors.New("time_entry_not_found")
 
 	// File errors

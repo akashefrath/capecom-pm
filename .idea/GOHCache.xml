@@ -109,6 +109,13 @@
             </set>
           </value>
         </entry>
+        <entry key="CreateTicketRequest">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/ticket.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="CreateUserRequest">
           <value>
             <set>
@@ -169,6 +176,13 @@
           <value>
             <set>
               <option value="file://$PROJECT_DIR$/internal/container/handler.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="HistoryRepo">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/repositories/ticket/history.go" />
             </set>
           </value>
         </entry>
@@ -284,6 +298,13 @@
             </set>
           </value>
         </entry>
+        <entry key="RABCMiddleware">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/middleware/rbac.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="RedisRepo">
           <value>
             <set>
@@ -333,6 +354,48 @@
             </set>
           </value>
         </entry>
+        <entry key="TicketHandler">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/handlers/ticket/ticket_handler.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="TicketRepo">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/repositories/ticket/ticket.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="TicketResponse">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/ticket.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="TicketService">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/services/ticket/ticket.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="TimeEntryRepo">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/repositories/ticket/time_entry.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="TimeEntryService">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/services/ticket/time_entry.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="UpdateProjectLifecycleRequest">
           <value>
             <set>
@@ -344,6 +407,27 @@
           <value>
             <set>
               <option value="file://$PROJECT_DIR$/internal/domain/dto/project.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="UpdateTicketAssigneeRequest">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/ticket.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="UpdateTicketLifecycleRequest">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/ticket.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="UpdateTicketRequest">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/ticket.go" />
             </set>
           </value>
         </entry>
@@ -446,7 +530,7 @@
         <entry key="file://$PROJECT_DIR$/internal/config/database.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771058094250" />
+              <option name="lastModified" value="1771058903089" />
             </ScannedPath>
           </value>
         </entry>
@@ -552,7 +636,7 @@
         <entry key="file://$PROJECT_DIR$/internal/domain/dto/project.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771056586798" />
+              <option name="lastModified" value="1771081942601" />
               <option name="schema">
                 <list>
                   <option value="CreateProjectRequest" />
@@ -560,6 +644,22 @@
                   <option value="UpdateProjectLifecycleRequest" />
                   <option value="ProjectResponse" />
                   <option value="AssetsResponse" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/domain/dto/ticket.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771080421355" />
+              <option name="schema">
+                <list>
+                  <option value="CreateTicketRequest" />
+                  <option value="UpdateTicketRequest" />
+                  <option value="UpdateTicketLifecycleRequest" />
+                  <option value="UpdateTicketAssigneeRequest" />
+                  <option value="TicketResponse" />
                 </list>
               </option>
             </ScannedPath>
@@ -606,7 +706,7 @@
         <entry key="file://$PROJECT_DIR$/internal/domain/error/error.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1770554416489" />
+              <option name="lastModified" value="1771082275566" />
             </ScannedPath>
           </value>
         </entry>
@@ -663,10 +763,22 @@
         <entry key="file://$PROJECT_DIR$/internal/handlers/project/project_handler.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771049706054" />
+              <option name="lastModified" value="1771060291300" />
               <option name="schema">
                 <list>
                   <option value="ProjectHandler" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/handlers/ticket/ticket_handler.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771061134652" />
+              <option name="schema">
+                <list>
+                  <option value="TicketHandler" />
                 </list>
               </option>
             </ScannedPath>
@@ -691,6 +803,18 @@
               <option name="schema">
                 <list>
                   <option value="AdminMiddleware" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/middleware/rbac.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771060849403" />
+              <option name="schema">
+                <list>
+                  <option value="RABCMiddleware" />
                 </list>
               </option>
             </ScannedPath>
@@ -797,7 +921,7 @@
         <entry key="file://$PROJECT_DIR$/internal/repositories/project/project.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771056539933" />
+              <option name="lastModified" value="1771081830121" />
               <option name="schema">
                 <list>
                   <option value="ProjectRepo" />
@@ -813,6 +937,42 @@
               <option name="schema">
                 <list>
                   <option value="SessionRepo" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/repositories/ticket/history.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771085475062" />
+              <option name="schema">
+                <list>
+                  <option value="HistoryRepo" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/repositories/ticket/ticket.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771080363535" />
+              <option name="schema">
+                <list>
+                  <option value="TicketRepo" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/repositories/ticket/time_entry.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771082669843" />
+              <option name="schema">
+                <list>
+                  <option value="TimeEntryRepo" />
                 </list>
               </option>
             </ScannedPath>
@@ -861,7 +1021,7 @@
         <entry key="file://$PROJECT_DIR$/internal/routes/version/v1/projects.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771049706733" />
+              <option name="lastModified" value="1771079797424" />
             </ScannedPath>
           </value>
         </entry>
@@ -887,10 +1047,34 @@
         <entry key="file://$PROJECT_DIR$/internal/services/project/project.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771049704332" />
+              <option name="lastModified" value="1771060364428" />
               <option name="schema">
                 <list>
                   <option value="ProjectService" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/services/ticket/ticket.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771061591762" />
+              <option name="schema">
+                <list>
+                  <option value="TicketService" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/services/ticket/time_entry.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771085445851" />
+              <option name="schema">
+                <list>
+                  <option value="TimeEntryService" />
                 </list>
               </option>
             </ScannedPath>
@@ -946,7 +1130,7 @@
         <entry key="file://$PROJECT_DIR$/internal/utils/jwt/jwt.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1770739973043" />
+              <option name="lastModified" value="1771084949501" />
               <option name="schema">
                 <list>
                   <option value="Claims" />
@@ -1010,6 +1194,7 @@
         <entry key="config" value="Config" />
         <entry key="container" value="Container" />
         <entry key="create_project_request" value="CreateProjectRequest" />
+        <entry key="create_ticket_request" value="CreateTicketRequest" />
         <entry key="create_user_request" value="CreateUserRequest" />
         <entry key="db_config" value="DBConfig" />
         <entry key="department_repo" value="DepartmentRepo" />
@@ -1019,6 +1204,7 @@
         <entry key="files" value="Files" />
         <entry key="group_repo" value="GroupRepo" />
         <entry key="handler" value="Handler" />
+        <entry key="history_repo" value="HistoryRepo" />
         <entry key="jwt_config" value="JWTConfig" />
         <entry key="list_with_meta" value="ListWithMeta" />
         <entry key="login_request" value="LoginRequest" />
@@ -1035,6 +1221,7 @@
         <entry key="project_response" value="ProjectResponse" />
         <entry key="project_service" value="ProjectService" />
         <entry key="r2_config" value="R2Config" />
+        <entry key="rabc_middleware" value="RABCMiddleware" />
         <entry key="redis_repo" value="RedisRepo" />
         <entry key="refresh_token_request" value="RefreshTokenRequest" />
         <entry key="repository" value="Repository" />
@@ -1043,8 +1230,17 @@
         <entry key="service" value="Service" />
         <entry key="session" value="Session" />
         <entry key="session_repo" value="SessionRepo" />
+        <entry key="ticket_handler" value="TicketHandler" />
+        <entry key="ticket_repo" value="TicketRepo" />
+        <entry key="ticket_response" value="TicketResponse" />
+        <entry key="ticket_service" value="TicketService" />
+        <entry key="time_entry_repo" value="TimeEntryRepo" />
+        <entry key="time_entry_service" value="TimeEntryService" />
         <entry key="update_project_lifecycle_request" value="UpdateProjectLifecycleRequest" />
         <entry key="update_project_request" value="UpdateProjectRequest" />
+        <entry key="update_ticket_assignee_request" value="UpdateTicketAssigneeRequest" />
+        <entry key="update_ticket_lifecycle_request" value="UpdateTicketLifecycleRequest" />
+        <entry key="update_ticket_request" value="UpdateTicketRequest" />
         <entry key="user" value="User" />
         <entry key="user_handler" value="UserHandler" />
         <entry key="user_middleware" value="UserMiddleware" />

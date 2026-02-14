@@ -105,7 +105,7 @@ func (r *TicketRepo) GenerateCode(projectID int64) (string, error) {
 }
 
 func (r *TicketRepo) selectQuery(whereCol string, extra ...string) string {
-	q := `SELECT t.uuid AS id, p.uuid AS project_id, t.code, t.title, t.description, t.branch,
+	q := `SELECT t.uuid AS id, p.id AS internal_project_id, p.uuid AS project_id, t.code, t.title, t.description, t.branch,
 		tt.uuid AS ticket_type_id, tt.name AS ticket_type_name,
 		ua.uuid AS assigned_to, ua.name AS assigned_to_name,
 		ub.uuid AS assigned_by, ub.name AS assigned_by_name,

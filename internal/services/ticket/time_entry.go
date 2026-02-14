@@ -1,6 +1,7 @@
 package ticketsvc
 
 import (
+	"capecom-pm/internal/config"
 	"capecom-pm/internal/domain/common"
 	"capecom-pm/internal/domain/dto"
 	domainerrors "capecom-pm/internal/domain/error"
@@ -9,6 +10,7 @@ import (
 	cacherepo "capecom-pm/internal/repositories/cache"
 	ticketrepo "capecom-pm/internal/repositories/ticket"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/google/uuid"
@@ -60,28 +62,35 @@ func (s *TimeEntryService) Create(ticketUUID string, req dto.CreateTimeEntryRequ
 
 	// verify user is assigned to ticket
 	assignedUserID, err := s.timeEntryRepo.GetTicketAssignedUserID(ticketID)
+
 	if err != nil {
 		return nil, err
 	}
+
 	if assignedUserID == nil || userID == nil || *assignedUserID != int64(*userID) {
 		return nil, domainerrors.NewWithCode(http.StatusForbidden, domainerrors.ErrNotTicketAssignee.Error(), "time_entry_service", "check_assignee")
+	}
+	workDate, _ := time.Parse("2006-01-02", req.WorkDate)
+	date, err := s.timeEntryRepo.GetTotalHoursByUserIDByDate(int64(*userID), workDate)
+	maxAllowedHours, _ := strconv.ParseFloat(config.GetEnvMust("MAX_BOOK_HOURS_PER_DAY"), 64)
+	if err != nil {
+		// Fallback to a default if the env is messed up
+		maxAllowedHours = 8.0
+	}
+	if date != nil && ((*date + req.Hours) > maxAllowedHours) {
+		return nil, domainerrors.NewWithCode(http.StatusForbidden, domainerrors.ErrHoursExceeded.Error(), "time_entry_service", "check_hours")
 	}
 
 	// get project_id from ticket
 	ticket, err := s.ticketRepo.FindByUUID(ticketUUID)
-	if err != nil {
-		return nil, err
-	}
-	projectID, err := s.ticketRepo.GetTicketInternalIDByUUID(ticket.ProjectID)
-	if err != nil {
-		return nil, err
-	}
 
-	workDate, _ := time.Parse("2006-01-02", req.WorkDate)
+	if err != nil {
+		return nil, err
+	}
 
 	entry := &models.TimeEntry{
 		TicketID:    uint64(ticketID),
-		ProjectID:   uint64(projectID),
+		ProjectID:   ticket.InternalProjectID,
 		UserID:      *userID,
 		WorkDate:    workDate,
 		Hours:       req.Hours,
@@ -90,6 +99,7 @@ func (s *TimeEntryService) Create(ticketUUID string, req dto.CreateTimeEntryRequ
 	}
 
 	result, err := s.timeEntryRepo.Create(entry)
+
 	if err != nil {
 		return nil, err
 	}
@@ -204,5 +214,8 @@ func (s *TimeEntryService) logHistory(ticketID int64, userID uint64, fieldName s
 		NewValue:  newValue,
 		Note:      note,
 	}
-	s.historyRepo.Create(history)
+	err := s.historyRepo.Create(history)
+	if err != nil {
+		return
+	}
 }

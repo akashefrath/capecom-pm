@@ -38,10 +38,11 @@ func (h *TicketHandler) CreateTicket(c *gin.Context) {
 
 func (h *TicketHandler) GetTickets(c *gin.Context) {
 	projectUUID := c.Param("projectId")
+	userID := utils.GetUserID(c)
 
 	pg, _ := bind.PaginationBinder(c, "get_tickets")
 
-	result, err := h.TicketService.GetAllByProject(projectUUID, pg)
+	result, err := h.TicketService.GetAllByProject(projectUUID, pg, userID)
 	if err != nil {
 		response.FromError(c, err)
 		return

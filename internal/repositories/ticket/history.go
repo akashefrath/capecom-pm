@@ -16,7 +16,7 @@ func NewHistoryRepo(db *gorm.DB) *HistoryRepo {
 }
 
 func (r *HistoryRepo) Create(history *models.TicketHistory) error {
-	return r.DB.Create(history).Error
+	return r.DB.Table("ticket_history").Create(history).Error
 }
 
 func (r *HistoryRepo) GetAllByTicketID(ticketID int64, pagination string) (*[]dto.TicketHistoryResponse, error) {

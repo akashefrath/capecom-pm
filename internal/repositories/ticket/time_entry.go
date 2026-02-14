@@ -4,6 +4,7 @@ import (
 	"capecom-pm/internal/domain/dto"
 	domainerrors "capecom-pm/internal/domain/error"
 	"capecom-pm/internal/domain/models"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -105,6 +106,30 @@ func (r *TimeEntryRepo) GetTimeEntryOwnerID(uuid string) (*int64, error) {
 	return userID, nil
 }
 
+func (r *TimeEntryRepo) GetTotalHoursByTicketID(ticketID int64) (float64, error) {
+	var hours float64
+	err := r.DB.Raw(`SELECT SUM(hours) FROM time_entries WHERE ticket_id = ? AND deleted_at IS NULL`, ticketID).Scan(&hours).Error
+	return hours, err
+}
+
+func (r *TimeEntryRepo) GetTotalHoursByProjectID(projectID int64) (float64, error) {
+	var hours float64
+	err := r.DB.Raw(`SELECT SUM(hours) FROM time_entries WHERE project_id = ? AND deleted_at IS NULL`, projectID).Scan(&hours).Error
+	return hours, err
+}
+
+func (r *TimeEntryRepo) GetTotalHoursByUserID(userID int64) (float64, error) {
+	var hours float64
+	err := r.DB.Raw(`SELECT SUM(hours) FROM time_entries WHERE user_id = ? AND deleted_at IS NULL`, userID).Scan(&hours).Error
+	return hours, err
+}
+func (r *TimeEntryRepo) GetTotalHoursByUserIDByDate(userID int64, date time.Time) (*float64, error) {
+	var hours *float64
+
+	err := r.DB.Raw(`SELECT SUM(hours) FROM time_entries WHERE user_id = ? AND DATE(work_date) = DATE(?) AND deleted_at IS NULL`, userID, date).Scan(&hours).Error
+
+	return hours, err
+}
 func (r *TimeEntryRepo) selectQuery(whereCol string, extra ...string) string {
 	q := `SELECT te.uuid AS id, t.uuid AS ticket_id, t.code AS ticket_code,
 		p.uuid AS project_id, u.uuid AS user_id, u.name AS user_name,

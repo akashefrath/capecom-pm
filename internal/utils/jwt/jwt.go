@@ -103,7 +103,7 @@ func (j *Manager) ValidateToken(tokenString string, tokenType TokenType) (*Claim
 		if errors.Is(err, jwt.ErrTokenExpired) {
 			return nil, domainerrors.ErrTokenExpired
 		}
-		return nil, domainerrors.ErrInvalidToken
+		return nil, domainerrors.ErrUnauthorized
 	}
 
 	if !token.Valid {

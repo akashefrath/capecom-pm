@@ -95,11 +95,14 @@ func (h *ProjectHandler) DeleteProject(c *gin.Context) {
 }
 
 func (h *ProjectHandler) GetProjects(c *gin.Context) {
+
 	pg, err := bind.PaginationBinder(c, "get_projects")
 	if err != nil {
 		/// no need
 	}
-	data, err := h.ProjectService.GetProjects(pg)
+	userID := utils.GetUserID(c)
+
+	data, err := h.ProjectService.GetProjects(pg, userID)
 	if err != nil {
 		response.FromError(c, err)
 		return
@@ -111,9 +114,9 @@ func (h *ProjectHandler) GetProjects(c *gin.Context) {
 }
 func (h *ProjectHandler) GetProject(c *gin.Context) {
 	projectId := c.Param("projectId")
-	//userID := utils.GetUserID(c)
+	userID := utils.GetUserID(c)
 
-	data, err := h.ProjectService.GetProject(projectId)
+	data, err := h.ProjectService.GetProject(projectId, userID)
 	if err != nil {
 		response.FromError(c, err)
 		return
