@@ -277,6 +277,13 @@
             </set>
           </value>
         </entry>
+        <entry key="R2Config">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/config/config.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="RedisRepo">
           <value>
             <set>
@@ -424,11 +431,12 @@
         <entry key="file://$PROJECT_DIR$/internal/config/config.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1770566020285" />
+              <option name="lastModified" value="1771057995688" />
               <option name="schema">
                 <list>
                   <option value="DBConfig" />
                   <option value="JWTConfig" />
+                  <option value="R2Config" />
                   <option value="Config" />
                 </list>
               </option>
@@ -438,7 +446,7 @@
         <entry key="file://$PROJECT_DIR$/internal/config/database.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1770553473711" />
+              <option name="lastModified" value="1771058094250" />
             </ScannedPath>
           </value>
         </entry>
@@ -1026,6 +1034,7 @@
         <entry key="project_repo" value="ProjectRepo" />
         <entry key="project_response" value="ProjectResponse" />
         <entry key="project_service" value="ProjectService" />
+        <entry key="r2_config" value="R2Config" />
         <entry key="redis_repo" value="RedisRepo" />
         <entry key="refresh_token_request" value="RefreshTokenRequest" />
         <entry key="repository" value="Repository" />

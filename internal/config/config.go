@@ -9,11 +9,14 @@ import (
 )
 
 type DBConfig struct {
-	DBUser string
-	DBPass string
-	DBHost string
-	DBPort string
-	DBName string
+	DBUser        string
+	DBPass        string
+	DBHost        string
+	DBPort        string
+	DBName        string
+	DBMaxIdle     int
+	DBMaxOpen     int
+	DBMaxLifetime int
 }
 
 type JWTConfig struct {
@@ -57,12 +60,19 @@ func LoadEnv() Config {
 }
 
 func loadDBConfig() DBConfig {
+	maxIdle, _ := strconv.Atoi(GetEnv("DB_MAX_IDLE"))
+	maxOpen, _ := strconv.Atoi(GetEnv("DB_MAX_OPEN"))
+	life, _ := strconv.Atoi(GetEnv("DB_MAX_LIFETIME"))
+
 	return DBConfig{
-		DBUser: GetEnvMust("DB_USER"),
-		DBPass: GetEnv("DB_PASS"),
-		DBHost: GetEnvMust("DB_HOST"),
-		DBPort: GetEnvMust("DB_PORT"),
-		DBName: GetEnvMust("DB_NAME"),
+		DBUser:        GetEnvMust("DB_USER"),
+		DBPass:        GetEnv("DB_PASS"),
+		DBHost:        GetEnvMust("DB_HOST"),
+		DBPort:        GetEnvMust("DB_PORT"),
+		DBName:        GetEnvMust("DB_NAME"),
+		DBMaxIdle:     maxIdle,
+		DBMaxOpen:     maxOpen,
+		DBMaxLifetime: life,
 	}
 
 }

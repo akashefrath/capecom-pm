@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -30,13 +31,9 @@ func ConnectDB(dbConfig DBConfig) *gorm.DB {
 	}
 	println("opened")
 
-	//maxIdle, _ := strconv.Atoi(GetEnv("DB_MAX_IDLE"))
-	//maxOpen, _ := strconv.Atoi(GetEnv("DB_MAX_OPEN"))
-	//life, _ := strconv.Atoi(GetEnv("DB_MAX_LIFETIME"))
-	//
-	//sqlDB.SetMaxIdleConns(maxIdle)
-	//sqlDB.SetMaxOpenConns(maxOpen)
-	//sqlDB.SetConnMaxLifetime(time.Minute * time.Duration(life))
+	sqlDB.SetMaxIdleConns(dbConfig.DBMaxIdle)
+	sqlDB.SetMaxOpenConns(dbConfig.DBMaxOpen)
+	sqlDB.SetConnMaxLifetime(time.Minute * time.Duration(dbConfig.DBMaxLifetime))
 
 	return db
 }
