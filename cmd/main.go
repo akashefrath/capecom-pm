@@ -34,12 +34,12 @@ func main() {
 	c := container.NewContainer(db, appConfig, redis)
 	r := gin.Default()
 	r.Use(cors.New(cors.Config{
-		AllowAllOrigins: true,
-		AllowMethods:    cors.DefaultConfig().AllowMethods,
-		AllowHeaders:    cors.DefaultConfig().AllowHeaders,
-		ExposeHeaders:   []string{"Content-Length"},
-
-		MaxAge: 12 * time.Hour,
+		AllowAllOrigins:  true,
+		AllowMethods:     cors.DefaultConfig().AllowMethods,
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		AllowCredentials: true,
+		ExposeHeaders:    []string{"Content-Length"},
+		MaxAge:           12 * time.Hour,
 	}))
 
 	routes.Setup(r, c)
