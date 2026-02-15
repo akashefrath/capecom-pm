@@ -38,7 +38,7 @@ func main() {
 		AllowMethods:    cors.DefaultConfig().AllowMethods,
 		AllowHeaders:    cors.DefaultConfig().AllowHeaders,
 		ExposeHeaders:   []string{"Content-Length"},
-		 
+
 		MaxAge: 12 * time.Hour,
 	}))
 
