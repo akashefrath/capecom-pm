@@ -8,6 +8,7 @@ import (
 	"capecom-pm/internal/routes"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -32,7 +33,15 @@ func main() {
 	}
 	c := container.NewContainer(db, appConfig, redis)
 	r := gin.Default()
-	r.Use(cors.Default())
+	r.Use(cors.New(cors.Config{
+		AllowAllOrigins:  true,
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: false,
+		MaxAge:           12 * time.Hour,
+	}))
+
 	routes.Setup(r, c)
 	fmt.Println("http://localhost:" + appConfig.Port)
 	err = r.Run(":" + appConfig.Port)
