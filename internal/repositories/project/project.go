@@ -36,7 +36,7 @@ func (r *ProjectRepo) FindByUUID(uuid string) (*dto.ProjectResponse, error) {
 	var result dto.ProjectResponse
 
 	err := r.DB.Transaction(func(tx *gorm.DB) error {
-		err := tx.Raw(r.selectQuery("p.uuid", "", ",COUNT(t.id) AS ticket_count", " LEFT JOIN tickets t on t.project_id = p.id"), uuid).Scan(&result).Error
+		err := tx.Raw(r.selectQuery("p.uuid", "", r.GetBookedHours(), ""), uuid).Scan(&result).Error
 		println(result.InternalID)
 		err = tx.Raw(`SELECT p.uuid AS id, p.title , p.asset_type ,p.description ,p.content,
        f.uuid as file_id, f.storage_key as file_storage_key, f.mime_type as file_mime_type, f.size_bytes as files_size_bytes, f.storage as storage 
@@ -60,12 +60,8 @@ func (r *ProjectRepo) FindByUUIDIfUserHaveAccess(uuid string, userID int64) (*dt
 	var result dto.ProjectResponse
 
 	err := r.DB.Transaction(func(tx *gorm.DB) error {
-		err := tx.Raw(r.selectQueryMember("p.uuid", "", `, 
-       (SELECT COUNT(t.id) FROM tickets t 
-        WHERE t.project_id = p.id AND t.deleted_at IS NULL) AS ticket_count,
-       (SELECT COALESCE(SUM(hours), 0) FROM time_entries te
-        WHERE te.project_id = p.id AND te.deleted_at IS NULL) AS total_booked_hours`,
-			` LEFT JOIN tickets t on t.project_id = p.id`), userID, uuid).Scan(&result).Error
+		err := tx.Raw(r.selectQueryMember("p.uuid", "", r.GetBookedHours(),
+			``), userID, uuid).Scan(&result).Error
 
 		err = tx.Raw(`SELECT p.uuid AS id, p.title , p.asset_type ,p.description ,p.content,
        f.uuid as file_id, f.storage_key as file_storage_key, f.mime_type as file_mime_type, f.size_bytes as files_size_bytes, f.storage as storage
@@ -100,7 +96,7 @@ func (r *ProjectRepo) findByID(id uint64) (*dto.ProjectResponse, error) {
 
 func (r *ProjectRepo) GetAll(pg *common.Pagination) (*[]dto.ProjectResponse, error) {
 	var results []dto.ProjectResponse
-	err := r.DB.Raw(r.selectQuery("", pg.BuildPaginationQuery(), "", "")).Scan(&results).Error
+	err := r.DB.Raw(r.selectQuery("", "", r.GetBookedHours(), "")).Scan(&results).Error
 	if err != nil {
 		return nil, err
 	}
@@ -108,7 +104,7 @@ func (r *ProjectRepo) GetAll(pg *common.Pagination) (*[]dto.ProjectResponse, err
 }
 func (r *ProjectRepo) GetAllForUser(pg *common.Pagination, userID int64) (*[]dto.ProjectResponse, error) {
 	var results []dto.ProjectResponse
-	err := r.DB.Raw(r.selectQueryMember("", pg.BuildPaginationQuery(), "", ""), userID).Scan(&results).Error
+	err := r.DB.Raw(r.selectQueryMember("", pg.BuildPaginationQuery(), r.GetBookedHours(), ""), userID).Scan(&results).Error
 	if err != nil {
 		return nil, err
 	}
@@ -214,6 +210,17 @@ func (r *ProjectRepo) selectQueryMember(whereCol string, pagination string, extr
 	}
 
 	q = fmt.Sprintf(q, extraSelect, extraJoin)
+
+	return q
+}
+
+func (r *ProjectRepo) GetBookedHours() string {
+
+	q := `, 
+       (SELECT COUNT(t.id) FROM tickets t 
+        WHERE t.project_id = p.id AND t.deleted_at IS NULL) AS ticket_count,
+       (SELECT COALESCE(SUM(hours), 0) FROM time_entries te
+        WHERE te.project_id = p.id AND te.deleted_at IS NULL) AS total_booked_hours`
 
 	return q
 }

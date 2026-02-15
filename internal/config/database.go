@@ -7,6 +7,7 @@ import (
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 func ConnectDB(dbConfig DBConfig) *gorm.DB {
@@ -20,7 +21,7 @@ func ConnectDB(dbConfig DBConfig) *gorm.DB {
 
 	// 1. Use a more robust Logger to see slow queries caused by latency
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
-		//	Logger: logger.Default.LogMode(logger.Info),
+		Logger: logger.Default.LogMode(logger.Info),
 
 		PrepareStmt: true, // Cache prepared statements to reduce round trips
 	})

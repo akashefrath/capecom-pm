@@ -530,7 +530,7 @@
         <entry key="file://$PROJECT_DIR$/internal/config/database.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771058903089" />
+              <option name="lastModified" value="1771137128688" />
             </ScannedPath>
           </value>
         </entry>
@@ -921,7 +921,7 @@
         <entry key="file://$PROJECT_DIR$/internal/repositories/project/project.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771081830121" />
+              <option name="lastModified" value="1771137283753" />
               <option name="schema">
                 <list>
                   <option value="ProjectRepo" />
