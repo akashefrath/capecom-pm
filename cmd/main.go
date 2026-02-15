@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -31,6 +32,7 @@ func main() {
 	}
 	c := container.NewContainer(db, appConfig, redis)
 	r := gin.Default()
+	r.Use(cors.Default())
 	routes.Setup(r, c)
 	fmt.Println("http://localhost:" + appConfig.Port)
 	err = r.Run(":" + appConfig.Port)
