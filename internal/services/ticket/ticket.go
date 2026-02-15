@@ -239,6 +239,7 @@ func (s *TicketService) Update(ticketUUID string, req dto.UpdateTicketRequest) (
 func (s *TicketService) UpdateLifecycleStatus(ticketUUID string, status string, userID string) (*dto.TicketResponse, error) {
 	ticketID, err := s.ticketRepo.IsUserAssignedToTicket(ticketUUID, userID)
 	isAdmin, err := s.userRepo.IsManagerOrAdmin(userID)
+	println(ticketID)
 	if err != nil || (!isAdmin && ticketID == 0) {
 		return nil, domainerrors.NewWithCode(http.StatusUnauthorized, domainerrors.ErrUnauthorized.Error(), "ticket_service", "resolve_project")
 	}

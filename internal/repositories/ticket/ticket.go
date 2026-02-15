@@ -167,12 +167,12 @@ func (r *TicketRepo) Delete(uuid string) error {
 	return nil
 }
 
-func (r *TicketRepo) IsUserAssignedToTicket(uuid string, id string) (int64, error) {
+func (r *TicketRepo) IsUserAssignedToTicket(uuid string, userID string) (int64, error) {
 	var ticketID int64 = 0
 	err := r.DB.Raw(`SELECT t.id FROM tickets t
-               LEFT JOIN users us ON users.uuid = tickets.assigned_to 
+               LEFT JOIN users us ON us.uuid =?
               WHERE t.uuid = ? AND t.assigned_to= us.id `,
-		uuid, id).Scan(&ticketID).Error
+		userID, uuid).Scan(&ticketID).Error
 
 	return ticketID, err
 

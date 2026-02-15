@@ -403,6 +403,13 @@
             </set>
           </value>
         </entry>
+        <entry key="TeamService">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/services/project/team.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="TicketHandler">
           <value>
             <set>
@@ -1035,7 +1042,7 @@
         <entry key="file://$PROJECT_DIR$/internal/repositories/ticket/ticket.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771154387463" />
+              <option name="lastModified" value="1771166118442" />
               <option name="schema">
                 <list>
                   <option value="TicketRepo" />
@@ -1134,10 +1141,22 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/internal/services/project/team.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771165816241" />
+              <option name="schema">
+                <list>
+                  <option value="TeamService" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/internal/services/ticket/ticket.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771154407828" />
+              <option name="lastModified" value="1771166042666" />
               <option name="schema">
                 <list>
                   <option value="TicketService" />
@@ -1315,6 +1334,7 @@
         <entry key="session" value="Session" />
         <entry key="session_repo" value="SessionRepo" />
         <entry key="team_handler" value="TeamHandler" />
+        <entry key="team_service" value="TeamService" />
         <entry key="ticket_handler" value="TicketHandler" />
         <entry key="ticket_repo" value="TicketRepo" />
         <entry key="ticket_response" value="TicketResponse" />
