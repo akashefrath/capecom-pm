@@ -133,7 +133,7 @@ func (s *TeamService) AssignManagers(projectUUID string, req dto.AssignManagersR
 	return s.teamRepo.GetManagersByProjectID(projectID)
 }
 
-func (s *TeamService) RemoveManagers(projectUUID string, req dto.RemoveManagersRequest) ([]dto.ProjectManagerResponse, error) {
+func (s *TeamService) RemoveManagers(projectUUID string, req dto.AssignManagersRequest) ([]dto.ProjectManagerResponse, error) {
 	projectID, err := s.resolveProjectID(projectUUID)
 	if err != nil {
 		return nil, err
