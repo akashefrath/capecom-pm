@@ -46,7 +46,7 @@ func Projects(v1 *gin.RouterGroup, c *container.Container) {
 	projectNs.GET("/:projectId/tickets", tk.GetTickets)          // for all with conditions
 	projectNs.GET("/:projectId/tickets/:ticketId", tk.GetTicket) // for all with conditions
 	project.PUT("/:projectId/tickets/:ticketId", tk.UpdateTicket)
-	project.PATCH("/:projectId/tickets/:ticketId/lifecycle", tk.UpdateLifecycleStatus)
+	projectNs.PATCH("/:projectId/tickets/:ticketId/lifecycle", tk.UpdateLifecycleStatus)
 	project.PATCH("/:projectId/tickets/:ticketId/assignee", tk.UpdateAssignee)
 	project.DELETE("/:projectId/tickets/:ticketId", tk.DeleteTicket)
 

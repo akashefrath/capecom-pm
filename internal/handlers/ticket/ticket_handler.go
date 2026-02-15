@@ -82,13 +82,14 @@ func (h *TicketHandler) UpdateTicket(c *gin.Context) {
 
 func (h *TicketHandler) UpdateLifecycleStatus(c *gin.Context) {
 	ticketUUID := c.Param("ticketId")
+	userID := utils.GetUserID(c)
 
 	var req dto.UpdateTicketLifecycleRequest
 	if !bind.AndValidate(c, &req, "update_ticket_lifecycle") {
 		return
 	}
 
-	result, err := h.TicketService.UpdateLifecycleStatus(ticketUUID, req.LifecycleStatus)
+	result, err := h.TicketService.UpdateLifecycleStatus(ticketUUID, req.LifecycleStatus, userID)
 	if err != nil {
 		response.FromError(c, err)
 		return

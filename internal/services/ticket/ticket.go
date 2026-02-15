@@ -142,7 +142,9 @@ func (s *TicketService) GetAllByProject(projectUUID string, pg *common.Paginatio
 	}
 
 	member, err := s.projectRepo.IsUserProjectMember(*userId, projectUUID)
-	if err != nil || !member {
+	isAdmin, err := s.userRepo.IsManagerOrAdmin(userID)
+
+	if err != nil || (!member && !isAdmin) {
 		return nil, domainerrors.NewWithCode(http.StatusUnauthorized, domainerrors.ErrUnauthorized.Error(), "ticket_service", "resolve_project")
 	}
 
@@ -234,7 +236,12 @@ func (s *TicketService) Update(ticketUUID string, req dto.UpdateTicketRequest) (
 	return s.ticketRepo.Update(ticketUUID, updates)
 }
 
-func (s *TicketService) UpdateLifecycleStatus(ticketUUID string, status string) (*dto.TicketResponse, error) {
+func (s *TicketService) UpdateLifecycleStatus(ticketUUID string, status string, userID string) (*dto.TicketResponse, error) {
+	ticketID, err := s.ticketRepo.IsUserAssignedToTicket(ticketUUID, userID)
+	isAdmin, err := s.userRepo.IsManagerOrAdmin(userID)
+	if err != nil || (!isAdmin && ticketID == 0) {
+		return nil, domainerrors.NewWithCode(http.StatusUnauthorized, domainerrors.ErrUnauthorized.Error(), "ticket_service", "resolve_project")
+	}
 	return s.ticketRepo.Update(ticketUUID, map[string]any{"lifecycle_status": status})
 }
 
