@@ -8,10 +8,6 @@ type AssignManagersRequest struct {
 	UserUUIDs []string `json:"user_ids"  form:"user_ids" binding:"required,min=1,dive,uuid"`
 }
 
-type RemoveManagersRequest struct {
-	UserUUIDs []string `json:"user_ids"  form:"user_ids" binding:"required,min=1,dive,uuid"`
-}
-
 type ProjectManagerResponse struct {
 	Id       string `json:"id"`
 	UserID   string `json:"user_id"`

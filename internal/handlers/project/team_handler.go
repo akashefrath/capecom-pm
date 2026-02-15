@@ -41,7 +41,7 @@ func (h *TeamHandler) AssignManagers(c *gin.Context) {
 func (h *TeamHandler) RemoveManagers(c *gin.Context) {
 	projectUUID := c.Param("projectId")
 
-	var req dto.RemoveManagersRequest
+	var req dto.AssignManagersRequest
 	if !bind.AndValidate(c, &req, "remove_managers") {
 		return
 	}

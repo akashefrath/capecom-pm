@@ -38,6 +38,20 @@
             </set>
           </value>
         </entry>
+        <entry key="AssignManagersRequest">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/project_team.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="AssignMembersRequest">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/project_team.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="AuthHandler">
           <value>
             <set>
@@ -235,6 +249,13 @@
             </set>
           </value>
         </entry>
+        <entry key="MemberEntry">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/project_team.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="Middleware">
           <value>
             <set>
@@ -267,6 +288,20 @@
           <value>
             <set>
               <option value="file://$PROJECT_DIR$/internal/handlers/project/project_handler.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ProjectManagerResponse">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/project_team.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ProjectMemberResponse">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/project_team.go" />
             </set>
           </value>
         </entry>
@@ -319,6 +354,13 @@
             </set>
           </value>
         </entry>
+        <entry key="RemoveMembersRequest">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/project_team.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="Repository">
           <value>
             <set>
@@ -351,6 +393,13 @@
           <value>
             <set>
               <option value="file://$PROJECT_DIR$/internal/repositories/session.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="TeamHandler">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/handlers/project/team_handler.go" />
             </set>
           </value>
         </entry>
@@ -649,6 +698,23 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/internal/domain/dto/project_team.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771148422790" />
+              <option name="schema">
+                <list>
+                  <option value="AssignManagersRequest" />
+                  <option value="ProjectManagerResponse" />
+                  <option value="MemberEntry" />
+                  <option value="AssignMembersRequest" />
+                  <option value="RemoveMembersRequest" />
+                  <option value="ProjectMemberResponse" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/internal/domain/dto/ticket.go">
           <value>
             <ScannedPath>
@@ -767,6 +833,18 @@
               <option name="schema">
                 <list>
                   <option value="ProjectHandler" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/handlers/project/team_handler.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771148428315" />
+              <option name="schema">
+                <list>
+                  <option value="TeamHandler" />
                 </list>
               </option>
             </ScannedPath>
@@ -1184,6 +1262,8 @@
         <entry key="app_error" value="AppError" />
         <entry key="assets" value="Assets" />
         <entry key="assets_response" value="AssetsResponse" />
+        <entry key="assign_managers_request" value="AssignManagersRequest" />
+        <entry key="assign_members_request" value="AssignMembersRequest" />
         <entry key="auth_handler" value="AuthHandler" />
         <entry key="auth_repo" value="AuthRepo" />
         <entry key="auth_service" value="AuthService" />
@@ -1212,11 +1292,14 @@
         <entry key="manager" value="Manager" />
         <entry key="master_data_i_ds" value="MasterDataIDs" />
         <entry key="master_data_repo" value="MasterDataRepo" />
+        <entry key="member_entry" value="MemberEntry" />
         <entry key="middleware" value="Middleware" />
         <entry key="page_meta" value="PageMeta" />
         <entry key="pagination" value="Pagination" />
         <entry key="pagination_meta" value="PaginationMeta" />
         <entry key="project_handler" value="ProjectHandler" />
+        <entry key="project_manager_response" value="ProjectManagerResponse" />
+        <entry key="project_member_response" value="ProjectMemberResponse" />
         <entry key="project_repo" value="ProjectRepo" />
         <entry key="project_response" value="ProjectResponse" />
         <entry key="project_service" value="ProjectService" />
@@ -1224,12 +1307,14 @@
         <entry key="rabc_middleware" value="RABCMiddleware" />
         <entry key="redis_repo" value="RedisRepo" />
         <entry key="refresh_token_request" value="RefreshTokenRequest" />
+        <entry key="remove_members_request" value="RemoveMembersRequest" />
         <entry key="repository" value="Repository" />
         <entry key="role_repo" value="RoleRepo" />
         <entry key="row" value="row" />
         <entry key="service" value="Service" />
         <entry key="session" value="Session" />
         <entry key="session_repo" value="SessionRepo" />
+        <entry key="team_handler" value="TeamHandler" />
         <entry key="ticket_handler" value="TicketHandler" />
         <entry key="ticket_repo" value="TicketRepo" />
         <entry key="ticket_response" value="TicketResponse" />
