@@ -294,3 +294,76 @@ func (r *UserRepo) IsManagerOrAdmin(uuid string) (bool, error) {
 
 	return result, nil
 }
+
+func (r *UserRepo) UpdateUser(userUUID string, updates map[string]interface{}, roleIDs []int64) (*dto.UserResponse, error) {
+	var result *dto.UserResponse
+	err := r.DB.Transaction(func(tx *gorm.DB) error {
+		// Get user ID
+		var userID int64
+		if err := tx.Raw("SELECT id FROM users WHERE uuid = ?", userUUID).Scan(&userID).Error; err != nil {
+			return err
+		}
+		if userID == 0 {
+			return domainerrors.NewWithCode(http.StatusNotFound, domainerrors.ErrUserNotFound.Error(), "repo", "UpdateUser")
+		}
+
+		// Update user fields
+		if len(updates) > 0 {
+			if err := tx.Table("users").Where("id = ?", userID).Updates(updates).Error; err != nil {
+				var mysqlErr *mysql.MySQLError
+				if errors.As(err, &mysqlErr) {
+					if mysqlErr.Number == 1062 {
+						return domainerrors.NewWithCode(http.StatusConflict, domainerrors.ErrDuplicateEmail.Error(), "repo", "UpdateUser")
+					}
+				}
+				return err
+			}
+		}
+
+		// Update roles if provided
+		if roleIDs != nil && len(roleIDs) > 0 {
+			// Delete existing roles
+			if err := tx.Exec("DELETE FROM user_roles WHERE user_id = ?", userID).Error; err != nil {
+				return err
+			}
+
+			// Insert new roles
+			userRoles := make([]map[string]any, len(roleIDs))
+			for i, roleID := range roleIDs {
+				userRoles[i] = map[string]any{
+					"uuid":    uuid.NewString(),
+					"user_id": userID,
+					"role_id": roleID,
+					"status":  "active",
+				}
+			}
+			if err := tx.Table("user_roles").Create(userRoles).Error; err != nil {
+				return err
+			}
+		}
+
+		// Fetch updated user
+		updatedUser, err := r.FindByIDWithTx(uint64(userID), tx)
+		if err != nil {
+			return err
+		}
+		result = updatedUser
+		return nil
+	})
+
+	return result, err
+}
+
+func (r *UserRepo) DeleteUser(userUUID string) error {
+	return r.DB.Transaction(func(tx *gorm.DB) error {
+		// Soft delete user
+		result := tx.Exec("UPDATE users SET deleted_at = NOW() WHERE uuid = ? AND deleted_at IS NULL", userUUID)
+		if result.Error != nil {
+			return result.Error
+		}
+		if result.RowsAffected == 0 {
+			return domainerrors.NewWithCode(http.StatusNotFound, domainerrors.ErrUserNotFound.Error(), "repo", "DeleteUser")
+		}
+		return nil
+	})
+}

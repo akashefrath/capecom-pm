@@ -69,3 +69,38 @@ func (h *UserHandler) GetUsers(c *gin.Context) {
 		Data:    user,
 	})
 }
+
+func (h *UserHandler) UpdateUser(c *gin.Context) {
+	id := c.Param("id")
+	var req dto.UpdateUserRequest
+	validate := bind.AndValidate(c, &req, "update_user")
+	if !validate {
+		return
+	}
+
+	user, err := h.UserService.UpdateUser(id, req)
+	if err != nil {
+		response.FromError(c, err)
+		return
+	}
+
+	response.JSON(c, http.StatusOK, response.APIResponse{
+		Success: true,
+		Data:    user,
+	})
+}
+
+func (h *UserHandler) DeleteUser(c *gin.Context) {
+	id := c.Param("id")
+
+	err := h.UserService.DeleteUser(id)
+	if err != nil {
+		response.FromError(c, err)
+		return
+	}
+
+	response.JSON(c, http.StatusOK, response.APIResponse{
+		Success: true,
+		Data:    nil,
+	})
+}

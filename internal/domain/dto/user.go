@@ -34,3 +34,16 @@ type UtilNameId struct {
 	Id   string `json:"id"`
 	Name string `json:"name"`
 }
+
+type UpdateUserRequest struct {
+	Name          string   `json:"name" form:"name" binding:"omitempty,min=2,max=120"`
+	Email         string   `json:"email" form:"email" binding:"omitempty,email,max=255"`
+	Phone         *string  `json:"phone" form:"phone" binding:"omitempty,max=15"`
+	CountryCode   *int     `json:"country_code" form:"country_code" binding:"omitempty"`
+	Password      string   `json:"password" form:"password" binding:"omitempty,min=6,max=255"`
+	EmployeeID    *string  `json:"employee_id" form:"employee_id" binding:"omitempty,max=50"`
+	GroupID       string   `json:"group_id" form:"group_id" binding:"omitempty"`
+	DesignationID string   `json:"designation_id" form:"designation_id" binding:"omitempty"`
+	DepartmentID  string   `json:"department_id" form:"department_id" binding:"omitempty"`
+	RoleIDs       []string `json:"role_ids" form:"role_ids" binding:"omitempty,min=1"`
+}

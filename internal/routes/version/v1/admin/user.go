@@ -12,4 +12,6 @@ func UserRoutes(v1 *gin.RouterGroup, c *container.Container) {
 	user.POST("", h.CreateUser)
 	user.GET("/:id", h.GetUserByID)
 	user.GET("", h.GetUsers)
+	user.PUT("/:id", h.UpdateUser)
+	user.DELETE("/:id", h.DeleteUser)
 }

@@ -88,3 +88,65 @@ func (s *UserService) GetUser(pagination common.Pagination) (*dto.ListWithMeta, 
 	}
 	return user, nil
 }
+
+func (s *UserService) UpdateUser(uuid string, req dto.UpdateUserRequest) (*dto.UserResponse, error) {
+	updates := make(map[string]interface{})
+	var roleIDs []int64
+
+	// Build updates map
+	if req.Name != "" {
+		updates["name"] = req.Name
+	}
+	if req.Email != "" {
+		updates["email"] = req.Email
+	}
+	if req.Phone != nil {
+		updates["phone"] = req.Phone
+	}
+	if req.CountryCode != nil {
+		updates["country_code"] = req.CountryCode
+	}
+	if req.Password != "" {
+		updates["password_hash"] = utils.HashPassword(req.Password)
+	}
+	if req.EmployeeID != nil {
+		updates["employee_id"] = req.EmployeeID
+	}
+
+	// Handle foreign key IDs if provided
+	if req.GroupID != "" || req.DesignationID != "" || req.DepartmentID != "" || len(req.RoleIDs) > 0 {
+		idS, err := s.masterDataRepo.GetUserRelatedIDs(
+			req.GroupID,
+			req.DesignationID,
+			req.DepartmentID,
+			req.RoleIDs,
+		)
+		if err != nil {
+			return nil, domainerrors.NewWithCode(http.StatusBadRequest, err.Error(), "service", "UpdateUser")
+		}
+
+		if req.GroupID != "" {
+			updates["group_id"] = idS.GroupID
+		}
+		if req.DesignationID != "" {
+			updates["designation_id"] = idS.DesignationID
+		}
+		if req.DepartmentID != "" {
+			updates["department_id"] = idS.DepartmentID
+		}
+		if len(req.RoleIDs) > 0 {
+			roleIDs = idS.RoleIDs
+		}
+	}
+
+	user, err := s.userRepo.UpdateUser(uuid, updates, roleIDs)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (s *UserService) DeleteUser(uuid string) error {
+	return s.userRepo.DeleteUser(uuid)
+}
