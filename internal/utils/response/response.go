@@ -3,20 +3,16 @@ package response
 import (
 	"net/http"
 
-	"github.com/gofiber/fiber/v3"
+	"github.com/gin-gonic/gin"
 )
 
-func JSON(c fiber.Ctx, code int, res APIResponse) error {
-	err := c.Status(code).JSON(res)
-	if err != nil {
-		return err
-	}
+func JSON(c *gin.Context, code int, res APIResponse) {
+	c.JSON(code, res)
 
-	return nil
 }
-func JSONOk(c fiber.Ctx, res APIResponse) error {
-	return JSON(c, http.StatusOK, res)
+func JSONOk(c *gin.Context, res APIResponse) {
+	JSON(c, http.StatusOK, res)
 }
-func JSONCreated(c fiber.Ctx, res APIResponse) error {
-	return JSON(c, http.StatusCreated, res)
+func JSONCreated(c *gin.Context, res APIResponse) {
+	JSON(c, http.StatusCreated, res)
 }

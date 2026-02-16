@@ -1,13 +1,13 @@
 package config
 
 import (
-	"database/sql"
 	"fmt"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/jmoiron/sqlx"
 )
 
-func InitDB(config Config) *sql.DB {
+func InitDB(config Config) *sqlx.DB {
 	dbConfig := config.DBConfig
 	// Ensure this string is exactly: user:pass@tcp(host:port)/dbname
 	dbUrl := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
@@ -19,7 +19,7 @@ func InitDB(config Config) *sql.DB {
 	)
 
 	// 1. Capture the error! Don't use '_'
-	db, err := sql.Open("mysql", dbUrl)
+	db, err := sqlx.Connect("mysql", dbUrl)
 	if err != nil {
 		panic(fmt.Sprintf("Invalid connection string: %v", err))
 	}

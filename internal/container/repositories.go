@@ -1,19 +1,19 @@
 package container
 
 import (
-	"database/sql"
-
+	"github.com/akashefrath/capecom-pm/internal/config"
 	"github.com/akashefrath/capecom-pm/internal/src/repository"
+	"github.com/jmoiron/sqlx"
 )
 
 type Repositories struct {
-	Auth *repository.Auth
-	User *repository.User
+	Session *repository.Session
+	User    *repository.User
 }
 
-func NewRepository(db *sql.DB) *Repositories {
+func NewRepository(db *sqlx.DB, config *config.Config) *Repositories {
 	return &Repositories{
-		Auth: repository.NewAuth(db),
-		User: repository.NewUser(db),
+		Session: repository.NewSession(db, config),
+		User:    repository.NewUser(db),
 	}
 }

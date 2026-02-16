@@ -1,22 +1,31 @@
 package container
 
 import (
-	"database/sql"
-
 	"github.com/akashefrath/capecom-pm/internal/config"
+	jwtutil "github.com/akashefrath/capecom-pm/internal/utils/jwt"
+	"github.com/jmoiron/sqlx"
 )
 
 type Container struct {
-	DB           *sql.DB
+	DB           *sqlx.DB
 	Config       *config.Config
 	Handler      *Handler
 	Service      *Service
 	Repositories *Repositories
+	JWTManager   *jwtutil.Manager
 }
 
-func New(db *sql.DB, config *config.Config) Container {
-	repo := NewRepository(db)
-	service := NewService(repo)
+func New(db *sqlx.DB, config *config.Config) Container {
+	jwtManager := jwtutil.NewJWTManager(
+		config.JWT.UserSecret,
+		config.JWT.UserRefreshSecret,
+		config.JWT.AdminSecret,
+		config.JWT.AdminRefreshSecret,
+		config.JWT.ExpireHours,
+		config.JWT.RefreshExpireHours,
+	)
+	repo := NewRepository(db, config)
+	service := NewService(repo, jwtManager)
 
 	return Container{
 		DB:           db,
@@ -24,5 +33,6 @@ func New(db *sql.DB, config *config.Config) Container {
 		Handler:      SetupHandler(service),
 		Service:      service,
 		Repositories: repo,
+		JWTManager:   jwtManager,
 	}
 }

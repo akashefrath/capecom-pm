@@ -11,6 +11,7 @@ import (
 type Config struct {
 	Port     int
 	DBConfig DBConfig
+	JWT      JWTConfig
 }
 type DBConfig struct {
 	DBUser        string
@@ -22,6 +23,14 @@ type DBConfig struct {
 	DBMaxOpen     int
 	DBMaxLifetime int
 }
+type JWTConfig struct {
+	UserSecret         string
+	AdminSecret        string
+	UserRefreshSecret  string
+	AdminRefreshSecret string
+	ExpireHours        int
+	RefreshExpireHours int
+}
 
 func LoadEnv() Config {
 	err := godotenv.Load()
@@ -32,6 +41,7 @@ func LoadEnv() Config {
 	return Config{
 		Port:     port,
 		DBConfig: LoadDBConfig(),
+		JWT:      loadJWTConfig(),
 	}
 }
 
@@ -50,6 +60,26 @@ func LoadDBConfig() DBConfig {
 		DBMaxIdle:     maxIdle,
 		DBMaxOpen:     maxOpen,
 		DBMaxLifetime: life,
+	}
+}
+func loadJWTConfig() JWTConfig {
+	expireHours, err := strconv.Atoi(GetEnvMust("JWT_EXPIRE_HOURS"))
+	if err != nil {
+		log.Fatal("JWT_EXPIRE_HOURS must be a number")
+	}
+
+	refreshExpireHours, err := strconv.Atoi(GetEnvMust("JWT_REFRESH_EXPIRE_HOURS"))
+	if err != nil {
+		log.Fatal("JWT_REFRESH_EXPIRE_HOURS must be a number")
+	}
+
+	return JWTConfig{
+		UserSecret:         GetEnvMust("JWT_SECRET"),
+		UserRefreshSecret:  GetEnvMust("JWT_REFRESH_SECRET"),
+		AdminSecret:        GetEnvMust("JWT_ADMIN_SECRET"),
+		AdminRefreshSecret: GetEnvMust("JWT_ADMIN_REFRESH_SECRET"),
+		ExpireHours:        expireHours,
+		RefreshExpireHours: refreshExpireHours,
 	}
 }
 

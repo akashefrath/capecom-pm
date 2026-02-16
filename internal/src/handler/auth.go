@@ -3,8 +3,9 @@ package handler
 import (
 	"github.com/akashefrath/capecom-pm/internal/domain/dto"
 	"github.com/akashefrath/capecom-pm/internal/src/service"
+	"github.com/akashefrath/capecom-pm/internal/utils/bind"
 	"github.com/akashefrath/capecom-pm/internal/utils/response"
-	"github.com/gofiber/fiber/v3"
+	"github.com/gin-gonic/gin"
 )
 
 type AuthHandler struct {
@@ -17,19 +18,20 @@ func NewAuth(auth *service.Auth) AuthHandler {
 	}
 }
 
-func (a *AuthHandler) Login(c fiber.Ctx) error {
+func (a *AuthHandler) Login(c *gin.Context) {
 	var req dto.LoginRequest
-	err := c.Bind().Body(&req)
-	if err != nil {
-		return err
+	isValid := bind.AndValidate(c, &req, "login")
+	if !isValid {
+		return
 	}
-
-	err = a.Auth.Login(req.Email, req.Password)
+	token, err := a.Auth.Login(req.Email, req.Password)
 	if err != nil {
-		return err
+		response.FromError(c, err)
+		return
 	}
-	return response.JSONOk(c, response.APIResponse{
+	response.JSONOk(c, response.APIResponse{
 		Success: true,
-		Message: "Pongs",
+
+		Data: token,
 	})
 }

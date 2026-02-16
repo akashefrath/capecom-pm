@@ -1,25 +1,30 @@
 package repository
 
-import "database/sql"
+import (
+	domainerrors "github.com/akashefrath/capecom-pm/internal/domain/error"
+	models "github.com/akashefrath/capecom-pm/internal/domain/model"
+	"github.com/jmoiron/sqlx"
+)
 
 type User struct {
-	DB *sql.DB
+	DB *sqlx.DB
 }
 
-func NewUser(db *sql.DB) *User {
+func NewUser(db *sqlx.DB) *User {
 	return &User{
 		DB: db,
 	}
 }
 
-func (u *User) GetUserByEmail(email string) error {
-	var uuid string
-	var id int64
-	var status string
-	var password string
-	err := u.DB.QueryRow("SELECT id,uuid,status,password_hash FROM users WHERE email = ? AND deleted_at IS NULL AND status = ?", email, "active").Scan(&id, &uuid, &status, &password)
-	println(id)
-	return err
+func (u *User) GetUserMinimalByEmail(email string) (*models.MinimalUser, error) {
+	var user models.MinimalUser
+
+	err := u.DB.Get(&user, "SELECT id,uuid,status,password_hash FROM users WHERE email = ? AND deleted_at IS NULL AND status = ?", email, "active")
+	if err != nil {
+		return nil, domainerrors.ErrUserNotFound
+	}
+
+	return &user, err
 
 }
 
