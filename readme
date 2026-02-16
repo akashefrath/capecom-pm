@@ -1,0 +1,5 @@
+start := time.Now()
+
+
+fmt.Println("took:", time.Since(start).Milliseconds(), "ms")
+

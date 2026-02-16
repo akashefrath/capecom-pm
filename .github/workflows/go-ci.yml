@@ -1,0 +1,79 @@
+name: Go CI
+
+on:
+  push:
+    branches:
+      - main
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Cache Go modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Install dependencies
+        run: go mod download
+
+      - name: Verify formatting
+        run: |
+          if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then
+            echo "Code is not formatted. Run 'gofmt -s -w .'"
+            gofmt -s -l .
+            exit 1
+          fi
+
+      - name: Run go vet
+        run: go vet ./...
+
+      - name: Build project
+        run: |
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o pm_backend ./cmd/main.go
+
+      # Copy binary to server TEMP first (prevents "Text file busy" error)
+      - name: Copy Binary to Server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          source: "pm_backend"
+          target: "/tmp"
+
+      # Move, Permission, and Restart
+      - name: Deploy and Restart
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          script: |
+            # Define target directory
+            TARGET_DIR="/home/anchorbytes-pm-api/htdocs/pm-api.anchorbytes.com"
+            
+            # Move binary
+            mv /tmp/pm_backend $TARGET_DIR/pm_backend
+            
+            # Set executable permission
+            chmod +x $TARGET_DIR/pm_backend
+            
+            # Restart app
+            pm2 restart all
+
