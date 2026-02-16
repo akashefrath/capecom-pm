@@ -71,6 +71,7 @@ type TicketResponse struct {
 	ParentID               *string    `json:"parent_id"`
 	DueDate                *time.Time `json:"due_date"`
 	Status                 string     `json:"status"`
+	TotalBookedHours       float64    `json:"total_booked_hours"`
 
 	models.BaseResponse
 }

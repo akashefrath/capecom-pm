@@ -725,7 +725,7 @@
         <entry key="file://$PROJECT_DIR$/internal/domain/dto/ticket.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771080421355" />
+              <option name="lastModified" value="1771166359580" />
               <option name="schema">
                 <list>
                   <option value="CreateTicketRequest" />
@@ -1042,7 +1042,7 @@
         <entry key="file://$PROJECT_DIR$/internal/repositories/ticket/ticket.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771166118442" />
+              <option name="lastModified" value="1771166337992" />
               <option name="schema">
                 <list>
                   <option value="TicketRepo" />

@@ -113,7 +113,9 @@ func (r *TicketRepo) selectQuery(whereCol string, extra ...string) string {
 		t.estimated_hours, t.internal_estimated_hours,
 		t.lifecycle_status, t.priority,
 		pt.uuid AS parent_id,
-		t.due_date, t.status, t.created_at, t.updated_at
+		t.due_date, t.status, t.created_at, t.updated_at,
+          (SELECT COALESCE(SUM(hours), 0) FROM time_entries te
+        WHERE te.project_id = p.id AND te.deleted_at IS NULL) AS total_booked_hours
 		FROM tickets t
 		INNER JOIN projects p ON p.id = t.project_id AND p.deleted_at IS NULL
 		INNER JOIN ticket_types tt ON tt.id = t.ticket_type_id
