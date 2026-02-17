@@ -9,9 +9,10 @@ import (
 )
 
 type Config struct {
-	Port     int
-	DBConfig DBConfig
-	JWT      JWTConfig
+	Port         int
+	DBConfig     DBConfig
+	JWT          JWTConfig
+	RedisAddress string
 }
 type DBConfig struct {
 	DBUser        string
@@ -39,9 +40,10 @@ func LoadEnv() Config {
 	}
 	port, _ := strconv.Atoi(GetEnv("APP_PORT"))
 	return Config{
-		Port:     port,
-		DBConfig: LoadDBConfig(),
-		JWT:      loadJWTConfig(),
+		Port:         port,
+		DBConfig:     LoadDBConfig(),
+		JWT:          loadJWTConfig(),
+		RedisAddress: GetEnv("REDIS_ADDRESS"),
 	}
 }
 

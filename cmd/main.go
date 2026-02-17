@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/akashefrath/capecom-pm/internal/cache"
 	"github.com/akashefrath/capecom-pm/internal/config"
 	"github.com/akashefrath/capecom-pm/internal/container"
 	"github.com/akashefrath/capecom-pm/internal/routes"
@@ -23,6 +24,11 @@ func main() {
 func initApp() container.Container {
 	appConfig := config.LoadEnv()
 	db := config.InitDB(appConfig)
-	return container.New(db, &appConfig)
+	redis := cache.NewRedis(appConfig.RedisAddress)
+	if redis == nil {
+		panic("failed to connect to redis")
+
+	}
+	return container.New(db, &appConfig, redis)
 
 }

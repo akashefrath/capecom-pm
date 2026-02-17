@@ -11,6 +11,6 @@ type Service struct {
 
 func NewService(repo *Repositories, jwtManager *jwtutil.Manager) *Service {
 	return &Service{
-		Auth: service.NewAuth(repo.Session, repo.User, jwtManager),
+		Auth: service.NewAuth(repo.Session, repo.User, jwtManager, repo.Redis),
 	}
 }

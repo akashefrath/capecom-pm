@@ -2,8 +2,10 @@ package container
 
 import (
 	"github.com/akashefrath/capecom-pm/internal/config"
+	"github.com/akashefrath/capecom-pm/internal/middleware"
 	jwtutil "github.com/akashefrath/capecom-pm/internal/utils/jwt"
 	"github.com/jmoiron/sqlx"
+	"github.com/redis/go-redis/v9"
 )
 
 type Container struct {
@@ -13,9 +15,14 @@ type Container struct {
 	Service      *Service
 	Repositories *Repositories
 	JWTManager   *jwtutil.Manager
+	Middleware   *Middleware
 }
 
-func New(db *sqlx.DB, config *config.Config) Container {
+type Middleware struct {
+	Auth *middleware.Auth
+}
+
+func New(db *sqlx.DB, config *config.Config, redis *redis.Client) Container {
 	jwtManager := jwtutil.NewJWTManager(
 		config.JWT.UserSecret,
 		config.JWT.UserRefreshSecret,
@@ -24,7 +31,7 @@ func New(db *sqlx.DB, config *config.Config) Container {
 		config.JWT.ExpireHours,
 		config.JWT.RefreshExpireHours,
 	)
-	repo := NewRepository(db, config)
+	repo := NewRepository(db, config, redis)
 	service := NewService(repo, jwtManager)
 
 	return Container{
@@ -34,5 +41,10 @@ func New(db *sqlx.DB, config *config.Config) Container {
 		Service:      service,
 		Repositories: repo,
 		JWTManager:   jwtManager,
+		Middleware:   SetMiddleware(jwtManager, repo),
 	}
+}
+
+func SetMiddleware(jwtManager *jwtutil.Manager, repo *Repositories) *Middleware {
+	return &Middleware{Auth: middleware.NewAuth(jwtManager, repo.User, repo.Redis, repo.Session)}
 }

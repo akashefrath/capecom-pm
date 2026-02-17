@@ -1,23 +1,14 @@
-package models
+package dto
 
 type User struct {
-	BaseModel
+	BaseModelTop
 
-	Name        string
+	Name        string  `db:"name" json:"name"`
 	Email       string  `db:"email" json:"email"`
 	Phone       *string `db:"phone" json:"phone"`
 	CountryCode *int    `db:"country_code" json:"country_code"`
 	EmployeeID  *string `db:"employee_id" json:"employee_id"`
 	IsAdmin     bool    `db:"is_admin" json:"is_admin"`
-	
-	PasswordHash  string
-	GroupID       int64
-	DesignationID int64
-	DepartmentID  int64
-}
-type MinimalUser struct {
-	BaseModel
-	Email    string `db:"email"`
-	Password string `db:"password_hash"`
-	IsAdmin  bool   `db:"is_admin"`
+
+	BaseModelBottom
 }
