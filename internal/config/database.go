@@ -10,7 +10,7 @@ import (
 func InitDB(config Config) *sqlx.DB {
 	dbConfig := config.DBConfig
 	// Ensure this string is exactly: user:pass@tcp(host:port)/dbname
-	dbUrl := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",
+	dbUrl := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true&multiStatements=true",
 		dbConfig.DBUser,
 		dbConfig.DBPass,
 		dbConfig.DBHost,

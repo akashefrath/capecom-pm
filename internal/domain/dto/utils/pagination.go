@@ -1,0 +1,14 @@
+package utilsdto
+
+type ListWithMeta struct {
+	Data         interface{} `json:"data"`
+	Meta         any         `json:"meta"`
+	AppliedFiler []Filter    `json:"appliedFiler,omitempty"`
+}
+
+type PaginationMeta struct {
+	Page    int   `json:"page"`
+	Limit   int   `json:"limit"`
+	Total   int64 `json:"total"`
+	HasMore bool  `json:"has_more"`
+}

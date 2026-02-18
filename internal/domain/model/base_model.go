@@ -11,6 +11,7 @@ const (
 	StatusInactive = "inactive"
 	StatusBlocked  = "blocked"
 	StatusArchived = "archived"
+	StatusRevoked  = "revoked"
 )
 
 type BaseModel struct {

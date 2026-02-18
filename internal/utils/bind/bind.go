@@ -77,3 +77,17 @@ func PaginationBinder(c *gin.Context, entity string) (*common.Pagination, error)
 	req.Normalize()
 	return &req, nil
 }
+
+func FilterBinder(c *gin.Context) ([]common.FilterWithKeys, error) {
+
+	qFilters := c.QueryMap("filter")
+	var filters []common.FilterWithKeys
+	for key, value := range qFilters {
+		filters = append(filters, common.FilterWithKeys{
+			Key:    key,
+			Values: strings.Split(value, ","),
+		})
+		fmt.Printf("Filtering by Key: %s with Value: %s\n", key, value)
+	}
+	return filters, nil
+}

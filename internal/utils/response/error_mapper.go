@@ -75,4 +75,5 @@ func FromError(c *gin.Context, err error) {
 		Entity:  entity,
 		Func:    funcErr,
 	})
+	c.Abort()
 }

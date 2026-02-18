@@ -38,8 +38,23 @@ func GetMessage(key string, c *gin.Context) string {
 	lang := c.GetHeader("Accept-Language")
 	message := i18n.GetMessages(lang)
 	finalMessage := message[key]
+
 	return finalMessage
 }
+func GetMessageWithExtra(key string, c *gin.Context, a ...string) string {
+	lang := c.GetHeader("Accept-Language")
+	message := i18n.GetMessages(lang)
+	finalMessage := message[key]
+	for _, v := range a {
+		trMessage := message[v]
+		if trMessage == "" {
+			trMessage = v
+		}
+		finalMessage = fmt.Sprintf(finalMessage, trMessage)
+	}
+	return finalMessage
+}
+
 func ParseDate(s *string) *time.Time {
 	if s == nil || *s == "" {
 		return nil

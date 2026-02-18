@@ -2,12 +2,12 @@ package models
 
 import "time"
 
-const (
-	SessionStatusActive   = "active"
-	SessionStatusInactive = "inactive"
-	SessionStatusBlocked  = "blocked"
-	SessionStatusRevoked  = "revoked"
-)
+//const (
+//	SessionStatusActive   = "active"
+//	SessionStatusInactive = "inactive"
+//	SessionStatusBlocked  = "blocked"
+//	SessionStatusRevoked  = "revoked"
+//)
 
 type Session struct {
 	BaseModelNoCB

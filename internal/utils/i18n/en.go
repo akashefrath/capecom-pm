@@ -30,4 +30,12 @@ var EN = map[string]string{
 	"duplicate_client": "Client already exists",
 
 	"logged_out_success": "Logged out successfully",
+	"func_success":       "%s successfully",
+	"func_failed":        "%s failed",
+
+	///fun
+
+	"logout": "Logout",
+
+	"data_exists_on": "%s already exists",
 }

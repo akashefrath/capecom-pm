@@ -22,7 +22,7 @@ func NewSession(db *sqlx.DB, config *config.Config) *Session {
 	}
 }
 
-func (r *Session) CreateSession(userUuid string, jti string, hashedToken string) (error, error) {
+func (r *Session) CreateSession(userUuid string, jti string, hashedToken []byte) (error, error) {
 	if jti == "" {
 		jti = uuid.NewString()
 	}
@@ -45,7 +45,7 @@ func (r *Session) CreateSession(userUuid string, jti string, hashedToken string)
 	return nil, err
 }
 
-func (r *Session) UpdateSession(id int64, hashedToken string, jti string) error {
+func (r *Session) UpdateSession(id int64, hashedToken []byte, jti string) error {
 	timeNow := time.Now()
 	expiresAt := timeNow.Add(time.Hour * time.Duration(r.Config.JWT.RefreshExpireHours))
 	q := `UPDATE sessions SET jti=?, refresh_token_hash = ?, refresh_expires_at = ?, rotated_at = ?,last_used_at =? WHERE id = ?`
@@ -55,21 +55,32 @@ func (r *Session) UpdateSession(id int64, hashedToken string, jti string) error 
 
 }
 
-func (r *Session) GetSessionJTI(hashedToken string) (*string, *int64, *string, *bool, error) {
+func (r *Session) GetSessionJTI(hashedToken []byte) (*string, *int64, *string, *bool, error) {
 
 	var jti string
 	var id *int64
 	var userUuid string
+	var userId int64
 	var isAdmin bool
 
-	q := `SELECT s.id,s.jti,u.uuid,u.is_admin as userUUID 
+	q := `SELECT s.id,s.jti,u.uuid,u.id as userUUID 
          FROM sessions as s 
          INNER JOIN users AS u ON s.user_id = u.id
-         WHERE refresh_token_hash = ?`
-	err := r.DB.QueryRow(q, hashedToken).Scan(&id, &jti, &userUuid, &isAdmin)
+         WHERE refresh_token_hash = ? AND s.status = ?`
+	err := r.DB.QueryRow(q, hashedToken, models.StatusActive).Scan(&id, &jti, &userUuid, &userId)
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
+	q2 := `
+    SELECT EXISTS(
+        SELECT 1
+        FROM user_roles
+        WHERE user_id = ?
+          AND role_id IN (?, ?)
+    )
+`
+	err = r.DB.Get(&isAdmin, q2, userId, 1, 2)
+	 
 	return &jti, id, &userUuid, &isAdmin, nil
 
 }
@@ -86,7 +97,7 @@ func (r *Session) GetByJTI(jti string) (*models.Session, error) {
 func (r *Session) RevokeTokenByJti(jti string) (int64, error) {
 	co, _ := utils.ToInt64("0")
 	q := `UPDATE sessions SET status = ? WHERE jti = ? AND refresh_expires_at > NOW()  AND status =? LIMIT 1 `
-	res, err := r.DB.Exec(q, models.SessionStatusInactive, jti, models.SessionStatusActive)
+	res, err := r.DB.Exec(q, models.StatusInactive, jti, models.StatusActive)
 	if err != nil {
 		return co, err
 	}

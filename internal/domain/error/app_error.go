@@ -6,6 +6,7 @@ type AppError struct {
 	canShow  bool
 	entity   string
 	function string
+	needTr   bool
 }
 
 func (e *AppError) Error() string {
@@ -38,6 +39,7 @@ func New(code *int, msg string, entity, fn string) *AppError {
 		canShow:  true,
 		entity:   entity,
 		function: fn,
+		needTr:   true,
 	}
 }
 func NewWithCode(code int, msg string, entity, fn string) *AppError {
@@ -47,6 +49,17 @@ func NewWithCode(code int, msg string, entity, fn string) *AppError {
 		canShow:  true,
 		entity:   entity,
 		function: fn,
+		needTr:   true,
+	}
+}
+func NewWithCodeNoTr(code int, msg string, entity, fn string) *AppError {
+	return &AppError{
+		code:     &code,
+		message:  msg,
+		canShow:  true,
+		entity:   entity,
+		function: fn,
+		needTr:   false,
 	}
 }
 func Internal(entity, fn string) *AppError {
@@ -57,5 +70,6 @@ func Internal(entity, fn string) *AppError {
 		canShow:  false,
 		entity:   entity,
 		function: fn,
+		needTr:   true,
 	}
 }

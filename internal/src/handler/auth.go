@@ -38,6 +38,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 }
 
 func (h *AuthHandler) RefreshToken(c *gin.Context) {
+
 	var req dto.RefreshTokenRequest
 
 	isValid := bind.AndValidate(c, &req, "login")
@@ -66,12 +67,12 @@ func (h *AuthHandler) Me(c *gin.Context) {
 	}
 	response.JSONOk(c, response.APIResponse{
 		Success: true,
-
-		Data: data,
+		Data:    data,
 	})
 }
 
 func (h *AuthHandler) Logout(c *gin.Context) {
+
 	jti := utils.GetJTI(c)
 
 	err := h.Auth.LogoutUserByJTI(jti)
@@ -81,5 +82,6 @@ func (h *AuthHandler) Logout(c *gin.Context) {
 	}
 	response.JSONOk(c, response.APIResponse{
 		Success: true,
+		Message: utils.GetMessageWithExtra("func_success", c, "logout"),
 	})
 }

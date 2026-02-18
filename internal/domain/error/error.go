@@ -3,7 +3,7 @@ package domainerrors
 import "errors"
 
 var (
-
+	ErrDuplicateError = errors.New("duplicate error")
 	// ErrInvalidCredentials auth
 	ErrInvalidCredentials = errors.New("invalid_login_credentials")
 	ErrUnauthorized       = errors.New("unauthorized")
@@ -50,4 +50,6 @@ var (
 	//ErrBadRequest common
 	ErrBadRequest = errors.New("bad_request")
 	ErrInternal   = errors.New("internal_error")
+
+	RoleNotFound = errors.New("role_not_found")
 )

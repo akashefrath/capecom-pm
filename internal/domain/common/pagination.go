@@ -1,7 +1,5 @@
 package common
 
-import "fmt"
-
 type Pagination struct {
 	Page  int `json:"page" form:"page" query:"page"`
 	Limit int `json:"limit" form:"limit" query:"limit"`
@@ -30,9 +28,10 @@ func (p *Pagination) Normalize() {
 func (p *Pagination) Offset() int {
 	return (p.Page - 1) * p.Limit
 }
-func (p *Pagination) BuildPaginationQuery() string {
+func (p *Pagination) BuildPaginationQuery() (string, []interface{}) {
 	p.Normalize()
-	return fmt.Sprintf(" LIMIT %d OFFSET %d ", p.Limit, p.Offset())
+	// Return the query string AND the arguments separately
+	return " LIMIT ? OFFSET ? ", []interface{}{p.Limit, p.Offset()}
 }
 
 func (p *Pagination) HasMore(total int64) bool {

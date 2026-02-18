@@ -13,7 +13,9 @@ func Auth(r *gin.RouterGroup, container container.Container) {
 	auth.POST("login", authHandler.Login)
 	auth.POST("refresh-token", authHandler.RefreshToken)
 	authMiddleware := container.Middleware.Auth
-	auth.Use(authMiddleware.VerifyToken(middleware.AllowedTypeAll))
-	auth.GET("me", authHandler.Me)
-	auth.POST("logout", authHandler.Logout)
+
+	authSecure := auth.Group("")
+	authSecure.Use(authMiddleware.VerifyToken(middleware.AllowedTypeAll))
+	authSecure.GET("me", authHandler.Me)
+	authSecure.POST("logout", authHandler.Logout)
 }

@@ -18,6 +18,10 @@ func HashToken(token string) string {
 	hash := sha256.Sum256([]byte(token))
 	return hex.EncodeToString(hash[:])
 }
+func HashTokenToBinary(token string) []byte {
+	hash := sha256.Sum256([]byte(token))
+	return hash[:] // Returns 32 raw bytes
+}
 func GenerateRefreshToken() (string, error) {
 	b := make([]byte, 32) // 256 bits
 	_, err := rand.Read(b)

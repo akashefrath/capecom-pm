@@ -44,6 +44,7 @@ func (s *Auth) Login(email, password string) (*dto.LoginResponse, error) {
 	}
 
 	isValid := utils.CheckPassword(user.Password, password)
+
 	if !isValid {
 		return nil, errorInvalid
 	}
@@ -53,23 +54,24 @@ func (s *Auth) Login(email, password string) (*dto.LoginResponse, error) {
 	if err != nil {
 		return nil, errorInvalid
 	}
-	hashedToken := utils.HashToken(refreshToken)
+	hashedToken := utils.HashTokenToBinary(refreshToken)
 	_, err = s.Session.CreateSession(user.UUID, jti, hashedToken)
 	if err != nil {
-		return nil, errorInvalid
+		return nil, err
 	}
 
 	return s.CreateAndReturnSession(user.UUID, jti, refreshToken, user.IsAdmin)
 }
 
 func (s *Auth) RefreshToken(oldRefreshToken string) (*dto.LoginResponse, error) {
-	hashedOldToken := utils.HashToken(oldRefreshToken)
+	hashedOldToken := utils.HashTokenToBinary(oldRefreshToken)
 	_, id, userUuid, isAdmin, err := s.Session.GetSessionJTI(hashedOldToken)
 	if err != nil {
-		return nil, domainerrors.ErrUnauthorized
+ 
+		return nil, err
 	}
 	refreshToken, err := utils.GenerateRefreshToken()
-	hashedToken := utils.HashToken(refreshToken)
+	hashedToken := utils.HashTokenToBinary(refreshToken)
 	jti := uuid.NewString()
 	err = s.Session.UpdateSession(*id, hashedToken, jti)
 	if err != nil {
@@ -79,18 +81,19 @@ func (s *Auth) RefreshToken(oldRefreshToken string) (*dto.LoginResponse, error) 
 }
 
 func (s *Auth) FindUser(id int64) (*dto.User, error) {
-	return s.User.FinUserByID(id)
+	return s.User.FindUserByID(id)
 
 }
 
 func (s *Auth) LogoutUserByJTI(jti string) error {
-	count, _ := s.Session.RevokeTokenByJti(jti)
+	count, err := s.Session.RevokeTokenByJti(jti)
 	zeroCount := int64(0)
-	if count == zeroCount {
+	if count == zeroCount || err != nil {
 		return domainerrors.ErrUnauthorized
 	}
 	cacheKey := fmt.Sprintf("session:jti:%s", jti)
-	err := s.Redis.Delete(context.Background(), cacheKey)
+	println("isdelete")
+	err = s.Redis.Delete(context.Background(), cacheKey)
 	if err != nil {
 		return err
 	}

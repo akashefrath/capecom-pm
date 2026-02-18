@@ -96,7 +96,7 @@ func (m *Auth) VerifyToken(allowedType AllowedType) gin.HandlerFunc {
 			},
 		)
 
-		if err != nil || session == nil || session.Status != models.SessionStatusActive {
+		if err != nil || session == nil || session.Status != models.StatusActive {
 			response.FromError(c, domainerrors.ErrUnauthorized)
 			c.Abort()
 			return
