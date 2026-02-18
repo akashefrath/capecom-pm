@@ -27,3 +27,15 @@ type CreateUserRequest struct {
 	Password   string   `json:"password" form:"password"`
 	//CountryCode *int    `db:"country_code" json:"country_code"`
 }
+
+type UpdateUserRequest struct {
+	Name       string   `json:"name" form:"name" binding:"required"`
+	Email      string   `json:"email" form:"email" binding:"required,email"`
+	Phone      *string  `json:"phone" form:"phone"`
+	EmployeeID *string  `json:"employee_id" form:"employee_id"`
+	Roles      []string `json:"role_ids" form:"role_ids"`
+}
+
+type ChangeUserStatusRequest struct {
+	Status string `json:"status" form:"status" binding:"oneof=active inactive"`
+}

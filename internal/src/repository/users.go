@@ -4,7 +4,9 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/akashefrath/capecom-pm/internal/database"
 	"github.com/akashefrath/capecom-pm/internal/domain/common"
@@ -81,23 +83,34 @@ func (r *User) FindUserByID(id int64) (*dto.User, error) {
 }
 
 func (r *User) GetAll(pg common.Pagination, filter []common.FilterWithKeys) (*utilsdto.ListWithMeta, error) {
-	var users []dto.User
+	users := make([]dto.User, 0)
 	filterQ, args := common.BuildFilterQuery(filter)
 	fArgs := args
 	paginationQ, pArgs := pg.BuildPaginationQuery()
 
+	if filterQ != "" {
+		filterQ = ` AND ` + filterQ
+	} else {
+		filterQ = ` `
+	}
 	// 1. Fetch all users in one go
 	q1 := `SELECT  id, uuid, name, email, is_admin, status 
            FROM users 
-           WHERE deleted_at IS NULL` + ` AND ` + filterQ + paginationQ
+           WHERE deleted_at IS NULL` + filterQ + paginationQ
+
 	newArgs := append(args, pArgs...)
+
 	if err := r.DB.Select(&users, q1, newArgs...); err != nil {
 		return nil, err
 	}
 
-	//if len(users) == 0 {
-	//	return users, nil
-	//}
+	if len(users) == 0 {
+		return &utilsdto.ListWithMeta{
+			Data:         users,
+			Meta:         nil,
+			AppliedFiler: nil,
+		}, nil
+	}
 
 	// 2. Collect all User IDs into a slice
 	userIDs := make([]int64, len(users))
@@ -141,7 +154,7 @@ func (r *User) GetAll(pg common.Pagination, filter []common.FilterWithKeys) (*ut
 	}
 
 	var total int64
-	countQuery := `SELECT COUNT(*) FROM users WHERE deleted_at IS NULL AND ` + filterQ
+	countQuery := `SELECT COUNT(*) FROM users WHERE deleted_at IS NULL ` + filterQ
 
 	err = r.DB.Get(&total, countQuery, fArgs...)
 	if err != nil {
@@ -163,7 +176,7 @@ func (r *User) GetAll(pg common.Pagination, filter []common.FilterWithKeys) (*ut
 }
 
 func (r *User) GetActiveUserUuidByID(id int64) *string {
-	var userUuid string = ""
+	var userUuid = ""
 	q := `SELECT uuid FROM users WHERE id = ? AND status`
 	_ = r.DB.Get(&userUuid, q, id, models.StatusActive)
 	return &userUuid
@@ -173,7 +186,7 @@ func (r *User) GetActiveUserUuidByID(id int64) *string {
 func (r *User) GetActiveUserIDByUuid(uuid string) *int64 {
 	var id int64
 	q := `SELECT id FROM users WHERE uuid = ? AND status`
-	_ = r.DB.Get(&id, q, id, models.StatusActive)
+	_ = r.DB.Get(&id, q, uuid, models.StatusActive)
 	return &id
 }
 
@@ -210,53 +223,149 @@ func (r *User) GetByID(uuid string) (*dto.User, error) {
 
 	return &user, nil
 }
-
 func (r *User) Create(createdBy int64, req dto.CreateUserRequest) (*int64, error) {
 	var userID int64
-	var roleID []int64
+
 	err := r.DBTx.WithTx(context.Background(), func(tx *sqlx.Tx) error {
-		// insert user
-		q := `INSERT INTO users (uuid, name, email, phone, country_code, password_hash, employee_id, created_by,status) 
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
-		result, err := tx.Exec(q, uuid.NewString(), req.Name, req.Email, req.Phone, nil, req.Password, req.EmployeeID, createdBy, models.StatusActive)
-		if err != nil {
-			return err
-		}
-		userID, err = result.LastInsertId()
-		if err != nil {
-			return err
-		}
-		// get user roles by uuid
-		query, args, err := sqlx.In(
-			`SELECT id FROM roles WHERE uuid IN (?)`,
-			req.Roles,
+
+		// 1️⃣ Insert user
+		res, err := tx.Exec(`
+			INSERT INTO users (uuid, name, email, phone, country_code, password_hash, employee_id, created_by, status)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+			uuid.NewString(),
+			req.Name,
+			req.Email,
+			req.Phone,
+			nil,
+			req.Password,
+			req.EmployeeID,
+			createdBy,
+			models.StatusActive,
 		)
 		if err != nil {
 			return err
 		}
 
-		// IMPORTANT for MySQL
-		query = tx.Rebind(query)
-
-		err = tx.Select(&roleID, query, args...)
+		userID, err = res.LastInsertId()
 		if err != nil {
 			return err
 		}
 
-		if roleID == nil || len(roleID) == 0 || len(roleID) != len(req.Roles) {
-			return domainerrors.NewWithCode(http.StatusBadRequest, domainerrors.RoleNotFound.Error(), "create_user", "check_role_id")
+		// 2️⃣ Get role IDs
+		var roleIDs []int64
+		query, args, err := sqlx.In(`SELECT id FROM roles WHERE uuid IN (?)`, req.Roles)
+		if err != nil {
+			return err
 		}
-		///// load user roles
-		for _, role := range roleID {
-			q2 := `INSERT INTO user_roles (uuid,user_id, role_id) VALUES (?,?, ?)`
-			_, err = tx.Exec(q2, uuid.NewString(), userID, role)
-			if err != nil {
-				return err
-			}
+		query = tx.Rebind(query)
+
+		if err = tx.Select(&roleIDs, query, args...); err != nil {
+			return err
 		}
 
+		if len(roleIDs) != len(req.Roles) {
+			return domainerrors.NewWithCode(
+				http.StatusBadRequest,
+				domainerrors.RoleNotFound.Error(),
+				"create_user",
+				"check_role_id",
+			)
+		}
+
+		// 3️⃣ BULK INSERT user_roles (single query instead of loop)
+		valueStrings := make([]string, 0, len(roleIDs))
+		valueArgs := make([]any, 0, len(roleIDs)*3)
+
+		for _, rid := range roleIDs {
+			valueStrings = append(valueStrings, "(UUID(), ?, ?)")
+			valueArgs = append(valueArgs, userID, rid)
+		}
+
+		stmt := fmt.Sprintf(`
+			INSERT INTO user_roles (uuid, user_id, role_id)
+			VALUES %s`, strings.Join(valueStrings, ","))
+
+		_, err = tx.Exec(stmt, valueArgs...)
 		return err
 	})
 
 	return &userID, err
+}
+
+func (r *User) Update(uuid string, req dto.UpdateUserRequest) error {
+	return r.DBTx.WithTx(context.Background(), func(tx *sqlx.Tx) error {
+
+		// 1️⃣ Update + fetch id in single query
+		var userID int64
+		err := tx.Get(&userID, `
+			SELECT id FROM users 
+			WHERE uuid = ? AND deleted_at IS NULL
+		`, uuid)
+		if err != nil {
+			return err
+		}
+
+		_, err = tx.Exec(`
+			UPDATE users 
+			SET name=?, email=?, phone=?, employee_id=? 
+			WHERE id=?`,
+			req.Name, req.Email, req.Phone, req.EmployeeID, userID,
+		)
+		if err != nil {
+			return err
+		}
+
+		// 2️⃣ Validate roles
+		var roleIDs []int64
+		query, args, err := sqlx.In(`SELECT id FROM roles WHERE uuid IN (?)`, req.Roles)
+		if err != nil {
+			return err
+		}
+		query = tx.Rebind(query)
+
+		if err = tx.Select(&roleIDs, query, args...); err != nil {
+			return err
+		}
+
+		if len(roleIDs) != len(req.Roles) {
+			return domainerrors.NewWithCode(http.StatusBadRequest, domainerrors.RoleNotFound.Error(), "update_user", "check_role_id")
+		}
+
+		// 3️⃣ Delete existing
+		if _, err = tx.Exec(`DELETE FROM user_roles WHERE user_id = ?`, userID); err != nil {
+			return err
+		}
+
+		// 4️⃣ BULK INSERT (single query)
+		valueStrings := make([]string, 0, len(roleIDs))
+		valueArgs := make([]any, 0, len(roleIDs)*3)
+
+		for _, rid := range roleIDs {
+			valueStrings = append(valueStrings, "(UUID(), ?, ?)")
+			valueArgs = append(valueArgs, userID, rid)
+		}
+
+		stmt := fmt.Sprintf(`
+			INSERT INTO user_roles (uuid, user_id, role_id)
+			VALUES %s
+		`, strings.Join(valueStrings, ","))
+
+		if _, err = tx.Exec(stmt, valueArgs...); err != nil {
+			return err
+		}
+
+		return nil
+	})
+}
+
+func (r *User) ChangeStatus(uuid string, status string) error {
+	q := `UPDATE users SET status = ? WHERE uuid = ? AND deleted_at IS NULL`
+	_, err := r.DB.Exec(q, status, uuid)
+	return err
+}
+
+func (r *User) ResetPassword(uuid string, password string) error {
+	q := `UPDATE users SET password_hash = ? WHERE uuid = ? AND deleted_at IS NULL`
+	_, err := r.DB.Exec(q, password, uuid)
+	return err
 }

@@ -5,7 +5,6 @@ import (
 
 	"github.com/akashefrath/capecom-pm/internal/config"
 	models "github.com/akashefrath/capecom-pm/internal/domain/model"
-	"github.com/akashefrath/capecom-pm/internal/utils"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 )
@@ -80,7 +79,7 @@ func (r *Session) GetSessionJTI(hashedToken []byte) (*string, *int64, *string, *
     )
 `
 	err = r.DB.Get(&isAdmin, q2, userId, 1, 2)
-	 
+
 	return &jti, id, &userUuid, &isAdmin, nil
 
 }
@@ -95,7 +94,7 @@ func (r *Session) GetByJTI(jti string) (*models.Session, error) {
 }
 
 func (r *Session) RevokeTokenByJti(jti string) (int64, error) {
-	co, _ := utils.ToInt64("0")
+	co := int64(0)
 	q := `UPDATE sessions SET status = ? WHERE jti = ? AND refresh_expires_at > NOW()  AND status =? LIMIT 1 `
 	res, err := r.DB.Exec(q, models.StatusInactive, jti, models.StatusActive)
 	if err != nil {

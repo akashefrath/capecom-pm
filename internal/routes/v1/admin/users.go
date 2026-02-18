@@ -12,4 +12,7 @@ func Users(r *gin.RouterGroup, container container.Container) {
 	userGroup.POST("", userHandler.Create)
 	userGroup.GET("", userHandler.GetUsers)
 	userGroup.GET(":id", userHandler.GetUserByID)
+	userGroup.PUT(":id", userHandler.Update)
+	userGroup.POST(":id/status", userHandler.ChangeStatus)
+	userGroup.POST(":id/reset-password", userHandler.ResetPassword)
 }

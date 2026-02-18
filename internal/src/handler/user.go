@@ -68,3 +68,49 @@ func (h UserHandler) GetUserByID(c *gin.Context) {
 		Data:    user,
 	})
 }
+
+func (h UserHandler) Update(c *gin.Context) {
+	id := c.Param("id")
+	var req dto.UpdateUserRequest
+	if valid := bind.AndValidate(c, &req, "update_user"); !valid {
+		return
+	}
+	usr, err := h.User.Update(id, req)
+	if err != nil {
+		response.FromError(c, err)
+		return
+	}
+	response.JSON(c, http.StatusOK, response.APIResponse{
+		Success: true,
+		Data:    usr,
+	})
+}
+
+func (h UserHandler) ChangeStatus(c *gin.Context) {
+	id := c.Param("id")
+	var req dto.ChangeUserStatusRequest
+	if valid := bind.AndValidate(c, &req, "change_status"); !valid {
+		return
+	}
+	usr, err := h.User.ChangeStatus(id, req)
+	if err != nil {
+		response.FromError(c, err)
+		return
+	}
+	response.JSON(c, http.StatusOK, response.APIResponse{
+		Success: true,
+		Data:    usr,
+	})
+}
+
+func (h UserHandler) ResetPassword(c *gin.Context) {
+	id := c.Param("id")
+	err := h.User.ResetPassword(id)
+	if err != nil {
+		response.FromError(c, err)
+		return
+	}
+	response.JSON(c, http.StatusOK, response.APIResponse{
+		Success: true,
+	})
+}

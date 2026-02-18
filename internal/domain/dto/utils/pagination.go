@@ -2,7 +2,7 @@ package utilsdto
 
 type ListWithMeta struct {
 	Data         interface{} `json:"data"`
-	Meta         any         `json:"meta"`
+	Meta         any         `json:"meta,omitempty"`
 	AppliedFiler []Filter    `json:"appliedFiler,omitempty"`
 }
 
