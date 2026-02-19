@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/akashefrath/capecom-pm/internal/database"
 	domainerrors "github.com/akashefrath/capecom-pm/internal/domain/error"
 	"github.com/akashefrath/capecom-pm/internal/utils/i18n"
 	"github.com/gin-gonic/gin"
@@ -59,16 +60,23 @@ func FromError(c *gin.Context, err error) {
 	var appErr *domainerrors.AppError
 	var entity string
 	var funcErr string
+
+	err = database.SQLErrorFinder(err)
+
 	if errors.As(err, &appErr) {
 		if appErr.Code() != nil {
 			code = *appErr.Code()
 			entity = appErr.Entity()
 			funcErr = appErr.Function()
-
-			//finalMessage = message[appErr.Error()]
+			if appErr.Tr() {
+				finalMessage = message[appErr.Error()]
+			} else {
+				finalMessage = appErr.Error()
+			}
 
 		}
 	}
+
 	JSON(c, code, APIResponse{
 		Success: false,
 		Message: finalMessage,

@@ -1,6 +1,7 @@
 package database
 
 import (
+	"database/sql"
 	"errors"
 	"fmt"
 	"net/http"
@@ -21,10 +22,22 @@ type DuplicateError struct {
 
 func SQLErrorFinder(err error) error {
 	var mysqlErr *mysql.MySQLError
+
 	if errors.As(err, &mysqlErr) {
+
 		if mysqlErr.Number == DuplicateCode {
-			return domainerrors.ErrDuplicateError
+			matches := dupRegex.FindStringSubmatch(mysqlErr.Message)
+			if len(matches) != 3 {
+				return err
+			}
+			msg := fmt.Sprintf("Duplicate entry '%s' for key '%s'", matches[1], matches[2])
+			errorInvalid := domainerrors.NewWithCodeNoTr(http.StatusConflict, msg, "", "duplicate error")
+			return errorInvalid
 		}
+	} else if errors.Is(err, sql.ErrNoRows) {
+
+		return domainerrors.NewWithCode(http.StatusNotFound, "item_not_found", "", "")
+
 	}
 
 	return err

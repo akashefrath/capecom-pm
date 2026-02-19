@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strings"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -50,15 +51,24 @@ func Migrate(DB *sqlx.DB) {
 
 		tx := DB.MustBegin()
 
-		_, err = tx.Exec(string(sqlBytes))
-		if err != nil {
-			err := tx.Rollback()
-			if err != nil {
-				return
-			}
-			log.Fatalf("migrations failed %s: %v", version, err)
-		}
+		statements := strings.Split(string(sqlBytes), ";")
 
+		for i, stmt := range statements {
+			stmt = strings.TrimSpace(stmt)
+			if stmt == "" {
+				continue
+			}
+
+			_, err := tx.Exec(stmt)
+			if err != nil {
+				err := tx.Rollback()
+				if err != nil {
+					return
+				}
+				log.Fatalf("Migration failed at statement #%d:\n%s\nError: %v",
+					i+1, stmt, err)
+			}
+		}
 		_, err = tx.Exec("INSERT INTO schema_migrations(version) VALUES(?)", version)
 		if err != nil {
 			err := tx.Rollback()

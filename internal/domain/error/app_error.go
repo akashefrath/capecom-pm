@@ -16,6 +16,9 @@ func (e *AppError) Error() string {
 func (e *AppError) Code() *int {
 	return e.code
 }
+func (e *AppError) Tr() bool {
+	return e.needTr
+}
 
 func (e *AppError) Message() string {
 	return e.message

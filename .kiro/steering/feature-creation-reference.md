@@ -52,7 +52,25 @@ func NewRole(roleRepo *repository.Role) *Role {
 func (s *Role) GetAllActive() ([]dto.RoleResponse, error) {
 	return s.RoleRepo.GetAllActive()
 }
+
+func (s *Role) Create(req dto.CreateRoleRequest) (*dto.RoleResponse, error) {
+	id, err := s.RoleRepo.Create(req)
+	if err != nil {
+		return nil, err
+	}
+	return s.RoleRepo.GetByID(*id)
+}
+
+func (s *Role) Update(uuid string, req dto.UpdateRoleRequest) (*dto.RoleResponse, error) {
+	err := s.RoleRepo.Update(uuid, req)
+	if err != nil {
+		return nil, err
+	}
+	return s.RoleRepo.GetByUUID(uuid)
+}
 ```
+
+**Pattern:** After Create/Update, fetch and return the created/updated record.
 
 ### 3. Handler (internal/src/handler/role.go)
 ```go
@@ -104,16 +122,57 @@ func (h *RoleHandler) Create(c *gin.Context) {
 		Data:    data,
 	})
 }
+
+// PUT endpoint - with request body validation
+func (h *RoleHandler) Update(c *gin.Context) {
+	uuid := c.Param("uuid")
+	var req dto.UpdateRoleRequest
+	isValid := bind.AndValidate(c, &req, "role")
+	if !isValid {
+		return
+	}
+	
+	data, err := h.Role.Update(uuid, req)
+	if err != nil {
+		response.FromError(c, err)
+		return
+	}
+	response.JSONOk(c, response.APIResponse{
+		Success: true,
+		Data:    data,
+	})
+}
 ```
+
+**Pattern:** Create/Update handlers return the created/updated record in response.
 
 ### 4. DTO (internal/domain/dto/role.go)
 ```go
 package dto
 
 type RoleResponse struct {
-	ID     string `json:"id"`
-	Name   string `json:"name"`
-	Status string `json:"status"`
+	BaseModelTop
+	Name string `json:"name" db:"name"`
+	BaseModelBottom
+}
+```
+
+**BaseModel Pattern:**
+- Use `BaseModelTop` for ID and UUID fields (ID hidden from JSON, UUID exposed as "id")
+- Use `BaseModelBottom` for Status, CreatedAt, UpdatedAt, DeletedAt, CreatedBy
+- Place custom fields between Top and Bottom
+
+Example with custom fields:
+```go
+type AttendancePolicyResponse struct {
+	BaseModelTop
+	MinWorkHoursMinutes   int `json:"min_work_hours_minutes" db:"min_work_hours_minutes"`
+	HalfDayMinutes        int `json:"half_day_minutes" db:"half_day_minutes"`
+	LateGraceMinutes      int `json:"late_grace_minutes" db:"late_grace_minutes"`
+	EarlyExitGraceMinutes int `json:"early_exit_grace_minutes" db:"early_exit_grace_minutes"`
+	MaxBreakMinutes       int `json:"max_break_minutes" db:"max_break_minutes"`
+	AutoCheckoutTime      int `json:"auto_checkout_time" db:"auto_checkout_time"`
+	BaseModelBottom
 }
 ```
 
@@ -254,23 +313,59 @@ q := `SELECT uuid, name FROM table WHERE deleted_at IS NULL AND status = ?`
 err := r.DB.Select(&results, q, models.StatusActive)
 ```
 
+**Pattern:** Initialize slice with `make()` to return empty array instead of null:
+```go
+var results = make([]dto.Response, 0)
+q := `SELECT uuid, name FROM table WHERE deleted_at IS NULL`
+err := r.DB.Select(&results, q)
+```
+
 ### Get By ID
 ```go
 q := `SELECT uuid, name FROM table WHERE uuid = ? AND deleted_at IS NULL`
 err := r.DB.Get(&result, q, id)
 ```
 
+**Additional Methods:**
+```go
+// GetByID - for fetching after create using LastInsertId
+func (r *Repository) GetByID(id int64) (*dto.Response, error) {
+	var result dto.Response
+	q := `SELECT id, uuid, name FROM table WHERE id = ? AND deleted_at IS NULL`
+	err := r.DB.Get(&result, q, id)
+	return &result, err
+}
+
+// GetByUUID - for fetching after update or by UUID param
+func (r *Repository) GetByUUID(uuid string) (*dto.Response, error) {
+	var result dto.Response
+	q := `SELECT id, uuid, name FROM table WHERE uuid = ? AND deleted_at IS NULL`
+	err := r.DB.Get(&result, q, uuid)
+	return &result, err
+}
+```
+
 ### Create
 ```go
 q := `INSERT INTO table (uuid, name, status) VALUES (?, ?, ?)`
-_, err := r.DB.Exec(q, uuid, name, status)
+result, err := r.DB.Exec(q, uuid, name, status)
+if err != nil {
+    return nil, err
+}
+id, err := result.LastInsertId()
+return &id, err
 ```
+
+**Pattern:** Return LastInsertId to fetch created record in service layer.
 
 ### Update
 ```go
 q := `UPDATE table SET name = ? WHERE uuid = ? AND deleted_at IS NULL`
 _, err := r.DB.Exec(q, name, uuid)
+return err
 ```
+
+**Pattern:** Return error only, fetch updated record in service layer.
 
 ### Soft Delete
 ```go
@@ -286,14 +381,16 @@ _, err := r.DB.Exec(q, uuid)
 package dto
 
 type CreateRoleRequest struct {
-	Name string `json:"name" binding:"required,min=3,max=50"`
-	Code string `json:"code" binding:"required,alphanum"`
+	Name string `json:"name" form:"name" binding:"required,min=3,max=50"`
+	Code string `json:"code" form:"code" binding:"required,alphanum"`
 }
 
 type UpdateRoleRequest struct {
-	Name string `json:"name" binding:"omitempty,min=3,max=50"`
+	Name string `json:"name" form:"name" binding:"omitempty,min=3,max=50"`
 }
 ```
+
+**IMPORTANT:** Always include both `json` and `form` tags to support both JSON and form-data requests.
 
 ### Common Validation Tags
 - `required` - Field must be present

@@ -10,19 +10,27 @@ import (
 )
 
 type Repositories struct {
-	Session *repository.Session
-	User    *repository.User
-	Role    *utilsrepository.Role
-	Redis   *utilsrepository.Redis
-	Utils   *utilsrepository.Utils
+	Session               *repository.Session
+	User                  *repository.User
+	Role                  *utilsrepository.Role
+	Redis                 *utilsrepository.Redis
+	Utils                 *utilsrepository.Utils
+	AttendancePolicy      *repository.AttendancePolicy
+	AttendancePolicyGroup *repository.AttendancePolicyGroup
+	ShiftSystem           *repository.ShiftSystem
+	ShiftSystemGroup      *repository.ShiftSystemGroup
 }
 
 func NewRepository(db *sqlx.DB, config *config.Config, redis *redis.Client, dbTX *database.Database) *Repositories {
 	return &Repositories{
-		Session: repository.NewSession(db, config),
-		User:    repository.NewUser(db, dbTX),
-		Role:    utilsrepository.NewRole(db),
-		Redis:   utilsrepository.NewRedis(redis),
-		Utils:   utilsrepository.NewUtils(db),
+		Session:               repository.NewSession(db, config),
+		User:                  repository.NewUser(db, dbTX),
+		Role:                  utilsrepository.NewRole(db),
+		Redis:                 utilsrepository.NewRedis(redis),
+		Utils:                 utilsrepository.NewUtils(db),
+		AttendancePolicy:      repository.NewAttendancePolicy(db),
+		AttendancePolicyGroup: repository.NewAttendancePolicyGroup(db),
+		ShiftSystem:           repository.NewShiftSystem(db),
+		ShiftSystemGroup:      repository.NewShiftSystemGroup(db),
 	}
 }

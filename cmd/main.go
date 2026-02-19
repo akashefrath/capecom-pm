@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
+	"time"
 
 	"github.com/akashefrath/capecom-pm/internal/cache"
 	"github.com/akashefrath/capecom-pm/internal/config"
@@ -14,13 +16,18 @@ import (
 )
 
 func main() {
+	err := os.Setenv("TZ", "UTC")
+	if err != nil {
+		return
+	}
+	time.Local = time.UTC
 	appContainer := initApp()
 
 	r := gin.Default()
 
 	routes.Setup(r, appContainer)
 
-	err := r.Run(fmt.Sprintf(":%d", appContainer.Config.Port))
+	err = r.Run(fmt.Sprintf(":%d", appContainer.Config.Port))
 
 	if err != nil {
 		return

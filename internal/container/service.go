@@ -7,17 +7,25 @@ import (
 )
 
 type Service struct {
-	Auth  *service.Auth
-	User  *service.User
-	Role  *utilsservice.Role
-	Utils *utilsservice.Utils
+	Auth                  *service.Auth
+	User                  *service.User
+	Role                  *utilsservice.Role
+	Utils                 *utilsservice.Utils
+	AttendancePolicy      *service.AttendancePolicy
+	AttendancePolicyGroup *service.AttendancePolicyGroup
+	ShiftSystem           *service.ShiftSystem
+	ShiftSystemGroup      *service.ShiftSystemGroup
 }
 
 func NewService(repo *Repositories, jwtManager *jwtutil.Manager) *Service {
 	return &Service{
-		Auth:  service.NewAuth(repo.Session, repo.User, jwtManager, repo.Redis),
-		User:  service.NewUser(repo.User),
-		Role:  utilsservice.NewRole(repo.Role),
-		Utils: utilsservice.NewUtils(repo.Utils),
+		Auth:                  service.NewAuth(repo.Session, repo.User, jwtManager, repo.Redis),
+		User:                  service.NewUser(repo.User),
+		Role:                  utilsservice.NewRole(repo.Role),
+		Utils:                 utilsservice.NewUtils(repo.Utils),
+		AttendancePolicy:      service.NewAttendancePolicy(repo.AttendancePolicy),
+		AttendancePolicyGroup: service.NewAttendancePolicyGroup(repo.AttendancePolicyGroup),
+		ShiftSystem:           service.NewShiftSystem(repo.ShiftSystem),
+		ShiftSystemGroup:      service.NewShiftSystemGroup(repo.ShiftSystemGroup, repo.ShiftSystem),
 	}
 }

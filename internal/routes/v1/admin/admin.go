@@ -10,4 +10,5 @@ func Admin(r *gin.RouterGroup, container container.Container) {
 	adminGroup := r.Group("/admin")
 	adminGroup.Use(container.Middleware.Auth.VerifyToken(middleware.AllowedTypeAdmin))
 	Users(adminGroup, container)
+	Settings(adminGroup, container)
 }

@@ -8,11 +8,11 @@ type BaseModelTop struct {
 }
 
 type BaseModelBottom struct {
-	Status string `db:"status" default:"active" json:"status"`
+	Status string `db:"status" default:"active" json:"status,omitempty"`
 
-	CreatedAt time.Time  `db:"created_at" json:"created_at"`
-	UpdatedAt time.Time  `db:"updated_at" json:"updated_at"`
-	DeletedAt *time.Time `db:"deleted_at" json:"deleted_at"`
+	CreatedAt *time.Time `db:"created_at" json:"created_at,omitempty"`
+	UpdatedAt *time.Time `db:"updated_at" json:"updated_at,omitempty"`
+	DeletedAt *time.Time `db:"deleted_at" json:"deleted_at,omitempty"`
 
 	CreatedBy *uint64 `db:"created_by" json:"-"`
 }

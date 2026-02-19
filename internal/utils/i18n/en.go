@@ -3,15 +3,16 @@ package i18n
 var EN = map[string]string{
 
 	// validation
-	"required":     "This field is required",
-	"email":        "Invalid email format",
-	"min":          "Minimum %s characters required",
-	"max":          "Maximum %s characters allowed",
-	"invalid_body": "Invalid request body",
-	"invalid":      "Invalid %s",
-	"invalid_type": "Invalid %s type",
-	"not_found":    "%s Not found",
-	"duplicate":    "Duplicate %s",
+	"required":       "This field is required",
+	"email":          "Invalid email format",
+	"min":            "Minimum %s characters required",
+	"max":            "Maximum %s characters allowed",
+	"invalid_body":   "Invalid request body",
+	"invalid":        "Invalid %s",
+	"invalid_type":   "Invalid %s type",
+	"not_found":      "%s Not found",
+	"item_not_found": "Item Not found",
+	"duplicate":      "Duplicate %s",
 
 	// common
 	"bad_request":    "Bad request",
