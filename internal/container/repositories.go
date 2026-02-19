@@ -19,6 +19,7 @@ type Repositories struct {
 	AttendancePolicyGroup *repository.AttendancePolicyGroup
 	ShiftSystem           *repository.ShiftSystem
 	ShiftSystemGroup      *repository.ShiftSystemGroup
+	TimeClock             *repository.TimeClock
 }
 
 func NewRepository(db *sqlx.DB, config *config.Config, redis *redis.Client, dbTX *database.Database) *Repositories {
@@ -32,5 +33,6 @@ func NewRepository(db *sqlx.DB, config *config.Config, redis *redis.Client, dbTX
 		AttendancePolicyGroup: repository.NewAttendancePolicyGroup(db),
 		ShiftSystem:           repository.NewShiftSystem(db),
 		ShiftSystemGroup:      repository.NewShiftSystemGroup(db),
+		TimeClock:             repository.NewTimeClock(db),
 	}
 }

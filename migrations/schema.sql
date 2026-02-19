@@ -189,10 +189,13 @@ CREATE INDEX idx_user_roles_lookup ON user_roles (user_id, role_id, status, dele
 -- =========================================================
 CREATE TABLE attendance_logs (
                                  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                 uuid CHAR(36) UNIQUE NOT NULL,
                                  employee_id BIGINT NOT NULL,
                                  log_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                                 log_type ENUM('IN', 'OUT', 'BREAK_IN', 'BREAK_OUT') NOT NULL,
+                                 log_type ENUM('IN', 'OUT', 'BREAK_IN', 'BREAK_OUT', 'TIME_OUT') NOT NULL,
                                  source ENUM('mobile', 'biometric', 'admin') NOT NULL,
+                                 latitude DECIMAL(10, 7) NULL,
+                                 longitude DECIMAL(10, 7) NULL,
                                  device_id VARCHAR(100),
                                  remarks TEXT,
                                  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

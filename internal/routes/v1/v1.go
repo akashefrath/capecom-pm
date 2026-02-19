@@ -12,5 +12,6 @@ func Setup(r *gin.Engine, container container.Container) {
 	adminv1.Admin(v1API, container)
 	Auth(v1API, container)
 	Utils(v1API, container)
+	TimeClock(v1API, container)
 
 }

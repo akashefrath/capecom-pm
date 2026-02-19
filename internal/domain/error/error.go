@@ -52,4 +52,6 @@ var (
 	ErrInternal   = errors.New("internal_error")
 
 	RoleNotFound = errors.New("role_not_found")
+
+	CantPerformThis = errors.New("cant_perform_this_action")
 )

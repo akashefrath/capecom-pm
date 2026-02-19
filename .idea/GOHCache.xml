@@ -17,6 +17,72 @@
             </set>
           </value>
         </entry>
+        <entry key="AttendancePolicy">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/model/attendance_policy.go" />
+              <option value="file://$PROJECT_DIR$/internal/src/repository/attendance_policy.go" />
+              <option value="file://$PROJECT_DIR$/internal/src/service/attendance_policy.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="AttendancePolicyGroup">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/src/repository/attendance_policy_group.go" />
+              <option value="file://$PROJECT_DIR$/internal/src/service/attendance_policy_group.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="AttendancePolicyGroupHandler">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/src/handler/attendance_policy_group.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="AttendancePolicyGroupResponse">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/attendance_policy_group.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="AttendancePolicyGroupSingleResponse">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/attendance_policy_group.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="AttendancePolicyGroupSingleRow">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/attendance_policy_group.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="AttendancePolicyHandler">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/src/handler/attendance_policy.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="AttendancePolicyResponse">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/attendance_policy.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="AttendancePolicyResponseGroup">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/attendance_policy_group.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="Auth">
           <value>
             <set>
@@ -93,6 +159,34 @@
           <value>
             <set>
               <option value="file://$PROJECT_DIR$/internal/container/container.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="CreateAttendancePolicyGroupRequest">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/attendance_policy_group.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="CreateAttendancePolicyRequest">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/attendance_policy.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="CreateShiftSystemGroupRequest">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/shift_system_group.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="CreateShiftSystemRequest">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/shift_system.go" />
             </set>
           </value>
         </entry>
@@ -281,6 +375,100 @@
             </set>
           </value>
         </entry>
+        <entry key="ShiftSystem">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/src/repository/shift_system.go" />
+              <option value="file://$PROJECT_DIR$/internal/src/service/shift_system.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ShiftSystemGroup">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/src/repository/shift_system_group.go" />
+              <option value="file://$PROJECT_DIR$/internal/src/service/shift_system_group.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ShiftSystemGroupHandler">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/src/handler/shift_system_group.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ShiftSystemGroupResponse">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/shift_system_group.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ShiftSystemHandler">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/src/handler/shift_system.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ShiftSystemResponse">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/shift_system.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="TimeClock">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/src/repository/time_clock.go" />
+              <option value="file://$PROJECT_DIR$/internal/src/service/time_clock.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="TimeClockHandler">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/src/handler/time_clock.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="TimeClockRequest">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/time_clock.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="TimeClockResponse">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/time_clock.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="UpdateAttendancePolicyGroupRequest">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/attendance_policy_group.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="UpdateShiftSystemGroupRequest">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/shift_system_group.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="UpdateShiftSystemRequest">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/shift_system.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="UpdateUserRequest">
           <value>
             <set>
@@ -334,7 +522,7 @@
         <entry key="file://$PROJECT_DIR$/cmd/main.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771428391483" />
+              <option name="lastModified" value="1771516178969" />
             </ScannedPath>
           </value>
         </entry>
@@ -369,7 +557,7 @@
         <entry key="file://$PROJECT_DIR$/internal/config/database.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771428391485" />
+              <option name="lastModified" value="1771516178969" />
             </ScannedPath>
           </value>
         </entry>
@@ -389,7 +577,7 @@
         <entry key="file://$PROJECT_DIR$/internal/container/handler.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771428391485" />
+              <option name="lastModified" value="1771516948529" />
               <option name="schema">
                 <list>
                   <option value="Handler" />
@@ -401,7 +589,7 @@
         <entry key="file://$PROJECT_DIR$/internal/container/repositories.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771428391486" />
+              <option name="lastModified" value="1771516873237" />
               <option name="schema">
                 <list>
                   <option value="Repositories" />
@@ -413,7 +601,7 @@
         <entry key="file://$PROJECT_DIR$/internal/container/service.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771428391486" />
+              <option name="lastModified" value="1771516889483" />
               <option name="schema">
                 <list>
                   <option value="Service" />
@@ -425,7 +613,7 @@
         <entry key="file://$PROJECT_DIR$/internal/database/extra_db_error.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771428391486" />
+              <option name="lastModified" value="1771516178970" />
               <option name="schema">
                 <list>
                   <option value="DuplicateError" />
@@ -437,14 +625,14 @@
         <entry key="file://$PROJECT_DIR$/internal/database/migration/migration.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771428391486" />
+              <option name="lastModified" value="1771516178971" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/internal/database/seeds/seeder.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771428391486" />
+              <option name="lastModified" value="1771516370798" />
             </ScannedPath>
           </value>
         </entry>
@@ -484,6 +672,36 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/internal/domain/dto/attendance_policy.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771516178971" />
+              <option name="schema">
+                <list>
+                  <option value="CreateAttendancePolicyRequest" />
+                  <option value="AttendancePolicyResponse" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/domain/dto/attendance_policy_group.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771516178971" />
+              <option name="schema">
+                <list>
+                  <option value="AttendancePolicyGroupResponse" />
+                  <option value="AttendancePolicyGroupSingleRow" />
+                  <option value="AttendancePolicyResponseGroup" />
+                  <option value="AttendancePolicyGroupSingleResponse" />
+                  <option value="CreateAttendancePolicyGroupRequest" />
+                  <option value="UpdateAttendancePolicyGroupRequest" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/internal/domain/dto/auth.go">
           <value>
             <ScannedPath>
@@ -501,7 +719,7 @@
         <entry key="file://$PROJECT_DIR$/internal/domain/dto/base_model.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771428391487" />
+              <option name="lastModified" value="1771516178971" />
               <option name="schema">
                 <list>
                   <option value="BaseModelTop" />
@@ -518,6 +736,47 @@
               <option name="schema">
                 <list>
                   <option value="RoleResponse" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/domain/dto/shift_system.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771516178972" />
+              <option name="schema">
+                <list>
+                  <option value="CreateShiftSystemRequest" />
+                  <option value="UpdateShiftSystemRequest" />
+                  <option value="ShiftSystemResponse" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/domain/dto/shift_system_group.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771516178972" />
+              <option name="schema">
+                <list>
+                  <option value="CreateShiftSystemGroupRequest" />
+                  <option value="UpdateShiftSystemGroupRequest" />
+                  <option value="ShiftSystemGroupResponse" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/domain/dto/time_clock.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771517378355" />
+              <option name="schema">
+                <list>
+                  <option value="TimeClockRequest" />
+                  <option value="TimeClockResponse" />
                 </list>
               </option>
             </ScannedPath>
@@ -567,7 +826,7 @@
         <entry key="file://$PROJECT_DIR$/internal/domain/error/app_error.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771428391488" />
+              <option name="lastModified" value="1771516178972" />
               <option name="schema">
                 <list>
                   <option value="AppError" />
@@ -579,7 +838,26 @@
         <entry key="file://$PROJECT_DIR$/internal/domain/error/error.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771428391488" />
+              <option name="lastModified" value="1771518510898" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/domain/model/attendance_log.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771518310537" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/domain/model/attendance_policy.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771516178972" />
+              <option name="schema">
+                <list>
+                  <option value="AttendancePolicy" />
+                </list>
+              </option>
             </ScannedPath>
           </value>
         </entry>
@@ -656,14 +934,21 @@
         <entry key="file://$PROJECT_DIR$/internal/routes/v1/admin/admin.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771428391489" />
+              <option name="lastModified" value="1771516178973" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/routes/v1/admin/settings.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771516178973" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/internal/routes/v1/admin/users.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771428391489" />
+              <option name="lastModified" value="1771430603658" />
             </ScannedPath>
           </value>
         </entry>
@@ -671,6 +956,13 @@
           <value>
             <ScannedPath>
               <option name="lastModified" value="1771428391489" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/routes/v1/time_clock.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771517185197" />
             </ScannedPath>
           </value>
         </entry>
@@ -684,7 +976,31 @@
         <entry key="file://$PROJECT_DIR$/internal/routes/v1/v1.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771428391490" />
+              <option name="lastModified" value="1771516319252" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/src/handler/attendance_policy.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771516178973" />
+              <option name="schema">
+                <list>
+                  <option value="AttendancePolicyHandler" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/src/handler/attendance_policy_group.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771516178973" />
+              <option name="schema">
+                <list>
+                  <option value="AttendancePolicyGroupHandler" />
+                </list>
+              </option>
             </ScannedPath>
           </value>
         </entry>
@@ -707,6 +1023,42 @@
               <option name="schema">
                 <list>
                   <option value="RoleHandler" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/src/handler/shift_system.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771516178974" />
+              <option name="schema">
+                <list>
+                  <option value="ShiftSystemHandler" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/src/handler/shift_system_group.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771516178974" />
+              <option name="schema">
+                <list>
+                  <option value="ShiftSystemGroupHandler" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/src/handler/time_clock.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771517843222" />
+              <option name="schema">
+                <list>
+                  <option value="TimeClockHandler" />
                 </list>
               </option>
             </ScannedPath>
@@ -736,6 +1088,30 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/internal/src/repository/attendance_policy.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771516178974" />
+              <option name="schema">
+                <list>
+                  <option value="AttendancePolicy" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/src/repository/attendance_policy_group.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771516178974" />
+              <option name="schema">
+                <list>
+                  <option value="AttendancePolicyGroup" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/internal/src/repository/session.go">
           <value>
             <ScannedPath>
@@ -743,6 +1119,42 @@
               <option name="schema">
                 <list>
                   <option value="Session" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/src/repository/shift_system.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771516178974" />
+              <option name="schema">
+                <list>
+                  <option value="ShiftSystem" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/src/repository/shift_system_group.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771516178974" />
+              <option name="schema">
+                <list>
+                  <option value="ShiftSystemGroup" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/src/repository/time_clock.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771519035299" />
+              <option name="schema">
+                <list>
+                  <option value="TimeClock" />
                 </list>
               </option>
             </ScannedPath>
@@ -797,6 +1209,30 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/internal/src/service/attendance_policy.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771516178975" />
+              <option name="schema">
+                <list>
+                  <option value="AttendancePolicy" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/src/service/attendance_policy_group.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771516178975" />
+              <option name="schema">
+                <list>
+                  <option value="AttendancePolicyGroup" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/internal/src/service/auth.go">
           <value>
             <ScannedPath>
@@ -804,6 +1240,42 @@
               <option name="schema">
                 <list>
                   <option value="Auth" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/src/service/shift_system.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771516178975" />
+              <option name="schema">
+                <list>
+                  <option value="ShiftSystem" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/src/service/shift_system_group.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771516178975" />
+              <option name="schema">
+                <list>
+                  <option value="ShiftSystemGroup" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/internal/src/service/time_clock.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771518964394" />
+              <option name="schema">
+                <list>
+                  <option value="TimeClock" />
                 </list>
               </option>
             </ScannedPath>
@@ -869,7 +1341,7 @@
         <entry key="file://$PROJECT_DIR$/internal/utils/i18n/en.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771428391492" />
+              <option name="lastModified" value="1771516178976" />
             </ScannedPath>
           </value>
         </entry>
@@ -917,7 +1389,7 @@
         <entry key="file://$PROJECT_DIR$/internal/utils/response/error_mapper.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771428391493" />
+              <option name="lastModified" value="1771516178976" />
             </ScannedPath>
           </value>
         </entry>
@@ -941,6 +1413,15 @@
       <map>
         <entry key="api_response" value="APIResponse" />
         <entry key="app_error" value="AppError" />
+        <entry key="attendance_policy" value="AttendancePolicy" />
+        <entry key="attendance_policy_group" value="AttendancePolicyGroup" />
+        <entry key="attendance_policy_group_handler" value="AttendancePolicyGroupHandler" />
+        <entry key="attendance_policy_group_response" value="AttendancePolicyGroupResponse" />
+        <entry key="attendance_policy_group_single_response" value="AttendancePolicyGroupSingleResponse" />
+        <entry key="attendance_policy_group_single_row" value="AttendancePolicyGroupSingleRow" />
+        <entry key="attendance_policy_handler" value="AttendancePolicyHandler" />
+        <entry key="attendance_policy_response" value="AttendancePolicyResponse" />
+        <entry key="attendance_policy_response_group" value="AttendancePolicyResponseGroup" />
         <entry key="auth" value="Auth" />
         <entry key="auth_handler" value="AuthHandler" />
         <entry key="base_model" value="BaseModel" />
@@ -952,6 +1433,10 @@
         <entry key="claims" value="Claims" />
         <entry key="config" value="Config" />
         <entry key="container" value="Container" />
+        <entry key="create_attendance_policy_group_request" value="CreateAttendancePolicyGroupRequest" />
+        <entry key="create_attendance_policy_request" value="CreateAttendancePolicyRequest" />
+        <entry key="create_shift_system_group_request" value="CreateShiftSystemGroupRequest" />
+        <entry key="create_shift_system_request" value="CreateShiftSystemRequest" />
         <entry key="create_user_request" value="CreateUserRequest" />
         <entry key="database" value="Database" />
         <entry key="db_config" value="DBConfig" />
@@ -979,6 +1464,19 @@
         <entry key="role_row" value="roleRow" />
         <entry key="service" value="Service" />
         <entry key="session" value="Session" />
+        <entry key="shift_system" value="ShiftSystem" />
+        <entry key="shift_system_group" value="ShiftSystemGroup" />
+        <entry key="shift_system_group_handler" value="ShiftSystemGroupHandler" />
+        <entry key="shift_system_group_response" value="ShiftSystemGroupResponse" />
+        <entry key="shift_system_handler" value="ShiftSystemHandler" />
+        <entry key="shift_system_response" value="ShiftSystemResponse" />
+        <entry key="time_clock" value="TimeClock" />
+        <entry key="time_clock_handler" value="TimeClockHandler" />
+        <entry key="time_clock_request" value="TimeClockRequest" />
+        <entry key="time_clock_response" value="TimeClockResponse" />
+        <entry key="update_attendance_policy_group_request" value="UpdateAttendancePolicyGroupRequest" />
+        <entry key="update_shift_system_group_request" value="UpdateShiftSystemGroupRequest" />
+        <entry key="update_shift_system_request" value="UpdateShiftSystemRequest" />
         <entry key="update_user_request" value="UpdateUserRequest" />
         <entry key="user" value="User" />
         <entry key="user_handler" value="UserHandler" />
@@ -986,6 +1484,6 @@
         <entry key="utils_handler" value="UtilsHandler" />
       </map>
     </option>
-    <option name="lastTimeChecked" value="1771428403438" />
+    <option name="lastTimeChecked" value="1771517438867" />
   </component>
 </project>

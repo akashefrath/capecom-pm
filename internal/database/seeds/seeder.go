@@ -22,10 +22,10 @@ func SeedMasterData(db *sqlx.DB) error {
          ('770e8400-e29b-41d4-a716-446655440001','1','1','active')
          `,
 
-		`INSERT INTO attendance_policies ( uuid, name,  min_work_hours_minutes ,  half_day_minutes , late_grace_minutes, early_exit_grace_minutes, max_break_minutes, auto_checkout_time, status, is_default) 
+		`INSERT IGNORE INTO attendance_policies ( uuid, name,  min_work_hours_minutes ,  half_day_minutes , late_grace_minutes, early_exit_grace_minutes, max_break_minutes, auto_checkout_time, status, is_default) 
 		 VALUES ('330e8400-e29b-41d4-a716-446655440001', 'basic', '480', '240', '15', '10', '60', '1200', 'active', '1')`,
 
-		`INSERT INTO shift_system ( uuid, name, start_time, end_time, checkin_early, checkin_late, checkout_early, checkout_late, is_overnight, is_default, status) 
+		`INSERT IGNORE INTO shift_system ( uuid, name, start_time, end_time, checkin_early, checkin_late, checkout_early, checkout_late, is_overnight, is_default, status) 
 		 VALUES ( '340e8400-e29b-41d4-a716-446655440001', 'Morning Shift', '09:00:00', '17:00:00', '30', '15', '15', '30', '0', '1', 'active')`,
 	}
 
