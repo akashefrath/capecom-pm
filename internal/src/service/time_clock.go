@@ -15,6 +15,13 @@ func NewTimeClock(timeClockRepo *repository.TimeClock) *TimeClock {
 	return &TimeClock{TimeClockRepo: timeClockRepo}
 }
 
+func (s *TimeClock) GetTodayDetails(userID *int64) (*[]dto.AttendanceDetails, error) {
+	data, err := s.TimeClockRepo.GetTodayDetails(userID)
+
+	return data, err
+
+}
+
 func (s *TimeClock) ClockIn(employeeID int64, req dto.TimeClockRequest) (*dto.TimeClockResponse, error) {
 
 	lastLog, err := s.TimeClockRepo.GetUsersLastLog(employeeID)
@@ -23,7 +30,7 @@ func (s *TimeClock) ClockIn(employeeID int64, req dto.TimeClockRequest) (*dto.Ti
 		return nil, domainerrors.CantPerformThis
 
 	}
-	id, err := s.TimeClockRepo.ClockIn(employeeID, req)
+	id, err := s.TimeClockRepo.TimePunch(employeeID, req, models.LogIn)
 	if err != nil {
 		return nil, err
 	}
@@ -38,7 +45,7 @@ func (s *TimeClock) ClockOut(employeeID int64, req dto.TimeClockRequest) (*dto.T
 
 	}
 
-	id, err := s.TimeClockRepo.ClockOut(employeeID, req)
+	id, err := s.TimeClockRepo.TimePunch(employeeID, req, models.LogOut)
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +60,7 @@ func (s *TimeClock) BreakIn(employeeID int64, req dto.TimeClockRequest) (*dto.Ti
 		return nil, domainerrors.CantPerformThis
 
 	}
-	id, err := s.TimeClockRepo.BreakIn(employeeID, req)
+	id, err := s.TimeClockRepo.TimePunch(employeeID, req, models.BrakeIn)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +74,7 @@ func (s *TimeClock) BreakOut(employeeID int64, req dto.TimeClockRequest) (*dto.T
 		return nil, domainerrors.CantPerformThis
 
 	}
-	id, err := s.TimeClockRepo.BreakOut(employeeID, req)
+	id, err := s.TimeClockRepo.TimePunch(employeeID, req, models.BrakeOut)
 	if err != nil {
 		return nil, err
 	}

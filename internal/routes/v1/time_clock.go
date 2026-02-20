@@ -10,6 +10,9 @@ func TimeClock(r *gin.RouterGroup, container container.Container) {
 	timeClock := r.Group("time-clock")
 	timeClock.Use(container.Middleware.Auth.VerifyToken(middleware.AllowedTypeAll))
 	handler := container.Handler.TimeClockHandler
+
+	timeClock.GET("details", handler.GetTodayDetails)
+
 	timeClock.POST("clock-in", handler.ClockIn)
 	timeClock.POST("clock-out", handler.ClockOut)
 

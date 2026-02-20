@@ -78,7 +78,7 @@ func (m *Auth) VerifyToken(allowedType AllowedType) gin.HandlerFunc {
 		}
 
 		if err != nil {
-			response.FromError(c, domainerrors.ErrInvalidToken)
+			response.FromError(c, err)
 			c.Abort()
 			return
 		}
@@ -117,7 +117,11 @@ func (m *Auth) VerifyToken(allowedType AllowedType) gin.HandlerFunc {
 		//	c.Abort()
 		//	return
 		//}
-
+		if session.UserID == 0 || claims.UserID == "" {
+			response.FromError(c, domainerrors.ErrUnauthorized)
+			c.Abort()
+			return
+		}
 		// Set context values
 		c.Set(utils.CtxUserUUID, claims.UserID)
 		c.Set(utils.CtxUserID, session.UserID)

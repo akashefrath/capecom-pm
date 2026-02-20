@@ -1,68 +1,82 @@
 package repository
 
 import (
+	"context"
+	"database/sql"
+	"errors"
+	"time"
+
+	"github.com/akashefrath/capecom-pm/internal/database"
 	"github.com/akashefrath/capecom-pm/internal/domain/dto"
+	domainerrors "github.com/akashefrath/capecom-pm/internal/domain/error"
+	models "github.com/akashefrath/capecom-pm/internal/domain/model"
+	"github.com/akashefrath/capecom-pm/internal/utils"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 )
 
 type TimeClock struct {
-	DB *sqlx.DB
+	DB                *sqlx.DB
+	DBTx              *database.Database
+	AttendanceSummary *AttendanceSummary
 }
 
-func NewTimeClock(db *sqlx.DB) *TimeClock {
-	return &TimeClock{DB: db}
+func NewTimeClock(db *sqlx.DB, dbTX *database.Database, summary *AttendanceSummary) *TimeClock {
+	return &TimeClock{DB: db, DBTx: dbTX, AttendanceSummary: summary}
 }
 
-func (r *TimeClock) ClockIn(employeeID int64, req dto.TimeClockRequest) (*int64, error) {
-	q := `INSERT INTO attendance_logs (uuid,employee_id, log_type, source, latitude, longitude, device_id, remarks) 
-	      VALUES (?,?, 'IN', ?, ?, ?, ?, ?)`
-	result, err := r.DB.Exec(q, uuid.NewString(), employeeID, req.Source, req.Latitude, req.Longitude, req.DeviceID, req.Remarks)
-	if err != nil {
-		return nil, err
-	}
-	id, err := result.LastInsertId()
-	return &id, err
-}
+func (r *TimeClock) TimePunch(userID int64, req dto.TimeClockRequest, punchType string) (*int64, error) {
+	var lastID int64
+	err := r.DBTx.WithTx(context.Background(), func(tx *sqlx.Tx) error {
+		var summaryID *int64
+		currentSummary, err := r.AttendanceSummary.GetCurrentSummaryForUserIf(tx, userID)
+		if errors.Is(err, sql.ErrNoRows) && punchType != models.LogIn {
+			return domainerrors.CantPerformThis
+		}
 
-func (r *TimeClock) ClockOut(employeeID int64, req dto.TimeClockRequest) (*int64, error) {
-	q := `INSERT INTO attendance_logs (uuid,employee_id, log_type, source, latitude, longitude, device_id, remarks) 
-	      VALUES (?,?, 'OUT', ?, ?, ?, ?, ?)`
-	result, err := r.DB.Exec(q, uuid.NewString(), employeeID, req.Source, req.Latitude, req.Longitude, req.DeviceID, req.Remarks)
-	if err != nil {
-		return nil, err
-	}
-	id, err := result.LastInsertId()
-	return &id, err
-}
+		if punchType == models.LogIn {
+			summaryID, err = r.AttendanceSummary.Create(tx, userID, time.Now())
+			if err != nil {
+				return err
+			}
+		} else {
+			summaryID = &currentSummary.ID
+			if summaryID == nil || *summaryID == 0 {
+				return domainerrors.ErrInternal
+			}
 
-func (r *TimeClock) BreakIn(employeeID int64, req dto.TimeClockRequest) (*int64, error) {
-	q := `INSERT INTO attendance_logs (uuid,employee_id, log_type, source, latitude, longitude, device_id, remarks) 
-	      VALUES (?,?, 'BREAK_IN', ?, ?, ?, ?, ?)`
-	result, err := r.DB.Exec(q, uuid.NewString(), employeeID, req.Source, req.Latitude, req.Longitude, req.DeviceID, req.Remarks)
-	if err != nil {
-		return nil, err
-	}
-	id, err := result.LastInsertId()
-	return &id, err
-}
+			err = r.AttendanceSummary.Update(tx, *summaryID, "PENDING", 0, 0)
+			if err != nil {
+				return err
+			}
 
-func (r *TimeClock) BreakOut(employeeID int64, req dto.TimeClockRequest) (*int64, error) {
-	q := `INSERT INTO attendance_logs (uuid,employee_id, log_type, source, latitude, longitude, device_id, remarks) 
-	      VALUES (?,?, 'BREAK_OUT', ?, ?, ?, ?, ?)`
-	result, err := r.DB.Exec(q, uuid.NewString(), employeeID, req.Source, req.Latitude, req.Longitude, req.DeviceID, req.Remarks)
-	if err != nil {
-		return nil, err
-	}
-	id, err := result.LastInsertId()
-	return &id, err
+		}
+
+		q := `INSERT INTO attendance_logs (uuid,user_id, log_type, source, latitude, longitude, device_id, remarks,attendance_summary_id) 
+	      VALUES (?,?, ?, ?, ?, ?, ?, ?,?)`
+		result, err := tx.Exec(q, uuid.NewString(), userID, punchType, req.Source, req.Latitude, req.Longitude, req.DeviceID, req.Remarks, summaryID)
+		if err != nil {
+			return err
+		}
+
+		lastID, err = result.LastInsertId()
+
+		if err != nil {
+			return err
+		}
+
+		return err
+
+	})
+
+	return &lastID, err
 }
 
 func (r *TimeClock) GetByID(id int64) (*dto.TimeClockResponse, error) {
 	var result dto.TimeClockResponse
-	q := `SELECT al.id,al.uuid, al.employee_id, al.log_time, al.log_type, al.source, al.latitude, al.longitude, al.device_id, al.remarks , users.uuid as user_uuid
+	q := `SELECT al.id,al.uuid, al.user_id, al.log_time, al.log_type, al.source, al.latitude, al.longitude, al.device_id, al.remarks,al.attendance_summary_id , users.uuid as user_uuid
 	      FROM attendance_logs  al
-	      LEFT JOIN users ON al.employee_id = users.id
+	      LEFT JOIN users ON al.user_id = users.id
 		  WHERE al.id = ?
 	      `
 	err := r.DB.Get(&result, q, id)
@@ -70,17 +84,31 @@ func (r *TimeClock) GetByID(id int64) (*dto.TimeClockResponse, error) {
 }
 
 func (r *TimeClock) GetUsersLastLog(id int64) (*string, error) {
+	s, e := utils.GetTodayRange()
 	var logType *string
 	q := `
 	SELECT log_type
 	FROM attendance_logs
-	WHERE employee_id = ?
-	  AND created_at >= CURDATE()
-	  AND created_at < CURDATE() + INTERVAL 1 DAY
+	WHERE user_id = ?
+	  AND created_at >= ?
+	  AND created_at < ?
 	ORDER BY created_at DESC
 	LIMIT 1
 	`
-	err := r.DB.Get(&logType, q, id)
+	err := r.DB.Get(&logType, q, id, s, e)
 	return logType, err
+
+}
+
+func (r *TimeClock) GetTodayDetails(id *int64) (*[]dto.AttendanceDetails, error) {
+	var attendances = make([]dto.AttendanceDetails, 0)
+	s, e := utils.GetTodayRange()
+	q := `SELECT uuid,log_time,log_type,source,remarks,attendance_summary_id FROM attendance_logs WHERE user_id = ? 	 
+	AND created_at >= ?
+	  AND created_at < ?
+	ORDER BY created_at ASC`
+	err := r.DB.Select(&attendances, q, id, s, e)
+
+	return &attendances, err
 
 }

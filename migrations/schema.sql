@@ -182,15 +182,34 @@ CREATE TABLE user_roles (
 CREATE UNIQUE INDEX idx_user_role_unique ON user_roles (user_id, role_id, deleted_at);
 CREATE INDEX idx_user_roles_lookup ON user_roles (user_id, role_id, status, deleted_at);
 
+-- =========================================================
+-- 9. ATTENDANCE SUMMARY
+-- =========================================================
+CREATE TABLE attendance_summary (
+                                    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                    uuid CHAR(36) UNIQUE NOT NULL,
+                                    user_id BIGINT NOT NULL,
+                                    log_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                    total_work_in_sec BIGINT NULL,
+                                    total_brake_in_sec BIGINT NULL,
+                                    log_status ENUM('PENDING', 'COMPLETED') NOT NULL,
+                                    status ENUM ('active','inactive','revoked','blocked','archived') NOT NULL DEFAULT 'active',
+                                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                    updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
+                                    deleted_at TIMESTAMP NULL,
+                                    CONSTRAINT fk_attendance_summary_employee FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
 
+CREATE INDEX idx_attendance_summary_user_time ON attendance_summary (user_id, log_date);
 
 -- =========================================================
--- 9. ATTENDANCE LOGS
+-- 10. ATTENDANCE LOGS
 -- =========================================================
 CREATE TABLE attendance_logs (
                                  id BIGINT AUTO_INCREMENT PRIMARY KEY,
                                  uuid CHAR(36) UNIQUE NOT NULL,
-                                 employee_id BIGINT NOT NULL,
+                                 user_id BIGINT NOT NULL,
+                                 attendance_summary_id BIGINT NOT NULL,
                                  log_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                                  log_type ENUM('IN', 'OUT', 'BREAK_IN', 'BREAK_OUT', 'TIME_OUT') NOT NULL,
                                  source ENUM('mobile', 'biometric', 'admin') NOT NULL,
@@ -198,8 +217,15 @@ CREATE TABLE attendance_logs (
                                  longitude DECIMAL(10, 7) NULL,
                                  device_id VARCHAR(100),
                                  remarks TEXT,
+                                 status ENUM ('active','inactive','revoked','blocked','archived') NOT NULL DEFAULT 'active',
                                  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                                 CONSTRAINT fk_logs_employee FOREIGN KEY (employee_id) REFERENCES users(id) ON DELETE CASCADE
+                                 updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
+                                 deleted_at TIMESTAMP NULL,
+                                 CONSTRAINT fk_logs_employee FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                                 CONSTRAINT fk_log_attendance_summary_id FOREIGN KEY (attendance_summary_id) REFERENCES attendance_summary(id) ON DELETE CASCADE
 );
 
-CREATE INDEX idx_logs_employee_time ON attendance_logs (employee_id, log_time);
+CREATE INDEX idx_logs_employee_time ON attendance_logs (user_id, log_time);
+
+
+

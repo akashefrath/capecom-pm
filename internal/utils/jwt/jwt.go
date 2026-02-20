@@ -100,8 +100,9 @@ func (j *Manager) ValidateToken(tokenString string, tokenType TokenType) (*Claim
 	})
 
 	if err != nil {
-		println(err.Error())
+
 		if errors.Is(err, jwt.ErrTokenExpired) {
+
 			return nil, domainerrors.ErrTokenExpired
 		}
 

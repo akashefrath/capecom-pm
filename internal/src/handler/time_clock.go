@@ -17,6 +17,21 @@ func NewTimeClock(timeClock *service.TimeClock) TimeClockHandler {
 	return TimeClockHandler{TimeClock: timeClock}
 }
 
+func (h *TimeClockHandler) GetTodayDetails(c *gin.Context) {
+	userID := utils.GetUserID(c)
+
+	data, err := h.TimeClock.GetTodayDetails(&userID)
+	if err != nil {
+		response.FromError(c, err)
+		return
+	}
+	response.JSONOk(c, response.APIResponse{
+		Success: true,
+		Data:    data,
+	})
+
+}
+
 func (h *TimeClockHandler) ClockIn(c *gin.Context) {
 	var req dto.TimeClockRequest
 	isValid := bind.AndValidate(c, &req, "time_clock")
@@ -25,7 +40,6 @@ func (h *TimeClockHandler) ClockIn(c *gin.Context) {
 	}
 
 	employeeID := utils.GetUserID(c)
-	print(utils.GetUserUuid(c))
 
 	data, err := h.TimeClock.ClockIn(employeeID, req)
 	if err != nil {

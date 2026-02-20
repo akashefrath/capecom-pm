@@ -1,0 +1,58 @@
+{
+  "response_example": {
+    "success": true,
+    "data": {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "log_date": "2024-01-15T10:30:00Z",
+      "total_work_in_sec": 28800,
+      "total_brake_in_sec": 3600,
+      "log_status": "COMPLETED",
+      "status": "active",
+      "created_at": "2024-01-15T10:30:00Z",
+      "updated_at": "2024-01-15T18:30:00Z"
+    }
+  },
+  "get_all_response": {
+    "success": true,
+    "data": [
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "log_date": "2024-01-15T10:30:00Z",
+        "total_work_in_sec": 28800,
+        "total_brake_in_sec": 3600,
+        "log_status": "COMPLETED",
+        "status": "active",
+        "created_at": "2024-01-15T10:30:00Z",
+        "updated_at": "2024-01-15T18:30:00Z"
+      },
+      {
+        "id": "660e8400-e29b-41d4-a716-446655440001",
+        "log_date": "2024-01-16T10:30:00Z",
+        "total_work_in_sec": 30600,
+        "total_brake_in_sec": 3000,
+        "log_status": "COMPLETED",
+        "status": "active",
+        "created_at": "2024-01-16T10:30:00Z",
+        "updated_at": "2024-01-16T18:45:00Z"
+      }
+    ]
+  },
+  "field_descriptions": {
+    "id": "UUID of the attendance summary (exposed as 'id' in JSON)",
+    "user_id": "Hidden from JSON response - internal reference to user",
+    "log_date": "Date and time of the attendance log",
+    "total_work_in_sec": "Total work time in seconds (nullable)",
+    "total_brake_in_sec": "Total break time in seconds (nullable)",
+    "log_status": "Status of the log: PENDING or COMPLETED",
+    "status": "Record status: active, inactive, revoked, blocked, archived",
+    "created_at": "Timestamp when record was created",
+    "updated_at": "Timestamp when record was last updated"
+  },
+  "notes": {
+    "user_id": "This field is hidden from JSON response using json:\"-\" tag",
+    "nullable_fields": "total_work_in_sec and total_brake_in_sec are nullable (pointer types)",
+    "time_format": "All timestamps are in ISO 8601 format",
+    "work_time_example": "28800 seconds = 8 hours",
+    "break_time_example": "3600 seconds = 1 hour"
+  }
+}

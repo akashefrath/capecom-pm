@@ -3,7 +3,7 @@ package dto
 import "time"
 
 type BaseModelTop struct {
-	ID   uint64 `db:"id" json:"-"`
+	ID   int64  `db:"id" json:"-"`
 	UUID string `db:"uuid" json:"id"`
 }
 
