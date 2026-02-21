@@ -2,7 +2,7 @@ package v1
 
 import (
 	"github.com/akashefrath/capecom-pm/internal/container"
-	"github.com/akashefrath/capecom-pm/internal/routes/v1/admin"
+	adminv1 "github.com/akashefrath/capecom-pm/internal/routes/v1/admin"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,5 +13,6 @@ func Setup(r *gin.Engine, container container.Container) {
 	Auth(v1API, container)
 	Utils(v1API, container)
 	TimeClock(v1API, container)
+	AttendanceSummary(v1API, container)
 
 }

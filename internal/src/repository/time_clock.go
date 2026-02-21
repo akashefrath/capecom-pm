@@ -44,8 +44,46 @@ func (r *TimeClock) TimePunch(userID int64, req dto.TimeClockRequest, punchType 
 			if summaryID == nil || *summaryID == 0 {
 				return domainerrors.ErrInternal
 			}
+			lastLog, err := r.GetLastTimeDataWithSummaryIDTx(summaryID, tx)
+			if err != nil {
+				return err
+			}
+			punchTime := time.Now() // or request.PunchTime (better)
 
-			err = r.AttendanceSummary.Update(tx, *summaryID, "PENDING", 0, 0)
+			duration := punchTime.Sub(lastLog.LogTime).Seconds()
+			if duration < 0 {
+				duration = 0
+			}
+			delta := int64(duration)
+
+			// copy previous totals
+			workSec := currentSummary.TotalWorkInSec
+			breakSec := currentSummary.TotalBrakeInSec
+
+			switch lastLog.LogType {
+
+			case models.LogIn:
+				if punchType == models.BrakeIn || punchType == models.LogOut || punchType == models.TimeOut {
+					workSec += delta
+				}
+
+			case models.BrakeOut:
+				if punchType == models.BrakeIn || punchType == models.LogOut || punchType == models.TimeOut {
+					workSec += delta
+				}
+
+			case models.BrakeIn:
+				if punchType == models.BrakeOut {
+					breakSec += delta
+				}
+			}
+
+			logStatus := "PENDING"
+			if punchType == models.LogOut || punchType == models.TimeOut {
+				logStatus = "COMPLETED"
+			}
+
+			err = r.AttendanceSummary.Update(tx, *summaryID, logStatus, workSec, breakSec, punchType)
 			if err != nil {
 				return err
 			}
@@ -100,15 +138,49 @@ func (r *TimeClock) GetUsersLastLog(id int64) (*string, error) {
 
 }
 
-func (r *TimeClock) GetTodayDetails(id *int64) (*[]dto.AttendanceDetails, error) {
+func (r *TimeClock) GetTodayDetails(id *int64) (*dto.AttendanceDetailsListWithSummary, error) {
 	var attendances = make([]dto.AttendanceDetails, 0)
+	var summary *dto.AttendanceSummaryResponse
 	s, e := utils.GetTodayRange()
-	q := `SELECT uuid,log_time,log_type,source,remarks,attendance_summary_id FROM attendance_logs WHERE user_id = ? 	 
+	q := `SELECT uuid,log_time,log_type,source,remarks,attendance_summary_id
+		FROM attendance_logs 
+		WHERE user_id = ? 	 
 	AND created_at >= ?
 	  AND created_at < ?
 	ORDER BY created_at ASC`
 	err := r.DB.Select(&attendances, q, id, s, e)
+	if len(attendances) != 0 {
+		summary, err = r.AttendanceSummary.GetCurrentSummaryWithID(attendances[0].AttendanceSummaryID)
+	}
 
-	return &attendances, err
+	return &dto.AttendanceDetailsListWithSummary{
+		TimeLogs:          attendances,
+		AttendanceSummary: summary,
+	}, err
 
+}
+
+func (r *TimeClock) GetLastTimeDataWithSummaryID(summaryID *int64) (*dto.TimeClockResponse, error) {
+
+	var result dto.TimeClockResponse
+	q := `SELECT al.id,al.uuid, al.user_id, al.log_time, al.log_type, al.source, al.latitude, al.longitude, al.device_id, al.remarks,al.attendance_summary_id , users.uuid as user_uuid
+	      FROM attendance_logs  al
+		  WHERE al.attendance_summary_id = ?
+		  ORDER BY created_at DESC 
+		  LIMIT 1
+	      `
+	err := r.DB.Get(&result, q, summaryID)
+	return &result, err
+}
+func (r *TimeClock) GetLastTimeDataWithSummaryIDTx(summaryID *int64, tx *sqlx.Tx) (*dto.TimeClockResponse, error) {
+
+	var result dto.TimeClockResponse
+	q := `SELECT al.id,al.uuid, al.user_id, al.log_time, al.log_type, al.source, al.latitude, al.longitude, al.device_id, al.remarks,al.attendance_summary_id 
+	      FROM attendance_logs  al
+		  WHERE al.attendance_summary_id = ?
+		  ORDER BY created_at DESC 
+		  LIMIT 1
+	      `
+	err := tx.Get(&result, q, summaryID)
+	return &result, err
 }

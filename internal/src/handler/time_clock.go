@@ -32,6 +32,27 @@ func (h *TimeClockHandler) GetTodayDetails(c *gin.Context) {
 
 }
 
+func (h *TimeClockHandler) AdvancePunch(c *gin.Context, punchType string) {
+	var req dto.TimeClockRequest
+
+	isValid := bind.AndValidate(c, &req, "time_clock")
+	if !isValid {
+		return
+	}
+
+	employeeID := utils.GetUserID(c)
+
+	data, err := h.TimeClock.AdvancePunch(employeeID, req, punchType)
+	if err != nil {
+		response.FromError(c, err)
+		return
+	}
+	response.JSONCreated(c, response.APIResponse{
+		Success: true,
+		Data:    data,
+	})
+}
+
 func (h *TimeClockHandler) ClockIn(c *gin.Context) {
 	var req dto.TimeClockRequest
 	isValid := bind.AndValidate(c, &req, "time_clock")

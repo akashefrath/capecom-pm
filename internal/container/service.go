@@ -16,6 +16,7 @@ type Service struct {
 	ShiftSystem           *service.ShiftSystem
 	ShiftSystemGroup      *service.ShiftSystemGroup
 	TimeClock             *service.TimeClock
+	AttendanceSummary     *service.AttendanceSummary
 }
 
 func NewService(repo *Repositories, jwtManager *jwtutil.Manager) *Service {
@@ -29,5 +30,6 @@ func NewService(repo *Repositories, jwtManager *jwtutil.Manager) *Service {
 		ShiftSystem:           service.NewShiftSystem(repo.ShiftSystem),
 		ShiftSystemGroup:      service.NewShiftSystemGroup(repo.ShiftSystemGroup, repo.ShiftSystem),
 		TimeClock:             service.NewTimeClock(repo.TimeClock),
+		AttendanceSummary:     service.NewAttendanceSummary(repo.AttendanceSummary),
 	}
 }

@@ -10,7 +10,14 @@ import (
 )
 
 func Setup(r *gin.Engine, container container.Container) {
-	//	app.Use(r.New())
+	r.NoRoute(func(c *gin.Context) {
+		response.JSON(c, http.StatusNotFound, response.APIResponse{
+
+			Message: "404 page not found",
+		})
+
+	})
+
 	r.Any("/ping", func(c *gin.Context) {
 		response.JSON(c, http.StatusOK, response.APIResponse{
 			Success: true,

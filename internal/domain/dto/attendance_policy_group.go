@@ -17,7 +17,7 @@ type AttendancePolicyGroupSingleRow struct {
 }
 type AttendancePolicyResponseGroup struct {
 	Name string `json:"name" db:"policy_name"`
-	Uuid string `json:"id" db:"policy_uuid"`
+	Uuid string `json:"a_id" db:"policy_uuid"`
 
 	MinWorkHoursMinutes   int `json:"min_work_hours_minutes,omitempty" db:"policy_min_work_hours_minutes"`
 	HalfDayMinutes        int `json:"half_day_minutes,omitempty" db:"policy_half_day_minutes"`

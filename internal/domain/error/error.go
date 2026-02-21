@@ -54,4 +54,27 @@ var (
 	RoleNotFound = errors.New("role_not_found")
 
 	CantPerformThis = errors.New("cant_perform_this_action")
+
+	InvalidPunchOrder = errors.New("invalid_punch_order")
+	DuplicatePunch    = errors.New("duplicate_punch")
+
+	// Clock In
+	AlreadyClockedIn = errors.New("already_clocked_in")
+	MustClockInFirst = errors.New("must_clock_in_first")
+
+	// Clock Out
+	AlreadyClockedOut = errors.New("already_clocked_out")
+	NotClockedIn      = errors.New("not_clocked_in")
+	MustBreakOutFirst = errors.New("must_break_out_first")
+
+	// Break
+	AlreadyOnBreak = errors.New("already_on_break")
+	NotOnBreak     = errors.New("not_on_break")
+
+	// Timeout
+	AlreadyTimedOut = errors.New("already_timed_out")
+
+	// Data / State
+	AttendanceNotFound = errors.New("attendance_not_found")
+	SummaryNotFound    = errors.New("attendance_summary_not_found")
 )

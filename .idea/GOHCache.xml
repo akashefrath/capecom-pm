@@ -17,6 +17,27 @@
             </set>
           </value>
         </entry>
+        <entry key="AttendanceDetails">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/time_clock.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="AttendanceDetailsListWithSummary">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/time_clock.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="AttendanceDetailsW">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/time_clock.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="AttendancePolicy">
           <value>
             <set>
@@ -80,6 +101,20 @@
           <value>
             <set>
               <option value="file://$PROJECT_DIR$/internal/domain/dto/attendance_policy_group.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="AttendanceSummary">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/src/repository/attendance_summary.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="AttendanceSummaryResponse">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/attendance_summary.go" />
             </set>
           </value>
         </entry>
@@ -589,7 +624,7 @@
         <entry key="file://$PROJECT_DIR$/internal/container/repositories.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771516873237" />
+              <option name="lastModified" value="1771653648296" />
               <option name="schema">
                 <list>
                   <option value="Repositories" />
@@ -702,6 +737,18 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/internal/domain/dto/attendance_summary.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771657447573" />
+              <option name="schema">
+                <list>
+                  <option value="AttendanceSummaryResponse" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/internal/domain/dto/auth.go">
           <value>
             <ScannedPath>
@@ -719,7 +766,7 @@
         <entry key="file://$PROJECT_DIR$/internal/domain/dto/base_model.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771516178971" />
+              <option name="lastModified" value="1771653648297" />
               <option name="schema">
                 <list>
                   <option value="BaseModelTop" />
@@ -772,11 +819,13 @@
         <entry key="file://$PROJECT_DIR$/internal/domain/dto/time_clock.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771517378355" />
+              <option name="lastModified" value="1771660700754" />
               <option name="schema">
                 <list>
                   <option value="TimeClockRequest" />
                   <option value="TimeClockResponse" />
+                  <option value="AttendanceDetails" />
+                  <option value="AttendanceDetailsListWithSummary" />
                 </list>
               </option>
             </ScannedPath>
@@ -838,7 +887,7 @@
         <entry key="file://$PROJECT_DIR$/internal/domain/error/error.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771518510898" />
+              <option name="lastModified" value="1771659847487" />
             </ScannedPath>
           </value>
         </entry>
@@ -915,7 +964,7 @@
         <entry key="file://$PROJECT_DIR$/internal/middleware/auth.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771428391489" />
+              <option name="lastModified" value="1771653648297" />
               <option name="schema">
                 <list>
                   <option value="Auth" />
@@ -927,7 +976,7 @@
         <entry key="file://$PROJECT_DIR$/internal/routes/routes.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771258431226" />
+              <option name="lastModified" value="1771663073620" />
             </ScannedPath>
           </value>
         </entry>
@@ -962,7 +1011,7 @@
         <entry key="file://$PROJECT_DIR$/internal/routes/v1/time_clock.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771517185197" />
+              <option name="lastModified" value="1771660269584" />
             </ScannedPath>
           </value>
         </entry>
@@ -1055,7 +1104,7 @@
         <entry key="file://$PROJECT_DIR$/internal/src/handler/time_clock.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771517843222" />
+              <option name="lastModified" value="1771660274517" />
               <option name="schema">
                 <list>
                   <option value="TimeClockHandler" />
@@ -1112,6 +1161,18 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/internal/src/repository/attendance_summary.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1771663863197" />
+              <option name="schema">
+                <list>
+                  <option value="AttendanceSummary" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/internal/src/repository/session.go">
           <value>
             <ScannedPath>
@@ -1151,7 +1212,7 @@
         <entry key="file://$PROJECT_DIR$/internal/src/repository/time_clock.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771519035299" />
+              <option name="lastModified" value="1771659136125" />
               <option name="schema">
                 <list>
                   <option value="TimeClock" />
@@ -1272,7 +1333,7 @@
         <entry key="file://$PROJECT_DIR$/internal/src/service/time_clock.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771518964394" />
+              <option name="lastModified" value="1771660673456" />
               <option name="schema">
                 <list>
                   <option value="TimeClock" />
@@ -1362,7 +1423,7 @@
         <entry key="file://$PROJECT_DIR$/internal/utils/jwt/jwt.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771428391493" />
+              <option name="lastModified" value="1771653648300" />
               <option name="schema">
                 <list>
                   <option value="Claims" />
@@ -1413,6 +1474,9 @@
       <map>
         <entry key="api_response" value="APIResponse" />
         <entry key="app_error" value="AppError" />
+        <entry key="attendance_details" value="AttendanceDetails" />
+        <entry key="attendance_details_list_with_summary" value="AttendanceDetailsListWithSummary" />
+        <entry key="attendance_details_w" value="AttendanceDetailsW" />
         <entry key="attendance_policy" value="AttendancePolicy" />
         <entry key="attendance_policy_group" value="AttendancePolicyGroup" />
         <entry key="attendance_policy_group_handler" value="AttendancePolicyGroupHandler" />
@@ -1422,6 +1486,8 @@
         <entry key="attendance_policy_handler" value="AttendancePolicyHandler" />
         <entry key="attendance_policy_response" value="AttendancePolicyResponse" />
         <entry key="attendance_policy_response_group" value="AttendancePolicyResponseGroup" />
+        <entry key="attendance_summary" value="AttendanceSummary" />
+        <entry key="attendance_summary_response" value="AttendanceSummaryResponse" />
         <entry key="auth" value="Auth" />
         <entry key="auth_handler" value="AuthHandler" />
         <entry key="base_model" value="BaseModel" />
@@ -1484,6 +1550,6 @@
         <entry key="utils_handler" value="UtilsHandler" />
       </map>
     </option>
-    <option name="lastTimeChecked" value="1771517438867" />
+    <option name="lastTimeChecked" value="1771653683447" />
   </component>
 </project>

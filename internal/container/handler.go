@@ -15,6 +15,7 @@ type Handler struct {
 	ShiftSystemHandler           handler.ShiftSystemHandler
 	ShiftSystemGroupHandler      handler.ShiftSystemGroupHandler
 	TimeClockHandler             handler.TimeClockHandler
+	AttendanceSummaryHandler     handler.AttendanceSummaryHandler
 }
 
 func SetupHandler(service *Service) *Handler {
@@ -28,5 +29,6 @@ func SetupHandler(service *Service) *Handler {
 		ShiftSystemHandler:           handler.NewShiftSystem(service.ShiftSystem),
 		ShiftSystemGroupHandler:      handler.NewShiftSystemGroup(service.ShiftSystemGroup),
 		TimeClockHandler:             handler.NewTimeClock(service.TimeClock),
+		AttendanceSummaryHandler:     handler.NewAttendanceSummary(service.AttendanceSummary),
 	}
 }
