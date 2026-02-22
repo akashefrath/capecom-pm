@@ -54,3 +54,19 @@ func (s *ShiftSystemGroup) GetAll() ([]dto.ShiftSystemGroupResponse, error) {
 func (s *ShiftSystemGroup) GetByUUID(uuid string) (*dto.ShiftSystemGroupResponse, error) {
 	return s.ShiftSystemGroupRepo.GetByUUID(uuid)
 }
+
+func (s *ShiftSystemGroup) AssignUsers(groupUUID string, req dto.AssignUsersToShiftGroupRequest) error {
+	groupID, err := s.ShiftSystemGroupRepo.GetIDByUUID(groupUUID)
+	if err != nil {
+		return err
+	}
+	return s.ShiftSystemGroupRepo.AssignUsers(*groupID, req.UserUUIDs)
+}
+
+func (s *ShiftSystemGroup) RemoveUsers(req dto.RemoveUsersFromShiftGroupRequest) error {
+	return s.ShiftSystemGroupRepo.RemoveUsers(req.UserUUIDs)
+}
+
+func (s *ShiftSystemGroup) GetUsersInGroup(groupUUID string) ([]dto.UserMinimalResponse, error) {
+	return s.ShiftSystemGroupRepo.GetUsersInGroup(groupUUID)
+}

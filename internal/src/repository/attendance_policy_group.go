@@ -130,3 +130,50 @@ func (r *AttendancePolicyGroup) GetByID(id int64) (*dto.AttendancePolicyGroupSin
 	finalStruct := group.AttendancePolicyGroupSingleResponse()
 	return &finalStruct, err
 }
+
+func (r *AttendancePolicyGroup) AssignUsers(groupID int64, userUUIDs []string) error {
+	if len(userUUIDs) == 0 {
+		return nil
+	}
+
+	q := `UPDATE users SET attendance_policy_group_id = ? WHERE uuid IN (?) AND deleted_at IS NULL`
+	query, args, err := sqlx.In(q, groupID, userUUIDs)
+	if err != nil {
+		return err
+	}
+	query = r.DB.Rebind(query)
+	_, err = r.DB.Exec(query, args...)
+	return err
+}
+
+func (r *AttendancePolicyGroup) RemoveUsers(userUUIDs []string) error {
+	if len(userUUIDs) == 0 {
+		return nil
+	}
+
+	q := `UPDATE users SET attendance_policy_group_id = NULL WHERE uuid IN (?) AND deleted_at IS NULL`
+	query, args, err := sqlx.In(q, userUUIDs)
+	if err != nil {
+		return err
+	}
+	query = r.DB.Rebind(query)
+	_, err = r.DB.Exec(query, args...)
+	return err
+}
+
+func (r *AttendancePolicyGroup) GetIDByUUID(uuid string) (*int64, error) {
+	var id int64
+	q := `SELECT id FROM attendance_policy_groups WHERE uuid = ? AND deleted_at IS NULL`
+	err := r.DB.Get(&id, q, uuid)
+	return &id, err
+}
+
+func (r *AttendancePolicyGroup) GetUsersInGroup(groupUUID string) ([]dto.UserMinimalResponse, error) {
+	var users = make([]dto.UserMinimalResponse, 0)
+	q := `SELECT u.uuid, u.name, u.employee_id
+	      FROM users u
+	      INNER JOIN attendance_policy_groups apg ON u.attendance_policy_group_id = apg.id
+	      WHERE apg.uuid = ? AND u.deleted_at IS NULL AND apg.deleted_at IS NULL`
+	err := r.DB.Select(&users, q, groupUUID)
+	return users, err
+}

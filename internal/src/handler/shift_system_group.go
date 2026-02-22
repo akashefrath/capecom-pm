@@ -89,3 +89,51 @@ func (h *ShiftSystemGroupHandler) GetByUUID(c *gin.Context) {
 		Data:    data,
 	})
 }
+
+func (h *ShiftSystemGroupHandler) AssignUsers(c *gin.Context) {
+	uuid := c.Param("uuid")
+	var req dto.AssignUsersToShiftGroupRequest
+	isValid := bind.AndValidate(c, &req, "shift_system_group")
+	if !isValid {
+		return
+	}
+
+	err := h.ShiftSystemGroup.AssignUsers(uuid, req)
+	if err != nil {
+		response.FromError(c, err)
+		return
+	}
+	response.JSONOk(c, response.APIResponse{
+		Success: true,
+	})
+}
+
+func (h *ShiftSystemGroupHandler) RemoveUsers(c *gin.Context) {
+	var req dto.RemoveUsersFromShiftGroupRequest
+	isValid := bind.AndValidate(c, &req, "shift_system_group")
+	if !isValid {
+		return
+	}
+
+	err := h.ShiftSystemGroup.RemoveUsers(req)
+	if err != nil {
+		response.FromError(c, err)
+		return
+	}
+	response.JSONOk(c, response.APIResponse{
+		Success: true,
+	})
+}
+
+func (h *ShiftSystemGroupHandler) GetUsersInGroup(c *gin.Context) {
+	uuid := c.Param("uuid")
+	data, err := h.ShiftSystemGroup.GetUsersInGroup(uuid)
+	if err != nil {
+		response.FromError(c, err)
+		return
+	}
+	response.JSONOk(c, response.APIResponse{
+		Success: true,
+		Data:    data,
+	})
+}

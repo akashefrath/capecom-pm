@@ -27,6 +27,9 @@ func Settings(r *gin.RouterGroup, container container.Container) {
 	attendancePolicyGroups.DELETE("/:uuid", attendancePolicyGroupHandler.Delete)
 	attendancePolicyGroups.GET("", attendancePolicyGroupHandler.GetAll)
 	attendancePolicyGroups.GET("/:uuid", attendancePolicyGroupHandler.GetByUUID)
+	attendancePolicyGroups.GET("/:uuid/users", attendancePolicyGroupHandler.GetUsersInGroup)
+	attendancePolicyGroups.POST("/:uuid/assign-users", attendancePolicyGroupHandler.AssignUsers)
+	attendancePolicyGroups.POST("/remove-users", attendancePolicyGroupHandler.RemoveUsers)
 
 	shiftSystems := settings.Group("shift-systems")
 	shiftSystems.POST("", shiftSystemHandler.Create)
@@ -43,4 +46,7 @@ func Settings(r *gin.RouterGroup, container container.Container) {
 	shiftSystemGroups.DELETE("/:uuid", shiftSystemGroupHandler.Delete)
 	shiftSystemGroups.GET("", shiftSystemGroupHandler.GetAll)
 	shiftSystemGroups.GET("/:uuid", shiftSystemGroupHandler.GetByUUID)
+	shiftSystemGroups.GET("/:uuid/users", shiftSystemGroupHandler.GetUsersInGroup)
+	shiftSystemGroups.POST("/:uuid/assign-users", shiftSystemGroupHandler.AssignUsers)
+	shiftSystemGroups.POST("/remove-users", shiftSystemGroupHandler.RemoveUsers)
 }

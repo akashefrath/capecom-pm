@@ -53,3 +53,7 @@ func (s *ShiftSystem) SetDefault(uuid string) (*dto.ShiftSystemResponse, error) 
 	}
 	return s.ShiftSystemRepo.GetByUUID(uuid)
 }
+
+func (s *ShiftSystem) GetForUser(userID int64) (*dto.ShiftSystemResponse, error) {
+	return s.ShiftSystemRepo.GetForUser(userID)
+}

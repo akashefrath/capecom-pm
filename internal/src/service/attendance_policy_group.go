@@ -51,3 +51,20 @@ func (s *AttendancePolicyGroup) GetAll() ([]dto.AttendancePolicyGroupSingleRespo
 func (s *AttendancePolicyGroup) GetByUUID(uuid string) (*dto.AttendancePolicyGroupSingleResponse, error) {
 	return s.AttendancePolicyGroupRepo.GetByUUID(uuid)
 }
+
+func (s *AttendancePolicyGroup) AssignUsers(groupUUID string, req dto.AssignUsersToGroupRequest) error {
+	groupID, err := s.AttendancePolicyGroupRepo.GetIDByUUID(groupUUID)
+	if err != nil {
+	 
+		return err
+	}
+	return s.AttendancePolicyGroupRepo.AssignUsers(*groupID, req.UserUUIDs)
+}
+
+func (s *AttendancePolicyGroup) RemoveUsers(req dto.RemoveUsersFromGroupRequest) error {
+	return s.AttendancePolicyGroupRepo.RemoveUsers(req.UserUUIDs)
+}
+
+func (s *AttendancePolicyGroup) GetUsersInGroup(groupUUID string) ([]dto.UserMinimalResponse, error) {
+	return s.AttendancePolicyGroupRepo.GetUsersInGroup(groupUUID)
+}

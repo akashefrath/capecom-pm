@@ -17,6 +17,13 @@
             </set>
           </value>
         </entry>
+        <entry key="AssignUsersToGroupRequest">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/attendance_policy_group.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="AttendanceDetails">
           <value>
             <set>
@@ -362,6 +369,13 @@
           <value>
             <set>
               <option value="file://$PROJECT_DIR$/internal/domain/dto/auth.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="RemoveUsersFromGroupRequest">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/internal/domain/dto/attendance_policy_group.go" />
             </set>
           </value>
         </entry>
@@ -723,7 +737,7 @@
         <entry key="file://$PROJECT_DIR$/internal/domain/dto/attendance_policy_group.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771516178971" />
+              <option name="lastModified" value="1771686545697" />
               <option name="schema">
                 <list>
                   <option value="AttendancePolicyGroupResponse" />
@@ -732,6 +746,8 @@
                   <option value="AttendancePolicyGroupSingleResponse" />
                   <option value="CreateAttendancePolicyGroupRequest" />
                   <option value="UpdateAttendancePolicyGroupRequest" />
+                  <option value="AssignUsersToGroupRequest" />
+                  <option value="RemoveUsersFromGroupRequest" />
                 </list>
               </option>
             </ScannedPath>
@@ -1152,7 +1168,7 @@
         <entry key="file://$PROJECT_DIR$/internal/src/repository/attendance_policy_group.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771516178974" />
+              <option name="lastModified" value="1771686644699" />
               <option name="schema">
                 <list>
                   <option value="AttendancePolicyGroup" />
@@ -1285,7 +1301,7 @@
         <entry key="file://$PROJECT_DIR$/internal/src/service/attendance_policy_group.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1771516178975" />
+              <option name="lastModified" value="1771686690203" />
               <option name="schema">
                 <list>
                   <option value="AttendancePolicyGroup" />
@@ -1474,6 +1490,7 @@
       <map>
         <entry key="api_response" value="APIResponse" />
         <entry key="app_error" value="AppError" />
+        <entry key="assign_users_to_group_request" value="AssignUsersToGroupRequest" />
         <entry key="attendance_details" value="AttendanceDetails" />
         <entry key="attendance_details_list_with_summary" value="AttendanceDetailsListWithSummary" />
         <entry key="attendance_details_w" value="AttendanceDetailsW" />
@@ -1523,6 +1540,7 @@
         <entry key="pagination_meta" value="PaginationMeta" />
         <entry key="redis" value="Redis" />
         <entry key="refresh_token_request" value="RefreshTokenRequest" />
+        <entry key="remove_users_from_group_request" value="RemoveUsersFromGroupRequest" />
         <entry key="repositories" value="Repositories" />
         <entry key="role" value="Role" />
         <entry key="role_handler" value="RoleHandler" />

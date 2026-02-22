@@ -62,3 +62,11 @@ type UpdateAttendancePolicyGroupRequest struct {
 	Name                 string `json:"name" form:"name" binding:"required,min=3,max=50"`
 	AttendancePolicyUUID string `json:"attendance_policy_uuid" form:"attendance_policy_uuid" binding:"required,uuid"`
 }
+
+type AssignUsersToGroupRequest struct {
+	UserUUIDs []string `json:"user_ids" form:"user_ids" binding:"required,min=1"`
+}
+
+type RemoveUsersFromGroupRequest struct {
+	UserUUIDs []string `json:"user_ids" form:"user_ids" binding:"required,min=1"`
+}

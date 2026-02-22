@@ -51,3 +51,7 @@ func (s *AttendancePolicy) SetDefault(uuid string) (*dto.AttendancePolicyRespons
 	}
 	return s.AttendancePolicyRepo.GetByUUID(uuid)
 }
+
+func (s *AttendancePolicy) GetForUser(userID int64) (*dto.AttendancePolicyResponse, error) {
+	return s.AttendancePolicyRepo.GetForUser(userID)
+}

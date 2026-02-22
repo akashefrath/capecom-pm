@@ -89,3 +89,51 @@ func (h *AttendancePolicyGroupHandler) GetByUUID(c *gin.Context) {
 		Data:    data,
 	})
 }
+
+func (h *AttendancePolicyGroupHandler) AssignUsers(c *gin.Context) {
+	uuid := c.Param("uuid")
+	var req dto.AssignUsersToGroupRequest
+	isValid := bind.AndValidate(c, &req, "attendance_policy_group")
+	if !isValid {
+		return
+	}
+
+	err := h.AttendancePolicyGroup.AssignUsers(uuid, req)
+	if err != nil {
+		response.FromError(c, err)
+		return
+	}
+	response.JSONOk(c, response.APIResponse{
+		Success: true,
+	})
+}
+
+func (h *AttendancePolicyGroupHandler) RemoveUsers(c *gin.Context) {
+	var req dto.RemoveUsersFromGroupRequest
+	isValid := bind.AndValidate(c, &req, "attendance_policy_group")
+	if !isValid {
+		return
+	}
+
+	err := h.AttendancePolicyGroup.RemoveUsers(req)
+	if err != nil {
+		response.FromError(c, err)
+		return
+	}
+	response.JSONOk(c, response.APIResponse{
+		Success: true,
+	})
+}
+
+func (h *AttendancePolicyGroupHandler) GetUsersInGroup(c *gin.Context) {
+	uuid := c.Param("uuid")
+	data, err := h.AttendancePolicyGroup.GetUsersInGroup(uuid)
+	if err != nil {
+		response.FromError(c, err)
+		return
+	}
+	response.JSONOk(c, response.APIResponse{
+		Success: true,
+		Data:    data,
+	})
+}

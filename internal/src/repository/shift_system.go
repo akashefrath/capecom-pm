@@ -106,3 +106,32 @@ func (r *ShiftSystem) GetIDByUUID(uuid string) (*int64, error) {
 	err := r.DB.Get(&id, q, uuid)
 	return &id, err
 }
+
+func (r *ShiftSystem) GetForUser(userID int64) (*dto.ShiftSystemResponse, error) {
+	var shift dto.ShiftSystemResponse
+	q := `SELECT ss.id, ss.uuid, ss.name, ss.start_time, ss.end_time, ss.checkin_early, 
+	             ss.checkin_late, ss.checkout_early, ss.checkout_late, ss.is_overnight, 
+	             ss.is_default, ss.status
+	      FROM users u
+	      LEFT JOIN shift_system_groups ssg ON u.shift_system_group_id = ssg.id
+	      LEFT JOIN shift_system ss ON ssg.shift_system_id = ss.id
+	      WHERE u.id = ? AND u.deleted_at IS NULL AND ss.deleted_at IS NULL
+	      LIMIT 1`
+
+	err := r.DB.Get(&shift, q, userID)
+	if err != nil {
+		return r.GetDefault()
+	}
+	return &shift, nil
+}
+
+func (r *ShiftSystem) GetDefault() (*dto.ShiftSystemResponse, error) {
+	var shift dto.ShiftSystemResponse
+	q := `SELECT id, uuid, name, start_time, end_time, checkin_early, checkin_late, 
+	             checkout_early, checkout_late, is_overnight, is_default, status
+	      FROM shift_system 
+	      WHERE is_default = TRUE AND deleted_at IS NULL
+	      LIMIT 1`
+	err := r.DB.Get(&shift, q)
+	return &shift, err
+}

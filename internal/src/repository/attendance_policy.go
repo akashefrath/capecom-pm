@@ -96,3 +96,32 @@ func (r *AttendancePolicy) SetDefault(uuid string) error {
 	_, err = r.DB.Exec(setQ, uuid)
 	return err
 }
+
+func (r *AttendancePolicy) GetForUser(userID int64) (*dto.AttendancePolicyResponse, error) {
+	var policy dto.AttendancePolicyResponse
+	q := `SELECT ap.id, ap.uuid, ap.name, ap.min_work_hours_minutes, ap.half_day_minutes, 
+	             ap.late_grace_minutes, ap.early_exit_grace_minutes, ap.max_break_minutes, 
+	             ap.auto_checkout_time, ap.is_default, ap.status
+	      FROM users u
+	      LEFT JOIN attendance_policy_groups apg ON u.attendance_policy_group_id = apg.id
+	      LEFT JOIN attendance_policies ap ON apg.attendance_policy_id = ap.id
+	      WHERE u.id = ? AND u.deleted_at IS NULL AND ap.deleted_at IS NULL
+	      LIMIT 1`
+
+	err := r.DB.Get(&policy, q, userID)
+	if err != nil {
+		return r.GetDefault()
+	}
+	return &policy, nil
+}
+
+func (r *AttendancePolicy) GetDefault() (*dto.AttendancePolicyResponse, error) {
+	var policy dto.AttendancePolicyResponse
+	q := `SELECT id, uuid, name, min_work_hours_minutes, half_day_minutes, late_grace_minutes, 
+	             early_exit_grace_minutes, max_break_minutes, auto_checkout_time, is_default, status
+	      FROM attendance_policies 
+	      WHERE is_default = TRUE AND deleted_at IS NULL
+	      LIMIT 1`
+	err := r.DB.Get(&policy, q)
+	return &policy, err
+}

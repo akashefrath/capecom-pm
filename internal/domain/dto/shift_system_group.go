@@ -16,3 +16,11 @@ type ShiftSystemGroupResponse struct {
 	ShiftSystemID string `json:"shift_system_id,omitempty" db:"shift_system_id"`
 	BaseModelBottom
 }
+
+type AssignUsersToShiftGroupRequest struct {
+	UserUUIDs []string `json:"user_uuids" form:"user_uuids" binding:"required,min=1"`
+}
+
+type RemoveUsersFromShiftGroupRequest struct {
+	UserUUIDs []string `json:"user_uuids" form:"user_uuids" binding:"required,min=1"`
+}
