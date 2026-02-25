@@ -29,6 +29,12 @@ func (r *TimeClock) TimePunch(userID int64, req dto.TimeClockRequest, punchType 
 	var lastID int64
 	err := r.DBTx.WithTx(context.Background(), func(tx *sqlx.Tx) error {
 		var summaryID *int64
+		pendingSummary, err := r.AttendanceSummary.GetCurrentPendingSummaryWithID(userID)
+
+		if pendingSummary != nil && punchType == models.LogIn {
+			return domainerrors.CantPerformThis
+		}
+
 		currentSummary, err := r.AttendanceSummary.GetCurrentSummaryForUserIf(tx, userID)
 		if errors.Is(err, sql.ErrNoRows) && punchType != models.LogIn {
 			return domainerrors.CantPerformThis
@@ -109,6 +115,91 @@ func (r *TimeClock) TimePunch(userID int64, req dto.TimeClockRequest, punchType 
 
 	return &lastID, err
 }
+func (r *TimeClock) TimeOutPunch(userID int64, req dto.TimeClockRequest, punchType string, timeOutTime time.Time) (*int64, error) {
+	var lastID int64
+	err := r.DBTx.WithTx(context.Background(), func(tx *sqlx.Tx) error {
+		var summaryID *int64
+		pendingSummary, err := r.AttendanceSummary.GetCurrentPendingSummaryWithID(userID)
+
+		if pendingSummary != nil && punchType == models.LogIn {
+			return domainerrors.CantPerformThis
+		}
+
+		currentSummary, err := r.AttendanceSummary.GetCurrentSummaryWithID(userID)
+		if errors.Is(err, sql.ErrNoRows) && punchType != models.LogIn {
+			return domainerrors.CantPerformThis
+		}
+
+		if punchType == models.LogIn {
+			summaryID, err = r.AttendanceSummary.Create(tx, userID, time.Now())
+			if err != nil {
+				return err
+			}
+		} else {
+			summaryID = &currentSummary.ID
+			if summaryID == nil || *summaryID == 0 {
+				return domainerrors.ErrInternal
+			}
+			lastLog, err := r.GetLastTimeDataWithSummaryIDTx(summaryID, tx)
+			if err != nil {
+				return err
+			}
+			punchTime := time.Now() // or request.PunchTime (better)
+
+			duration := punchTime.Sub(lastLog.LogTime).Seconds()
+			if duration < 0 {
+				duration = 0
+			}
+			delta := int64(duration)
+
+			// copy previous totals
+			workSec := currentSummary.TotalWorkInSec
+			breakSec := currentSummary.TotalBrakeInSec
+
+			switch lastLog.LogType {
+
+			case models.LogIn:
+
+				workSec += delta
+
+			case models.BrakeOut:
+
+				workSec += delta
+
+			case models.BrakeIn:
+
+				breakSec += delta
+
+			}
+
+			logStatus := "COMPLETED"
+
+			err = r.AttendanceSummary.Update(tx, *summaryID, logStatus, workSec, breakSec, punchType)
+			if err != nil {
+				return err
+			}
+
+		}
+
+		q := `INSERT INTO attendance_logs (uuid,user_id, log_type, source, latitude, longitude, device_id, remarks,attendance_summary_id,log_time) 
+	      VALUES (?,?, ?, ?, ?, ?, ?, ?,?,?)`
+		result, err := tx.Exec(q, uuid.NewString(), userID, punchType, req.Source, req.Latitude, req.Longitude, req.DeviceID, req.Remarks, summaryID, timeOutTime)
+		if err != nil {
+			return err
+		}
+
+		lastID, err = result.LastInsertId()
+
+		if err != nil {
+			return err
+		}
+
+		return err
+
+	})
+
+	return &lastID, err
+}
 
 func (r *TimeClock) GetByID(id int64) (*dto.TimeClockResponse, error) {
 	var result dto.TimeClockResponse
@@ -153,9 +244,12 @@ func (r *TimeClock) GetTodayDetails(id *int64) (*dto.AttendanceDetailsListWithSu
 		summary, err = r.AttendanceSummary.GetCurrentSummaryWithID(attendances[0].AttendanceSummaryID)
 	}
 
+	pendingSummary, err := r.AttendanceSummary.GetCurrentPendingSummaryWithID(*id)
+
 	return &dto.AttendanceDetailsListWithSummary{
 		TimeLogs:          attendances,
 		AttendanceSummary: summary,
+		PendingSummary:    pendingSummary,
 	}, err
 
 }

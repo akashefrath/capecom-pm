@@ -63,7 +63,7 @@ func (s *ShiftSystemGroup) AssignUsers(groupUUID string, req dto.AssignUsersToSh
 	return s.ShiftSystemGroupRepo.AssignUsers(*groupID, req.UserUUIDs)
 }
 
-func (s *ShiftSystemGroup) RemoveUsers(req dto.RemoveUsersFromShiftGroupRequest) error {
+func (s *ShiftSystemGroup) RemoveUsers(req dto.AssignUsersToShiftGroupRequest) error {
 	return s.ShiftSystemGroupRepo.RemoveUsers(req.UserUUIDs)
 }
 

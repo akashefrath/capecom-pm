@@ -18,9 +18,5 @@ type ShiftSystemGroupResponse struct {
 }
 
 type AssignUsersToShiftGroupRequest struct {
-	UserUUIDs []string `json:"user_uuids" form:"user_uuids" binding:"required,min=1"`
-}
-
-type RemoveUsersFromShiftGroupRequest struct {
-	UserUUIDs []string `json:"user_uuids" form:"user_uuids" binding:"required,min=1"`
+	UserUUIDs []string `json:"user_ids" form:"user_ids" binding:"required,min=1"`
 }

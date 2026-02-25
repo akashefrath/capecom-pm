@@ -109,7 +109,7 @@ func (h *ShiftSystemGroupHandler) AssignUsers(c *gin.Context) {
 }
 
 func (h *ShiftSystemGroupHandler) RemoveUsers(c *gin.Context) {
-	var req dto.RemoveUsersFromShiftGroupRequest
+	var req dto.AssignUsersToShiftGroupRequest
 	isValid := bind.AndValidate(c, &req, "shift_system_group")
 	if !isValid {
 		return

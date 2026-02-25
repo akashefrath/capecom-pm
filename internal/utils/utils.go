@@ -65,3 +65,30 @@ func ParseDate(s *string) *time.Time {
 	}
 	return &t
 }
+func CombineDateTime(baseDate time.Time, userTimeStr string) (time.Time, error) {
+	// Define supported layouts (24h and 12h)
+	layouts := []string{"15:04", "3:04 PM", "3:04PM", "15.04"}
+
+	var parsedTime time.Time
+	var err error
+
+	// Try parsing the time string against the layouts
+	for _, layout := range layouts {
+		parsedTime, err = time.Parse(layout, userTimeStr)
+		if err == nil {
+			break
+		}
+	}
+
+	if err != nil {
+		return time.Time{}, fmt.Errorf("invalid time format: %s", userTimeStr)
+	}
+
+	// Combine the fixed date with the parsed time
+	combined := time.Date(
+		baseDate.Year(), baseDate.Month(), baseDate.Day(),
+		parsedTime.Hour(), parsedTime.Minute(), 0, 0, baseDate.Location(),
+	)
+
+	return combined, nil
+}

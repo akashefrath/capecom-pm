@@ -53,83 +53,19 @@ func (h *TimeClockHandler) AdvancePunch(c *gin.Context, punchType string) {
 	})
 }
 
-func (h *TimeClockHandler) ClockIn(c *gin.Context) {
-	var req dto.TimeClockRequest
+func (h *TimeClockHandler) TimeOut(c *gin.Context) {
+	var req dto.TimeClockTimeOutRequest
+
 	isValid := bind.AndValidate(c, &req, "time_clock")
 	if !isValid {
 		return
 	}
-
 	employeeID := utils.GetUserID(c)
-
-	data, err := h.TimeClock.ClockIn(employeeID, req)
+	err := h.TimeClock.TimeOut(&req, employeeID)
 	if err != nil {
 		response.FromError(c, err)
 		return
 	}
-	response.JSONCreated(c, response.APIResponse{
-		Success: true,
-		Data:    data,
-	})
-}
+	response.JSONCreated(c, response.APIResponse{})
 
-func (h *TimeClockHandler) ClockOut(c *gin.Context) {
-
-	var req dto.TimeClockRequest
-	isValid := bind.AndValidate(c, &req, "time_clock")
-	if !isValid {
-		return
-	}
-
-	employeeID := utils.GetUserID(c)
-
-	data, err := h.TimeClock.ClockOut(employeeID, req)
-	if err != nil {
-		response.FromError(c, err)
-		return
-	}
-	response.JSONCreated(c, response.APIResponse{
-		Success: true,
-		Data:    data,
-	})
-}
-
-func (h *TimeClockHandler) BreakIn(c *gin.Context) {
-	var req dto.TimeClockRequest
-	isValid := bind.AndValidate(c, &req, "time_clock")
-	if !isValid {
-		return
-	}
-
-	employeeID := utils.GetUserID(c)
-
-	data, err := h.TimeClock.BreakIn(employeeID, req)
-	if err != nil {
-		response.FromError(c, err)
-		return
-	}
-	response.JSONCreated(c, response.APIResponse{
-		Success: true,
-		Data:    data,
-	})
-}
-
-func (h *TimeClockHandler) BreakOut(c *gin.Context) {
-	var req dto.TimeClockRequest
-	isValid := bind.AndValidate(c, &req, "time_clock")
-	if !isValid {
-		return
-	}
-
-	employeeID := utils.GetUserID(c)
-
-	data, err := h.TimeClock.BreakOut(employeeID, req)
-	if err != nil {
-		response.FromError(c, err)
-		return
-	}
-	response.JSONCreated(c, response.APIResponse{
-		Success: true,
-		Data:    data,
-	})
 }

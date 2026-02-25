@@ -74,6 +74,15 @@ func (r *AttendanceSummary) GetCurrentSummaryWithID(id int64) (*dto.AttendanceSu
 	return &attendanceSummary, err
 
 }
+func (r *AttendanceSummary) GetCurrentPendingSummaryWithID(id int64) (*dto.AttendanceSummaryResponse, error) {
+	var attendanceSummary dto.AttendanceSummaryResponse
+
+	q := `SELECT id,uuid,user_id,log_date,total_work_in_sec,total_brake_in_sec,log_status,created_at FROM attendance_summary WHERE user_id = ? AND log_status =?`
+	err := r.DB.Get(&attendanceSummary, q, id, "PENDING")
+
+	return &attendanceSummary, err
+
+}
 
 func (r *AttendanceSummary) GetByUUID(uuid string) (*dto.AttendanceSummaryResponse, error) {
 	var attendanceSummary dto.AttendanceSummaryResponse

@@ -9,6 +9,15 @@ type TimeClockRequest struct {
 	DeviceID  *string  `json:"device_id" form:"device_id"`
 	Remarks   *string  `json:"remarks" form:"remarks"`
 }
+type TimeClockTimeOutRequest struct {
+	Source    string   `json:"source" form:"source" binding:"required,oneof=mobile biometric admin"`
+	SummaryID *string  `json:"summary_id" form:"summary_id" binding:"required,uuid"`
+	Time      *string  `json:"time" form:"time" binding:"required"`
+	Latitude  *float64 `json:"latitude" form:"latitude"`
+	Longitude *float64 `json:"longitude" form:"longitude"`
+	DeviceID  *string  `json:"device_id" form:"device_id"`
+	Remarks   *string  `json:"remarks" form:"remarks"`
+}
 
 type TimeClockResponse struct {
 	BaseModelTop
@@ -24,6 +33,7 @@ type TimeClockResponse struct {
 	Remarks             *string   `json:"remarks" db:"remarks"`
 	BaseModelBottom
 }
+
 type AttendanceDetails struct {
 	BaseModelTop
 	LogTime             time.Time `json:"log_time" db:"log_time"`
@@ -38,4 +48,5 @@ type AttendanceDetails struct {
 type AttendanceDetailsListWithSummary struct {
 	TimeLogs          []AttendanceDetails        `json:"time_logs"`
 	AttendanceSummary *AttendanceSummaryResponse `json:"attendance_summary"`
+	PendingSummary    *AttendanceSummaryResponse `json:"pending_summary"`
 }

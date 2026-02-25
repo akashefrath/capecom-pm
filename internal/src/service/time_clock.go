@@ -5,6 +5,7 @@ import (
 	domainerrors "github.com/akashefrath/capecom-pm/internal/domain/error"
 	models "github.com/akashefrath/capecom-pm/internal/domain/model"
 	"github.com/akashefrath/capecom-pm/internal/src/repository"
+	"github.com/akashefrath/capecom-pm/internal/utils"
 )
 
 type TimeClock struct {
@@ -46,82 +47,32 @@ func (s *TimeClock) AdvancePunch(employeeID int64, req dto.TimeClockRequest, pun
 	}
 }
 
-func (s *TimeClock) ClockIn(employeeID int64, req dto.TimeClockRequest) (*dto.TimeClockResponse, error) {
+func (s *TimeClock) TimeOut(req *dto.TimeClockTimeOutRequest, employeeID int64) error {
+	pendingSummary, err := s.TimeClockRepo.AttendanceSummary.GetCurrentPendingSummaryWithID(employeeID)
 
-	lastLog, err := s.TimeClockRepo.GetUsersLastLog(employeeID)
+	if pendingSummary == nil || err != nil {
+		return err
+	}
+	baseDate := pendingSummary.CreatedAt
+
+	finalTime, err := utils.CombineDateTime(*baseDate, *req.Time)
 	if err != nil {
-		return nil, err
 
+		return err
 	}
-	currentPunch := models.LogIn
-	canPunch := canPunch(lastLog, currentPunch)
-	if canPunch {
-		id, err := s.TimeClockRepo.TimePunch(employeeID, req, currentPunch)
-		if err != nil {
-			return nil, err
-		}
-		return s.TimeClockRepo.GetByID(*id)
-	} else {
-		return nil, domainerrors.CantPerformThis
-	}
-}
 
-func (s *TimeClock) ClockOut(employeeID int64, req dto.TimeClockRequest) (*dto.TimeClockResponse, error) {
-	lastLog, err := s.TimeClockRepo.GetUsersLastLog(employeeID)
+	_, err = s.TimeClockRepo.TimeOutPunch(employeeID, dto.TimeClockRequest{
+		Source:    req.Source,
+		DeviceID:  req.DeviceID,
+		Latitude:  req.Latitude,
+		Longitude: req.Longitude,
+		Remarks:   req.Remarks,
+	}, models.TimeOut, finalTime)
 	if err != nil {
-		return nil, err
-
+		return err
 	}
-	currentPunch := models.LogOut
-	canPunch := canPunch(lastLog, currentPunch)
-	if canPunch {
-		id, err := s.TimeClockRepo.TimePunch(employeeID, req, currentPunch)
-		if err != nil {
-			return nil, err
-		}
-		return s.TimeClockRepo.GetByID(*id)
-	} else {
-		return nil, domainerrors.CantPerformThis
-	}
-}
 
-func (s *TimeClock) BreakIn(employeeID int64, req dto.TimeClockRequest) (*dto.TimeClockResponse, error) {
-
-	lastLog, err := s.TimeClockRepo.GetUsersLastLog(employeeID)
-	if err != nil {
-		return nil, err
-
-	}
-	currentPunch := models.BrakeIn
-	canPunch := canPunch(lastLog, currentPunch)
-	if canPunch {
-		id, err := s.TimeClockRepo.TimePunch(employeeID, req, currentPunch)
-		if err != nil {
-			return nil, err
-		}
-		return s.TimeClockRepo.GetByID(*id)
-	} else {
-		return nil, domainerrors.CantPerformThis
-	}
-}
-
-func (s *TimeClock) BreakOut(employeeID int64, req dto.TimeClockRequest) (*dto.TimeClockResponse, error) {
-	lastLog, err := s.TimeClockRepo.GetUsersLastLog(employeeID)
-	if err != nil {
-		return nil, err
-
-	}
-	currentPunch := models.BrakeOut
-	canPunch := canPunch(lastLog, currentPunch)
-	if canPunch {
-		id, err := s.TimeClockRepo.TimePunch(employeeID, req, currentPunch)
-		if err != nil {
-			return nil, err
-		}
-		return s.TimeClockRepo.GetByID(*id)
-	} else {
-		return nil, domainerrors.CantPerformThis
-	}
+	return nil
 
 }
 

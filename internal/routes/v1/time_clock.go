@@ -28,6 +28,8 @@ func TimeClock(r *gin.RouterGroup, container container.Container) {
 		handler.AdvancePunch(c, models.BrakeOut)
 	})
 
+	timeClock.POST("time-out", handler.TimeOut)
+
 }
 
 ///	timeClock.POST("time-out")
